@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { HorizontalNav } from '@layouts/components'
-import type { HorizontalNavItems } from '@layouts/types'
+import { HorizontalNav } from '@layouts/components';
+import type { HorizontalNavItems } from '@layouts/types';
 
 // ℹ️ Using import from `@layouts` causing build to hangup
 // import { useLayouts } from '@layouts'
-import { useLayouts } from '@layouts/composable/useLayouts'
+import { useLayouts } from '@layouts/composable/useLayouts';
 
 defineProps<{
   navItems: HorizontalNavItems

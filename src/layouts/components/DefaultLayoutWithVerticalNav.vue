@@ -1,27 +1,23 @@
 <script lang="ts" setup>
-import navItems from '@/navigation/vertical'
-import { useThemeConfig } from '@core/composable/useThemeConfig'
+import navItems from "@/navigation/vertical";
+import { useThemeConfig } from "@core/composable/useThemeConfig";
 
 // Components
-import Footer from '@/layouts/components/Footer.vue'
-import NavBarI18n from '@/layouts/components/NavBarI18n.vue'
-import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
-import NavbarShortcuts from '@/layouts/components/NavbarShortcuts.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import NavSearchBar from '@/layouts/components/NavSearchBar.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
+import Footer from "@/layouts/components/Footer.vue";
+import TheCustomizer from "@/page-components/TheCustomizer.vue";
+import Notification from "@/page-components/navbar/Notification.vue";
+import ThemeSwitcher from "@/page-components/navbar/ThemeSwitcher.vue";
+import UserProfile from "@/page-components/navbar/UserProfile.vue";
 
 // @layouts plugin
-import { VerticalNavLayout } from '@layouts'
+import { VerticalNavLayout } from "@layouts";
 
-const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig()
-const { width: windowWidth } = useWindowSize()
+const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
+const { width: windowWidth } = useWindowSize();
 </script>
 
 <template>
-  <VerticalNavLayout
-    :nav-items="navItems"
-  >
+  <VerticalNavLayout :nav-items="navItems">
     <!-- 👉 navbar -->
     <template #navbar="{ toggleVerticalOverlayNavActive }">
       <div class="d-flex h-100 align-center">
@@ -34,30 +30,18 @@ const { width: windowWidth } = useWindowSize()
           size="small"
           @click="toggleVerticalOverlayNavActive(true)"
         >
-          <VIcon
-            icon="tabler-menu-2"
-            size="24"
-          />
+          <VIcon icon="tabler-menu-2" size="24" />
         </VBtn>
-
-        <NavSearchBar class="ms-lg-n3" />
-
         <VSpacer />
-
-        <NavBarI18n />
-        <NavbarThemeSwitcher />
-        <NavbarShortcuts />
-        <NavBarNotifications class="me-2" />
+        <ThemeSwitcher />
+        <Notification class="me-2" />
         <UserProfile />
       </div>
     </template>
 
     <!-- 👉 Pages -->
     <RouterView v-slot="{ Component }">
-      <Transition
-        :name="appRouteTransition"
-        mode="out-in"
-      >
+      <Transition :name="appRouteTransition" mode="out-in">
         <Component :is="Component" />
       </Transition>
     </RouterView>

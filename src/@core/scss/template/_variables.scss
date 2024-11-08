@@ -2,30 +2,64 @@
   $css-vars: (
     "default": (
       "--v-theme-background": (
-        "light": (248,247,250),
-        "dark": (37,41,60),
+        "light": (
+          240,
+          245,
+          249,
+        ),
+        "dark": (
+          22,
+          33,
+          51,
+        ),
       ),
       "--v-theme-surface": (
-        "light": (255, 255, 255),
-        "dark": (47,51,73),
+        "light": (
+          255,
+          255,
+          255,
+        ),
+        "dark": (
+          9,
+          17,
+          28,
+        ),
       ),
     ),
     "bordered": (
       "--v-theme-background": (
-        "light": (255 ,255, 255),
-        "dark": (47,51,73),
+        "light": (
+          255,
+          255,
+          255,
+        ),
+        "dark": (
+          9,
+          17,
+          28,
+        ),
       ),
       "--v-theme-surface": (
-        "light": (255, 255, 255),
-        "dark": (47,51,73),
+        "light": (
+          255,
+          255,
+          255,
+        ),
+        "dark": (
+          9,
+          17,
+          28,
+        ),
       ),
     ),
-  ) !default,
+  )
+  !default,
 
   $default-layout-with-vertical-nav-navbar-footer-roundness: 6px !default,
 
-  $vertical-nav-navbar-style: "floating" !default, // options: elevated, floating
+  $vertical-nav-navbar-style: "floating" !default,
 
+  // options: elevated, floating
   // 👉 Vertical nav
   $vertical-nav-background-color-rgb: var(--v-theme-surface) !default,
   // ℹ️ This is used to keep consistency between nav items and nav header left & right margin
@@ -40,5 +74,5 @@
 
   // Vertical nav icons
   $vertical-nav-items-icon-size: 1.375rem !default,
-  $vertical-nav-items-nested-icon-size: 0.425rem !default,
+  $vertical-nav-items-nested-icon-size: 0.425rem !default
 );

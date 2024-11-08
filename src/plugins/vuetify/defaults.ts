@@ -1,34 +1,33 @@
 export default {
   VAlert: {
     density: "comfortable",
-    rounded: "xl",
+    rounded: "lg",
   },
   VAvatar: {
-    // ℹ️ Remove after next release
     variant: "flat",
   },
   VBadge: {
-    // set v-badge default color to primary
     color: "primary",
-    rounded: "xl",
+    rounded: "lg",
   },
   VCard: {
-    // set v-badge default color to primary
     rounded: "xl",
+    variant: "elevated",
   },
   VBtn: {
-    // set v-btn default color to primary
     color: "primary",
-    rounded: "xl",
+    rounded: "lg",
   },
   VChip: {
     size: "small",
-    rounded: "xl",
+    rounded: "lg",
   },
   VMenu: {
     VList: {
       density: "compact",
+      rounded: "xl",
     },
+    rounded: "xl",
   },
   VPagination: {
     activeColor: "primary",
@@ -36,7 +35,6 @@ export default {
     variant: "tonal",
   },
   VTabs: {
-    // set v-tabs default color to primary
     color: "primary",
     density: "comfortable",
     VSlideGroup: {
@@ -44,16 +42,15 @@ export default {
     },
   },
   VTooltip: {
-    // set v-tooltip default location to top
     location: "top",
   },
   VList: {
+    rounded: "xl",
     VListItem: {
       activeColor: "primary",
     },
   },
   VCheckbox: {
-    // set v-checkbox default color to primary
     color: "primary",
     density: "comfortable",
     hideDetails: "auto",
@@ -75,7 +72,6 @@ export default {
     rounded: "xl",
   },
   VRangeSlider: {
-    // set v-range-slider default color to primary
     color: "primary",
     thumbSize: 14,
     density: "comfortable",
@@ -83,15 +79,12 @@ export default {
     hideDetails: "auto",
   },
   VRating: {
-    // set v-rating default color to primary
     color: "warning",
   },
   VProgressCircular: {
-    // set v-progress-circular default color to primary
     color: "primary",
   },
   VSlider: {
-    // set v-slider default color to primary
     color: "primary",
     hideDetails: "auto",
     thumbSize: 14,
@@ -101,38 +94,32 @@ export default {
     density: "compact",
     color: "primary",
     hideDetails: "auto",
-    rounded: "xl",
   },
   VAutocomplete: {
     variant: "outlined",
     color: "primary",
     density: "compact",
     hideDetails: "auto",
-    rounded: "xl",
   },
   VCombobox: {
     variant: "outlined",
     density: "compact",
     color: "primary",
     hideDetails: "auto",
-    rounded: "xl",
   },
   VFileInput: {
     variant: "outlined",
     density: "compact",
     color: "primary",
     hideDetails: "auto",
-    rounded: "xl",
   },
   VTextarea: {
     variant: "outlined",
     density: "compact",
     color: "primary",
     hideDetails: "auto",
-    rounded: "xl",
   },
   VSwitch: {
-    // set v-switch default color to primary
     color: "primary",
     hideDetails: "auto",
   },
