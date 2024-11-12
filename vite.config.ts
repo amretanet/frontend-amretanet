@@ -1,10 +1,10 @@
-import { fileURLToPath } from 'url'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import DefineOptions from 'unplugin-vue-define-options/vite'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
@@ -27,28 +27,6 @@ export default defineConfig({
 
       // ℹ️ We need three routes using single routes so we will ignore generating route for this SFC file
       onRoutesGenerated: routes => [
-        // Email filter
-        {
-          path: '/apps/email/:filter',
-          name: 'apps-email-filter',
-          component: '/src/pages/apps/email/index.vue',
-          meta: {
-            navActiveLink: 'apps-email',
-            layoutWrapperClasses: 'layout-content-height-fixed',
-          },
-        },
-
-        // Email label
-        {
-          path: '/apps/email/label/:label',
-          name: 'apps-email-label',
-          component: '/src/pages/apps/email/index.vue',
-          meta: {
-            // contentClass: 'email-application',
-            navActiveLink: 'apps-email',
-            layoutWrapperClasses: 'layout-content-height-fixed',
-          },
-        },
         ...routes,
       ],
     }),

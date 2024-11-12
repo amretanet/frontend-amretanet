@@ -1,0 +1,129 @@
+.scroller-x {
+  inline-size: 100%;
+  overflow-x: auto;
+  transition: scroll-behavior 0.5s;
+}
+
+.scroller-x::-webkit-scrollbar {
+  display: none;
+}
+
+.scroller-hide {
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.scroller-hide::-webkit-scrollbar,
+.scroller-table::-webkit-scrollbar {
+  display: none;
+}
+
+.scroller {
+  overflow: auto;
+  overflow-x: hidden;
+}
+.scroller-table {
+  overflow: auto;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+  border-radius: 3px;
+  background-color: rgb(213, 224, 235);
+  inline-size: 3px;
+}
+.scroller:hover {
+  padding-right: 5px;
+}
+.scroller:hover::-webkit-scrollbar,
+.scroller-table:hover::-webkit-scrollbar {
+  display: contents;
+}
+.scroller::-webkit-scrollbar-thumb,
+.v-field__input::-webkit-scrollbar-thumb,
+.v-list::-webkit-scrollbar-thumb,
+.apexcharts-legend::-webkit-scrollbar-thumb,
+.scroller-table::-webkit-scrollbar-thumb {
+  border-radius: 3px !important;
+  background-color: #2092ec !important;
+}
+.v-field__input::-webkit-scrollbar,
+.v-list::-webkit-scrollbar,
+.v-table__wrapper::-webkit-scrollbar,
+.apexcharts-legend::-webkit-scrollbar,
+.scroller-table::-webkit-scrollbar {
+  border-radius: 3px !important;
+  background-color: rgb(213, 224, 235) !important;
+  inline-size: 3px !important;
+  block-size: 0 !important;
+}
+.scroll-x {
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+.bg-disable {
+  opacity: 0.6;
+}
+
+.header-action:hover {
+  opacity: 0.5;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+.clickable-color:hover {
+  cursor: pointer;
+  color: #2092ec;
+}
+.clickable-background:hover {
+  cursor: pointer;
+  background-color: #e4f2fc;
+}
+.table-custom {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-custom thead th {
+  background-color: #d9e9f5 !important;
+  text-wrap: nowrap;
+  padding: 10px;
+  text-align: left;
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.table-custom tbody td {
+  font-size: 14px;
+  padding: 0 10px 0;
+  border-bottom: 1px #eaebf0 solid;
+  height: 2.2rem;
+}
+.v-theme--dark .table-custom thead th {
+  background-color: rgba(21, 35, 51, 255) !important;
+}
+.v-theme--dark .table-custom tbody td {
+  border-bottom: 1px rgba(21, 35, 51, 255) solid;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.rotating-element {
+  display: inline-block;
+  animation: rotate 1s infinite linear;
+}

@@ -10,6 +10,7 @@ import ThemeSwitcher from "@/page-components/navbar/ThemeSwitcher.vue";
 import UserProfile from "@/page-components/navbar/UserProfile.vue";
 
 // @layouts plugin
+import WelcomeSuggest from "@/page-components/navbar/WelcomeSuggest.vue";
 import { VerticalNavLayout } from "@layouts";
 
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
@@ -32,6 +33,7 @@ const { width: windowWidth } = useWindowSize();
         >
           <VIcon icon="tabler-menu-2" size="24" />
         </VBtn>
+        <WelcomeSuggest />
         <VSpacer />
         <ThemeSwitcher />
         <Notification class="me-2" />

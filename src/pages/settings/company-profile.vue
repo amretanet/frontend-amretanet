@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import UserList from "@/page-components/settings/user/UserList.vue";
+import CompanyProfileForm from "@/page-components/settings/company-profile/CompanyProfileForm.vue";
 
 const path_data = ref([
   {
@@ -8,7 +8,7 @@ const path_data = ref([
     name: "Pengaturan",
   },
   {
-    name: "Pengguna",
+    name: "Profil Perusahaan",
   },
 ]);
 </script>
@@ -19,11 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <UserList />
+      <CompanyProfileForm />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Pengguna
+  title: Profil Perusahaan
 </route>

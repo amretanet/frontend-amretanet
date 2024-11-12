@@ -66,7 +66,7 @@ const is_loading = ref(props.is_loading);
 const items = ref(props.items || 10);
 const keyword = ref(props.keyword || "");
 const headers = ref(props.headers || []);
-const height = ref(props.height || "240px");
+const height = ref(props.height || "260px");
 const hide_pagination = ref(props.hide_pagination || false);
 const page = ref(1);
 
@@ -78,7 +78,7 @@ watch(props, () => {
   keyword.value = props.keyword || "";
   items.value = props.items || 10;
   headers.value = props.headers || [];
-  height.value = props.height || "240px";
+  height.value = props.height || "260px";
   data_body.value = props.body || [];
   hide_pagination.value = props.hide_pagination || false;
   is_loading.value = props.is_loading;
@@ -110,7 +110,7 @@ watch(props, () => {
               :class="data.td_class"
               class="py-1"
             >
-              <SkeletonLoader height="25px" rounded="5px" />
+              <SkeletonLoader height="28px" rounded="5px" />
             </td>
           </tr>
           <tr v-else v-for="(item, index) in data_body_show" :key="index">

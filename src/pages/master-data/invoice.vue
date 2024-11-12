@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import InvoiceList from "@/page-components/master-data/invoice/InvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-dashboard",
-    name: "Dashboard",
+    icon: "tabler-server-cog",
+    name: "Master Data",
+  },
+  {
+    name: "Invoice",
   },
 ]);
 </script>
@@ -14,9 +18,12 @@ const path_data = ref([
     <VCol cols="12">
       <PageHeader :data="path_data" />
     </VCol>
+    <VCol cols="12">
+      <InvoiceList />
+    </VCol>
   </VRow>
 </template>
 <route lang="yaml">
-meta:
-  title: Dashboard
-</route>
+  meta:
+    title: Invoice
+  </route>

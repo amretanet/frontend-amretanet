@@ -2,7 +2,6 @@
 import { injectionKeyIsVerticalNavHovered, useLayouts } from '@layouts'
 import { TransitionExpand, VerticalNavLink } from '@layouts/components'
 import { config } from '@layouts/config'
-import { canViewNavMenuGroup } from '@layouts/plugins/casl'
 import type { NavGroup } from '@layouts/types'
 import { isNavGroupActive, openGroups } from '@layouts/utils'
 
@@ -172,7 +171,6 @@ watch(isVerticalNavMini(windowWidth, isVerticalNavHovered), val => {
 
 <template>
   <li
-    v-if="canViewNavMenuGroup(item)"
     class="nav-group"
     :class="[
       {

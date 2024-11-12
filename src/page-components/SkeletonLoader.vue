@@ -46,11 +46,11 @@ watch(props, () => {
 }
 
 .v-theme--dark .skeleton-container {
-  background: #333850;
+  background: #25293e;
 }
 
 .v-theme--dark .skeleton-loader {
-  background: linear-gradient(90deg, #333850, #353a52, #565a70);
+  background: linear-gradient(90deg, #25293e, #2f334b, #3b405a);
 }
 
 @keyframes progress {

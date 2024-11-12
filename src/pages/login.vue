@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import type { LoginResponse } from "@/@fake-db/types";
 import { useAppAbility } from "@/plugins/casl/useAppAbility";
-import axios from "@axios";
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
-import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
-import { themeConfig } from "@themeConfig";
 import { emailValidator, requiredValidator } from "@validators";
 import { VForm } from "vuetify/components";
 
+import autloginIllustration from "@/assets/images/illustrations/user-protection.png";
 import authV2LoginIllustrationBorderedDark from "@images/pages/auth-v2-login-illustration-bordered-dark.png";
 import authV2LoginIllustrationBorderedLight from "@images/pages/auth-v2-login-illustration-bordered-light.png";
 import authV2LoginIllustrationDark from "@images/pages/auth-v2-login-illustration-dark.png";
@@ -43,29 +40,7 @@ const password = ref("admin");
 const rememberMe = ref(false);
 
 const login = () => {
-  axios
-    .post<LoginResponse>("/auth/login", {
-      email: email.value,
-      password: password.value,
-    })
-    .then((r) => {
-      const { accessToken, userData, userAbilities } = r.data;
-
-      localStorage.setItem("userAbilities", JSON.stringify(userAbilities));
-      ability.update(userAbilities);
-
-      localStorage.setItem("userData", JSON.stringify(userData));
-      localStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-      // Redirect to `to` query if exist or redirect to index route
-      router.replace(route.query.to ? String(route.query.to) : "/");
-    })
-    .catch((e) => {
-      const { errors: formErrors } = e.response.data;
-
-      errors.value = formErrors;
-      console.error(e.response.data);
-    });
+  router.push("/dashboard");
 };
 
 const onSubmit = () => {
@@ -81,8 +56,7 @@ const onSubmit = () => {
       <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">
         <div class="d-flex align-center justify-center w-100 h-100">
           <VImg
-            max-width="505"
-            :src="authThemeImg"
+            :src="autloginIllustration"
             class="auth-illustration mt-16 mb-2"
           />
         </div>
@@ -94,28 +68,20 @@ const onSubmit = () => {
     <VCol cols="12" lg="4" class="d-flex align-center justify-center">
       <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
-          <VNodeRenderer :nodes="themeConfig.app.logo" class="mb-6" />
-
-          <h5 class="text-h5 font-weight-semibold mb-1">
-            Welcome to {{ themeConfig.app.title }}! 👋🏻
-          </h5>
-          <p class="mb-0">
-            Please sign-in to your account and start the adventure
-          </p>
+          <div class="text-center">
+            <div>
+              <img
+                src="@/assets/images/illustrations/shield.png"
+                alt=""
+                style="width: 70%"
+              />
+            </div>
+            <div>
+              <img src="/logo.png" alt="Logo" style="width: 80%" />
+            </div>
+          </div>
         </VCardText>
-        <VCardText>
-          <VAlert color="primary" variant="tonal">
-            <p class="text-caption mb-2">
-              Admin Email: <strong>admin@demo.com</strong> / Pass:
-              <strong>admin</strong>
-            </p>
-            <p class="text-caption mb-0">
-              Client Email: <strong>client@demo.com</strong> / Pass:
-              <strong>client</strong>
-            </p>
-          </VAlert>
-        </VCardText>
-        <VCardText>
+        <VCardText class="mt-10">
           <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
@@ -151,7 +117,7 @@ const onSubmit = () => {
                     class="text-primary ms-2 mb-1"
                     :to="{ name: 'forgot-password' }"
                   >
-                    Forgot Password?
+                    Lupa Password?
                   </RouterLink>
                 </div>
 
@@ -160,18 +126,13 @@ const onSubmit = () => {
 
               <!-- create account -->
               <VCol cols="12" class="text-center">
-                <span>New on our platform?</span>
+                <span>Belum punya akun?</span>
                 <RouterLink
                   class="text-primary ms-2"
                   :to="{ name: 'register' }"
                 >
-                  Create an account
+                  Buat Akun
                 </RouterLink>
-              </VCol>
-              <VCol cols="12" class="d-flex align-center">
-                <VDivider />
-                <span class="mx-4">or</span>
-                <VDivider />
               </VCol>
             </VRow>
           </VForm>
@@ -187,6 +148,7 @@ const onSubmit = () => {
 
 <route lang="yaml">
 meta:
+  title: Login
   layout: blank
   action: read
   subject: Auth

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import misc404 from "@images/pages/404.png";
+import pageNotFound from "@/assets/images/illustrations/page-not-found.png";
+import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
 import miscMaskDark from "@images/pages/misc-mask-dark.png";
 import miscMaskLight from "@images/pages/misc-mask-light.png";
-import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
 
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
 </script>
@@ -10,14 +10,17 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
 <template>
   <div class="misc-wrapper">
     <ErrorHeader
-      error-title="Page Not Found :("
-      error-description="We couldn't find the page you are looking for."
+      error-title="Halaman Tidak Ditemukan ❌"
+      error-description="Kami tidak dapat menemukan halaman yang anda maksud "
     />
-    <VBtn to="/" class="mb-12"> Back to Home </VBtn>
-
-    <!-- 👉 Image -->
+    <VBtn to="/dashboard" class="mb-12"> Kembali Ke Home </VBtn>
     <div class="misc-avatar w-100 text-center">
-      <VImg :src="misc404" alt="Coming Soon" :max-width="200" class="mx-auto" />
+      <VImg
+        :src="pageNotFound"
+        alt="404-PageNotFound"
+        :max-height="500"
+        class="mx-auto"
+      />
     </div>
 
     <VImg :src="authThemeMask" class="misc-footer-img d-none d-md-block" />

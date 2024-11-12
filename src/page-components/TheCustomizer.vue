@@ -88,8 +88,8 @@ const headerValues = computed(() => {
       <!-- 👉 Header -->
       <div class="customizer-heading d-flex align-center justify-space-between">
         <div>
-          <h6 class="text-h6">THEME CUSTOMIZER</h6>
-          <span class="text-body-1">Customize & Preview in Real Time</span>
+          <h6 class="text-h6">Konfigurasi Tema</h6>
+          <span class="text-body-1">Ubah konfigurasi tema secara real time</span>
         </div>
         <VBtn
           icon
@@ -103,8 +103,7 @@ const headerValues = computed(() => {
       </div>
       <VDivider />
       <PerfectScrollbar tag="ul" :options="{ wheelPropagation: false }">
-        <CustomizerSection title="THEMING" :divider="false">
-          <!-- 👉 Skin -->
+        <CustomizerSection title="THEMES" :divider="false">
           <h6 class="text-base font-weight-regular">Skins</h6>
           <VRadioGroup v-model="skin" inline>
             <VRadio
@@ -172,12 +171,12 @@ const headerValues = computed(() => {
         <CustomizerSection title="LAYOUT">
           <!-- 👉 Navbar Type -->
           <h6 class="mt-3 text-base font-weight-regular">
+            Tipe
             {{
               appContentLayoutNav === AppContentLayoutNav.Vertical
                 ? "Navbar"
                 : "Header"
             }}
-            Type
           </h6>
           <VRadioGroup v-model="navbarType" inline>
             <VRadio
@@ -187,8 +186,7 @@ const headerValues = computed(() => {
               :value="val"
             />
           </VRadioGroup>
-          <!-- 👉 Footer Type -->
-          <h6 class="mt-3 text-base font-weight-regular">Footer Type</h6>
+          <h6 class="mt-3 text-base font-weight-regular">Tipe Footer</h6>
           <VRadioGroup v-model="footerType" inline>
             <VRadio
               v-for="[key, val] in Object.entries(FooterType)"
@@ -199,8 +197,7 @@ const headerValues = computed(() => {
           </VRadioGroup>
         </CustomizerSection>
         <CustomizerSection title="MENU">
-          <!-- 👉 Menu Type -->
-          <h6 class="text-base font-weight-regular">Menu Type</h6>
+          <h6 class="text-base font-weight-regular">Tipe Menu</h6>
           <VRadioGroup v-model="appContentLayoutNav" inline>
             <VRadio
               v-for="[key, val] in Object.entries(AppContentLayoutNav)"
