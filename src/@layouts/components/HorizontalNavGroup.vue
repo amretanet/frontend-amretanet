@@ -39,6 +39,10 @@ watch(() => route.path, () => {
 
   isGroupActive.value = isActive
 }, { immediate: true })
+
+function defineOptions(arg0: { name: string }) {
+  throw new Error('Function not implemented.')
+}
 </script>
 
 <template>
