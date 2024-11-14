@@ -13,6 +13,10 @@ dist
 dist-ssr
 *.local
 
+Dockerfile
+docker-compose.yaml
+.env
+
 /cypress/videos/
 /cypress/screenshots/
 
