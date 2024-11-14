@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { confirmAction, showToastification } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
+import AddUserModal from "./AddUserModal.vue";
 
 // VARIABLES
 const is_on_refresh = ref(true);
@@ -133,6 +135,16 @@ const roleFormatter = (role: number) => {
     };
   }
 };
+const deleteUser = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Hapus Pengguna?",
+    `${name} akan dihapus dari daftar pengguna`,
+    "Ya, Hapus!"
+  );
+  if (is_confirmed) {
+    showToastification(undefined, undefined, "Pengguna Telah Dihapus!");
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -157,9 +169,7 @@ onMounted(() => {
           @click="getUserData(true)"
         />
         <VSpacer />
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
-          <VTooltip activator="parent"> Tambah Pengguna </VTooltip>
-        </VBtn>
+        <AddUserModal />
         <form class="wm-100" style="width: 15rem">
           <VTextField
             label="Pencarian"
@@ -186,13 +196,17 @@ onMounted(() => {
             {{ roleFormatter(data.role).type }}
           </VChip>
         </template>
-        <template #cell-action="data">
+        <template #cell-action="{ data }">
           <div class="d-flex gap-2 py-1 justify-center">
             <VBtn size="35" color="info">
               <VIcon icon="tabler-edit" />
               <VTooltip activator="parent"> Edit </VTooltip>
             </VBtn>
-            <VBtn size="35" color="error">
+            <VBtn
+              size="35"
+              color="error"
+              @click="deleteUser(data.name, data.name)"
+            >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>

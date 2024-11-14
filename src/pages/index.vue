@@ -172,6 +172,13 @@ const our_contact = ref([
 // function
 const letsLogin = () => {
   router.push("/login");
+  // let temp  = ""
+  // for(let i=1;i<=100;i++){
+    
+  //   const data = `.fsm-${i}{font-size:${i}px !important}`
+  //   temp += data
+  // }
+  // console.log(temp)
 };
 const redirectToOurContact = (url: string) => {
   window.open(url);
@@ -241,11 +248,11 @@ const redirectToOurContact = (url: string) => {
     <VContainer class="hero-section">
       <VRow>
         <VCol cols="12" class="text-center">
-          <div class="fs-60 text-primary font-weight-black">Amreta Network</div>
-          <div class="font-weight-black text-warning fs-40 mt-1">
+          <div class="fs-60 fsm-35 text-primary font-weight-black">Amreta Network</div>
+          <div class="font-weight-black text-warning fs-40 fsm-20 mt-1">
             Solusi Internet Cepat, Untuk Aktivitas Tanpa Batas
           </div>
-          <div class="fs-20 mt-5 font-weight-bold">
+          <div class="fs-20 fsm-12 mt-5 font-weight-bold">
             Miliki layanan internet bebas akses internet stabil terbaik di rumah
             Anda sekarang juga.
           </div>
@@ -253,7 +260,7 @@ const redirectToOurContact = (url: string) => {
       </VRow>
       <VRow class="mt-10">
         <VCol v-for="item in advantages" cols="12" md="4" sm="12">
-          <VCard class="rounded-custom-xl">
+          <VCard class="rounded-custom-xl scale-up">
             <VCardText class="text-center">
               <div class="py-5">
                 <img
@@ -263,10 +270,10 @@ const redirectToOurContact = (url: string) => {
                 />
               </div>
               <VDivider></VDivider>
-              <div class="fs-30 font-weight-bold mt-2">
+              <div class="fs-30 fsm-20 font-weight-bold mt-2">
                 {{ item.title }}
               </div>
-              <div class="fs-25">{{ item.subtitle }} ✅</div>
+              <div class="fs-25 fsm-16">{{ item.subtitle }} ✅</div>
             </VCardText>
           </VCard>
         </VCol>
@@ -275,13 +282,13 @@ const redirectToOurContact = (url: string) => {
     <VContainer fluid class="mt-10 subscribe-step">
       <VRow>
         <VCol cols="12" class="text-center">
-          <div class="font-weight-black fs-40 mt-2">Cara Berlangganan</div>
-          <div class="fs-20 mt-2">
+          <div class="font-weight-black fs-40 fsm-30 mt-2">Cara Berlangganan</div>
+          <div class="fs-20 fsm-14 mt-2">
             Ikuti {{ subscribe_step.length }} langkah mudah untuk mulai
             menikmati internet stabil tanpa batas
           </div>
         </VCol>
-        <VCol cols="12">
+        <VCol cols="12" class="slide-in">
           <VTimeline
             :direction="
               isLessThanOverlayNavBreakpoint(windowWidth)
@@ -314,11 +321,11 @@ const redirectToOurContact = (url: string) => {
                       />
                     </div>
                     <div>
-                      <div class="fs-24 font-weight-bold pb-2">
+                      <div class="fs-24 fsm-16 font-weight-bold pb-2">
                         {{ index + 1 }}. {{ item.title }}
                       </div>
                       <VDivider></VDivider>
-                      <div class="pt-2">{{ item.description }}</div>
+                      <div class="pt-2 fsm-12">{{ item.description }}</div>
                     </div>
                   </div>
                 </VCardText>
@@ -330,21 +337,21 @@ const redirectToOurContact = (url: string) => {
     </VContainer>
     <VContainer class="mt-10">
       <div class="py-5 text-center">
-        <div class="fs-40 font-weight-black">Daftar Paket</div>
+        <div class="fs-40 fsm-25 font-weight-black">Daftar Paket</div>
       </div>
       <div class="d-flex gap-5 flex-wrap justify-center">
-        <VCard v-for="item in packages" width="350" class="h-100">
+        <VCard v-for="item in packages" width="350" class="h-100 scale-up">
           <VCardItem>
             <template #title>
-              <div class="font-weight-black">Paket {{ item.name }}</div>
-              <div class="fs-16 mt-3">
+              <div class="font-weight-black fsm-16">Paket {{ item.name }}</div>
+              <div class="fs-16 fsm-12 mt-3">
                 Rp{{ thousandSeparator(item.price) }}
               </div>
               <div class="mt-3">
                 <VChip
                   color="primary"
                   variant="tonal"
-                  class="font-weight-black"
+                  class="font-weight-black fsm-10"
                 >
                   Kecepatan Hingga {{ item.bandwidth }}
                 </VChip>
@@ -354,48 +361,48 @@ const redirectToOurContact = (url: string) => {
           <VDivider></VDivider>
           <VCardText>
             <div class="d-flex gap-2 justify-space-between align-center">
-              <div class="fs-14 d-flex align-center gap-1">
+              <div class="fs-14 fsm-10 d-flex align-center gap-1">
                 <VIcon icon="tabler-tool" /> Biaya Pasang:
               </div>
               <div class="fs-16 font-weight-black">
-                <VChip v-if="item.instalation_price">
+                <VChip v-if="item.instalation_price" class="fsm-12">
                   Rp{{ thousandSeparator(item.instalation_price) }}
                 </VChip>
-                <div v-else class="font-weight-black">GRATIS ✅</div>
+                <div v-else class="font-weight-black fsm-12">GRATIS ✅</div>
               </div>
             </div>
             <div class="mt-5 d-flex gap-2 justify-space-between align-center">
-              <div class="fs-14 d-flex align-center gap-1">
+              <div class="fs-14 fsm-10 d-flex align-center gap-1">
                 <VIcon icon="tabler-wallet" /> Mulai Dari:
               </div>
               <div class="fs-16 font-weight-black">
-                <VChip>
+                <VChip class="fsm-12">
                   Rp{{ thousandSeparator(item.price) }}/{{ item.pricing_type }}
                 </VChip>
               </div>
             </div>
             <div class="mt-5 d-flex gap-2 justify-space-between align-center">
-              <div class="fs-14 d-flex align-center gap-1">
+              <div class="fs-14 fsm-10 d-flex align-center gap-1">
                 <VIcon icon="tabler-router" /> Perangkat:
               </div>
               <div class="fs-16 font-weight-black">
-                <VChip> 1-{{ item.max_connected_device }} Perangkat </VChip>
+                <VChip class="fsm-12"> 1-{{ item.max_connected_device }} Perangkat </VChip>
               </div>
             </div>
-            <VBtn block rounded="pill" class="mt-10"> Daftar Sekarang </VBtn>
+            <VBtn block rounded="pill" size="small" class="mt-10"> Daftar Sekarang </VBtn>
           </VCardText>
         </VCard>
       </div>
     </VContainer>
     <VFooter class="mt-10">
       <VContainer>
-        <div class="d-flex gap-2 justify-space-between">
+        <div class="d-flex flex-wrap gap-2 justify-space-between">
           <div>
-            <span class="fs-18">
+            <span class="fs-18 fsm-12">
               Amreta Network @ All Right Reserved {{ today.getFullYear() }}
             </span>
           </div>
-          <div class="d-flex gap-5">
+          <div class="d-flex fsm-10 gap-5">
             <TermConditionModal>
               <template #trigger-button>
                 <div class="clickable text-primary">Syarat & Privasi</div>

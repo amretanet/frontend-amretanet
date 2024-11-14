@@ -4,6 +4,7 @@ import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 
 // VARIABLES
+const router = useRouter();
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const pagination = ref({
@@ -231,6 +232,9 @@ const getCustomerData = (is_refresh: boolean = false) => {
     is_loading.value = false;
   }, 1000);
 };
+const addCustomer = () => {
+  router.push({ name: "master-data-customer-add-customer" });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -261,7 +265,12 @@ onMounted(() => {
           <VTooltip activator="parent"> Ekspor Data </VTooltip>
         </VBtn>
         <VSpacer />
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
+        <VBtn
+          size="40"
+          prepend-icon="tabler-plus"
+          class="wm-100"
+          @click="addCustomer"
+        >
           <VTooltip activator="parent"> Tambah Pelanggan </VTooltip>
         </VBtn>
         <div class="wm-100" style="min-width: 10rem">

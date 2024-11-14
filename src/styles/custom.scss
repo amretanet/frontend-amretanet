@@ -127,3 +127,42 @@
   display: inline-block;
   animation: rotate 1s infinite linear;
 }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in alternate;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+@keyframes scaleUp {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.scale-up {
+  animation: scaleUp 0.7s ease-in-out;
+}
+.blink {
+  animation: fadeIn 1s ease-in-out infinite alternate;
+}

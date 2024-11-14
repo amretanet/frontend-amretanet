@@ -14,6 +14,7 @@ interface IProps {
 
 // VARIABLE
 const props = defineProps<IProps>();
+const router = useRouter();
 const is_show_backup_button = ref(props.is_show_backup_button || false);
 const path_data = ref(props.data);
 
@@ -28,6 +29,11 @@ const backupDatabase = async () => {
     console.log("file berhasil di backup");
   }
 };
+const redirectPath = (item: IPathData) => {
+  if (item?.to) {
+    router.push({ name: item.to });
+  }
+};
 
 // LIFECYCLE HOOKS
 watch(props, () => {
@@ -40,7 +46,11 @@ watch(props, () => {
     <div class="d-flex flex-wrap gap-2 align-center">
       <div v-for="(item, index) in path_data" class="d-flex align-center gap-1">
         <VIcon v-if="item.icon" :icon="item.icon" />
-        <span>{{ item.name }}</span>
+        <span
+          :class="item?.to ? 'clickable' : ''"
+          @click="redirectPath(item)"
+          >{{ item.name }}</span
+        >
         <VIcon
           v-if="path_data.length > 1 && index != path_data.length - 1"
           icon="mdi-chevron-right"
@@ -50,6 +60,7 @@ watch(props, () => {
       <VBtn
         v-if="is_show_backup_button"
         color="warning"
+        size="small"
         prepend-icon="tabler-database-import"
         class="wm-100"
         @click="backupDatabase()"

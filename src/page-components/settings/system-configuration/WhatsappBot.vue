@@ -4,6 +4,7 @@ import ProcessButton from "@/page-components/ProcessButton.vue";
 
 // VARIABLES
 const is_on_process = ref(false);
+const whatsapp_gateway_url = ref("https://wa7.amretanet.my.id/login");
 
 // FUNCTION
 const updateWhatsappbotConfig = async () => {
@@ -29,6 +30,18 @@ const updateWhatsappbotConfig = async () => {
         <VIcon icon="tabler-brand-whatsapp" />
       </template>
       <template #title> Bot Whatsapp </template>
+      <template #append>
+        <VBtn
+          size="small"
+          prepend-icon="tabler-brand-whatsapp"
+          color="success"
+          :href="whatsapp_gateway_url"
+          target="_blank"
+          variant="outlined"
+        >
+          Whatsapp Gateway
+        </VBtn>
+      </template>
     </VCardItem>
     <VCardText>
       <VRow>
