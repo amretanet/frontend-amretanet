@@ -178,7 +178,7 @@ const target = join(__dirname, 'icons-bundle.js');
       ) as IconifyJSON
 
       // Filter icons
-      if (typeof item !== 'string' && item.icons?.length) {
+      if (typeof item !== 'string' && item.icons) {
         const filteredContent = getIcons(content, item.icons)
         if (!filteredContent)
           throw new Error(`Cannot find required icons in ${filename}`)
