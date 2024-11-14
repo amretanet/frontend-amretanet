@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { VForm } from 'vuetify/components'
-import type { RegisterResponse } from '@/@fake-db/types'
 import authV2RegisterIllustrationBorderedDark from '@images/pages/auth-v2-register-illustration-bordered-dark.png'
 import authV2RegisterIllustrationBorderedLight from '@images/pages/auth-v2-register-illustration-bordered-light.png'
 import authV2RegisterIllustrationDark from '@images/pages/auth-v2-register-illustration-dark.png'
 import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
+import { VForm } from 'vuetify/components'
 
 import { useAppAbility } from '@/plugins/casl/useAppAbility'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
-import axios from '@axios'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
@@ -36,31 +33,7 @@ const errors = ref<Record<string, string | undefined>>({
 })
 
 const register = () => {
-  axios.post<RegisterResponse>('/auth/register', {
-    username: username.value,
-    email: email.value,
-    password: password.value,
-  })
-    .then(r => {
-      const { accessToken, userData, userAbilities } = r.data
-
-      localStorage.setItem('userAbilities', JSON.stringify(userAbilities))
-      ability.update(userAbilities)
-
-      localStorage.setItem('userData', JSON.stringify(userData))
-      localStorage.setItem('accessToken', JSON.stringify(accessToken))
-
-      // Redirect to `to` query if exist or redirect to index route
-      router.replace(route.query.to ? String(route.query.to) : '/')
-
-      return null
-    })
-    .catch(e => {
-      const { errors: formErrors } = e.response.data
-
-      errors.value = formErrors
-      console.error(e.response.data)
-    })
+  console.log("masuk")
 }
 
 const imageVariant = useGenerateImageVariant(
@@ -206,23 +179,6 @@ const onSubmit = () => {
                 >
                   Sign in instead
                 </RouterLink>
-              </VCol>
-
-              <VCol
-                cols="12"
-                class="d-flex align-center"
-              >
-                <VDivider />
-                <span class="mx-4">or</span>
-                <VDivider />
-              </VCol>
-
-              <!-- auth providers -->
-              <VCol
-                cols="12"
-                class="text-center"
-              >
-                <AuthProvider />
               </VCol>
             </VRow>
           </VForm>
