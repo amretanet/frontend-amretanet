@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { thousandSeparator } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
+import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 
 // VARIABLES
 const router = useRouter();
+const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const pagination = ref({
@@ -232,9 +234,6 @@ const getCustomerData = (is_refresh: boolean = false) => {
     is_loading.value = false;
   }, 1000);
 };
-const addCustomer = () => {
-  router.push({ name: "master-data-customer-add-customer" });
-};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -248,8 +247,18 @@ onMounted(() => {
         <VIcon icon="tabler-user-square-rounded" />
       </template>
       <template #title> Daftar Pelanggan </template>
+      <template #append>
+        <VSwitch v-model="is_show_maps">
+          <template #label>
+            <span class="fs-14"> Lihat Maps </span>
+          </template>
+        </VSwitch>
+      </template>
     </VCardItem>
-    <VCardText class="pb-2">
+    <VCardText v-if="is_show_maps">
+      <GoogleMaps :lat="0" :lng="0" />
+    </VCardText>
+    <VCardText v-if="!is_show_maps" class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
         <div>
           <VSelect v-model="pagination.items" :items="[5, 10, 25, 50, 100]" />
@@ -269,7 +278,7 @@ onMounted(() => {
           size="40"
           prepend-icon="tabler-plus"
           class="wm-100"
-          @click="addCustomer"
+          :to="{ name: 'managements-master-data-customer-add-customer' }"
         >
           <VTooltip activator="parent"> Tambah Pelanggan </VTooltip>
         </VBtn>
@@ -309,7 +318,7 @@ onMounted(() => {
         </form>
       </div>
     </VCardText>
-    <div>
+    <div v-if="!is_show_maps">
       <DataTable
         :headers="customer_table_data.headers"
         :body="customer_table_data.body"
@@ -340,7 +349,7 @@ onMounted(() => {
           </VChip>
         </template>
         <template #cell-action="data">
-          <div class="d-flex gap-2 py-1 justify-center">
+          <div class="d-flex gap-1 py-1 justify-center">
             <VBtn size="35" color="info">
               <VIcon icon="tabler-edit" />
               <VTooltip activator="parent"> Edit </VTooltip>

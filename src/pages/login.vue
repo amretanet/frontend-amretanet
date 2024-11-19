@@ -1,51 +1,54 @@
 <script setup lang="ts">
-import { useAppAbility } from "@/plugins/casl/useAppAbility";
+import autloginIllustration from "@/assets/images/illustrations/user-protection.png";
+import { errorMessage, showActionResult } from "@/modules";
+import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
+import authV2MaskDark from "@images/pages/misc-mask-dark.png";
+import authV2MaskLight from "@images/pages/misc-mask-light.png";
 import { emailValidator, requiredValidator } from "@validators";
 import { VForm } from "vuetify/components";
 
-import autloginIllustration from "@/assets/images/illustrations/user-protection.png";
-import authV2LoginIllustrationBorderedDark from "@images/pages/auth-v2-login-illustration-bordered-dark.png";
-import authV2LoginIllustrationBorderedLight from "@images/pages/auth-v2-login-illustration-bordered-light.png";
-import authV2LoginIllustrationDark from "@images/pages/auth-v2-login-illustration-dark.png";
-import authV2LoginIllustrationLight from "@images/pages/auth-v2-login-illustration-light.png";
-import authV2MaskDark from "@images/pages/misc-mask-dark.png";
-import authV2MaskLight from "@images/pages/misc-mask-light.png";
-
-const authThemeImg = useGenerateImageVariant(
-  authV2LoginIllustrationLight,
-  authV2LoginIllustrationDark,
-  authV2LoginIllustrationBorderedLight,
-  authV2LoginIllustrationBorderedDark,
-  true
-);
-
-const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
-
-const isPasswordVisible = ref(false);
-
-const route = useRoute();
+// VARIABLE
+const store = stateManagement();
 const router = useRouter();
-
-const ability = useAppAbility();
-
-const errors = ref<Record<string, string | undefined>>({
-  email: undefined,
-  password: undefined,
+const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
+const is_show_password = ref(false);
+const is_loading = ref(false);
+const login_form = ref<VForm>();
+const login_data = ref({
+  email: "",
+  password: "",
 });
 
-const refVForm = ref<VForm>();
-const email = ref("admin@demo.com");
-const password = ref("admin");
-const rememberMe = ref(false);
-
-const login = () => {
-  router.push("/dashboard");
+// FUNCTION
+const loginSuccess = () => {
+  // if (store.isAdmin) {
+  router.push("managements/dashboard");
+  // }
 };
-
 const onSubmit = () => {
-  refVForm.value?.validate().then(({ valid: isValid }) => {
-    if (isValid) login();
+  login_form.value?.validate().then(({ valid: is_valid }) => {
+    if (is_valid) {
+      is_loading.value = true;
+      const params = new FormData();
+      params.append("username", login_data.value.email);
+      params.append("password", login_data.value.password);
+      axiosIns
+        .post("auth/login", params)
+        .then((res) => {
+          store.tokenHandler(res.data.access_token, res.data.refresh_token);
+          store.userHandler(res.data.user_data);
+          loginSuccess();
+        })
+        .catch((err) => {
+          const message = errorMessage(err);
+          showActionResult(true, "error", message, 1500);
+        })
+        .finally(() => {
+          is_loading.value = false;
+        });
+    }
   });
 };
 </script>
@@ -60,11 +63,9 @@ const onSubmit = () => {
             class="auth-illustration mt-16 mb-2"
           />
         </div>
-
         <VImg :src="authThemeMask" class="auth-footer-mask" />
       </div>
     </VCol>
-
     <VCol cols="12" lg="4" class="d-flex align-center justify-center">
       <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
@@ -82,37 +83,34 @@ const onSubmit = () => {
           </div>
         </VCardText>
         <VCardText class="mt-10">
-          <VForm ref="refVForm" @submit.prevent="onSubmit">
+          <VForm ref="login_form" @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
               <VCol cols="12">
                 <VTextField
-                  v-model="email"
+                  v-model="login_data.email"
                   label="Email"
                   type="email"
                   :rules="[requiredValidator, emailValidator]"
-                  :error-messages="errors.email"
                 />
               </VCol>
 
               <!-- password -->
               <VCol cols="12">
                 <VTextField
-                  v-model="password"
+                  v-model="login_data.password"
                   label="Password"
                   :rules="[requiredValidator]"
-                  :type="isPasswordVisible ? 'text' : 'password'"
-                  :error-messages="errors.password"
+                  :type="is_show_password ? 'text' : 'password'"
                   :append-inner-icon="
-                    isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
+                    is_show_password ? 'tabler-eye-off' : 'tabler-eye'
                   "
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                  @click:append-inner="is_show_password = !is_show_password"
                 />
 
                 <div
                   class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4"
                 >
-                  <VCheckbox v-model="rememberMe" label="Remember me" />
                   <RouterLink
                     class="text-primary ms-2 mb-1"
                     :to="{ name: 'forgot-password' }"
@@ -121,9 +119,17 @@ const onSubmit = () => {
                   </RouterLink>
                 </div>
 
-                <VBtn block type="submit"> Login </VBtn>
+                <VBtn block type="submit">
+                  <template #prepend>
+                    <VIcon
+                      v-if="is_loading"
+                      icon="tabler-refresh"
+                      class="rotating-element"
+                    />
+                  </template>
+                  {{ is_loading ? "Memeriksa Kredensial..." : "Masuk" }}
+                </VBtn>
               </VCol>
-
               <!-- create account -->
               <VCol cols="12" class="text-center">
                 <span>Belum punya akun?</span>

@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { confirmAction, showToastification } from "@/modules";
+import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
+import axiosIns from "@/plugins/axios";
+import { VForm } from "vuetify/components";
 
 // VARIABLES
+const api_keys_form = ref<VForm>();
 const api_keys_data = ref({
-  google_maps_api: "67HASMasdhZfGXTjrqa8KHAS6XiOXre7ulOLx1",
+  maps_api: "67HASMasdhZfGXTjrqa8KHAS6XiOXre7ulOLx1",
   acs_api: "c",
-  updated_at: new Date(),
+  updated_at: "",
 });
 const is_on_process = ref(false);
 
 // FUNCTION
+const getAPIKeysConfig = () => {
+  axiosIns.get("configuration?type=GOOGLE_MAPS_API").then((res) => {
+    api_keys_data.value.maps_api =
+      res?.data?.configuration_data?.maps_api || "";
+    api_keys_data.value.acs_api = res?.data?.configuration_data?.acs_api || "";
+    api_keys_data.value.updated_at =
+      res?.data?.configuration_data?.updated_at || "";
+  });
+};
 const updateAPIKeysConfig = async () => {
   const is_confirmed = await confirmAction(
     "Simpan Perubahan?",
@@ -19,16 +31,32 @@ const updateAPIKeysConfig = async () => {
   );
   if (is_confirmed) {
     is_on_process.value = true;
-    setTimeout(() => {
-      showToastification();
-      is_on_process.value = false;
-    }, 500);
+    axiosIns
+      .put("configuration/maps-api/update", {
+        data: api_keys_data.value,
+      })
+      .then(() => {
+        showActionResult();
+        getAPIKeysConfig();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        is_on_process.value = false;
+      });
   }
 };
+
+// LIFECYCLE HOOKS
+onMounted(() => {
+  getAPIKeysConfig();
+});
 </script>
 
 <template>
-  <VCard>
+  <VCard class="h-100">
     <VCardItem>
       <template #prepend>
         <VIcon icon="tabler-key" />
@@ -36,33 +64,27 @@ const updateAPIKeysConfig = async () => {
       <template #title> API Keys </template>
     </VCardItem>
     <VCardText>
-      <VRow>
-        <VCol cols="12">
-          <VTextField
-            v-model="api_keys_data.google_maps_api"
-            label="Google Maps API"
-          />
-        </VCol>
-        <VCol cols="12">
-          <VTextField v-model="api_keys_data.acs_api" label="API ACS" />
-        </VCol>
-        <VCol cols="12">
-          <VTextField
-            v-model="api_keys_data.updated_at"
-            readonly
-            label="Terakhir Diperbarui"
-          />
-        </VCol>
-        <VCol cols="12">
-          <div class="d-flex justify-end gap-2">
-            <VBtn size="small" color="warning"> Reset </VBtn>
-            <ProcessButton
-              :is_on_process="is_on_process"
-              @click="updateAPIKeysConfig()"
+      <VForm ref="api_keys_form" @submit.prevent="updateAPIKeysConfig()">
+        <VRow>
+          <VCol cols="12">
+            <VTextField
+              v-model="api_keys_data.maps_api"
+              label="Google Maps API"
             />
-          </div>
-        </VCol>
-      </VRow>
+          </VCol>
+          <VCol cols="12">
+            <VTextField v-model="api_keys_data.acs_api" label="API ACS" />
+          </VCol>
+          <VCol cols="12">
+            <div class="d-flex justify-end gap-2">
+              <VBtn size="small" color="warning" @click="getAPIKeysConfig()">
+                Reset
+              </VBtn>
+              <ProcessButton :is_on_process="is_on_process" type="submit" />
+            </div>
+          </VCol>
+        </VRow>
+      </VForm>
     </VCardText>
   </VCard>
 </template>

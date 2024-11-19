@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { initialAbility } from "@/plugins/casl/ability";
-import { useAppAbility } from "@/plugins/casl/useAppAbility";
+import { roleFormatter } from "@/modules";
+import { stateManagement } from "@/store";
 
+// VARIABLE
 const router = useRouter();
-const ability = useAppAbility();
+const store = stateManagement();
 
+// FUNCTION
 const logout = () => {
-  localStorage.removeItem("userData");
-  localStorage.removeItem("accessToken");
+  store.logoutHandler();
   router.push("/login").then(() => {
-    localStorage.removeItem("userAbilities");
-    ability.update(initialAbility);
+    store.logoutHandler();
   });
 };
 </script>
@@ -46,14 +46,18 @@ const logout = () => {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              Nama User Login
+              {{ store.getUser.name || "-" }}
             </VListItemTitle>
-            <VListItemSubtitle> Administrator </VListItemSubtitle>
+            <VListItemSubtitle>
+              {{ roleFormatter(store.getUser.role).type }}
+            </VListItemSubtitle>
           </VListItem>
 
           <VDivider class="my-2" />
           <VListItem>
-            <VBtn block prepend-icon="tabler-user"> My Profile </VBtn>
+            <VBtn block prepend-icon="tabler-user" to="/my-profile">
+              My Profile
+            </VBtn>
           </VListItem>
           <VListItem>
             <VBtn

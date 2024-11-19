@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import CompanyProfileForm from "@/page-components/settings/company-profile/CompanyProfileForm.vue";
+import ODCList from "@/page-components/settings/hardware/ODCList.vue";
+import ODPList from "@/page-components/settings/hardware/ODPList.vue";
 
 const path_data = ref([
   {
@@ -8,7 +9,7 @@ const path_data = ref([
     name: "Pengaturan",
   },
   {
-    name: "Profil Perusahaan",
+    name: "Perangkat",
   },
 ]);
 </script>
@@ -19,11 +20,14 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <CompanyProfileForm />
+      <ODCList />
+    </VCol>
+    <VCol cols="12">
+      <ODPList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Profil Perusahaan
+  title: Perangkat
 </route>

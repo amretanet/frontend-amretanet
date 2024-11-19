@@ -134,7 +134,7 @@ const changeLocation = (data: any) => {
         <VBtn
           variant="text"
           prepend-icon="tabler-arrow-left"
-          :to="{ name: 'master-data-customer' }"
+          :to="{ name: 'managements-master-data-customer' }"
         >
           Kembali
         </VBtn>

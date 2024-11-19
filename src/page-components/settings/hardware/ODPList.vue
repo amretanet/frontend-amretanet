@@ -4,77 +4,32 @@ import {
   confirmAction,
   dataCountFormatter,
   errorMessage,
-  genderFormatter,
-  roleFormatter,
   setPaginationLength,
   showActionResult,
-  thousandSeparator,
 } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
+import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
-import AddUserModal from "./AddUserModal.vue";
-import EditUserModal from "./EditUserModal.vue";
+import AddODPModal from "./odp/AddODPModal.vue";
+import EditODPModal from "./odp/EditODPModal.vue";
+import { Marker } from "vue3-google-map";
 
 // VARIABLES
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
-  role: null,
 });
+const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
-const options = ref({
-  role: [
-    {
-      title: "Admin/Owner",
-      value: 1,
-    },
-    {
-      title: "Member PPOE",
-      value: 2,
-    },
-    {
-      title: "Member Hotspot",
-      value: 3,
-    },
-    {
-      title: "Reseller Hotspot",
-      value: 4,
-    },
-    {
-      title: "Sales PPOE",
-      value: 5,
-    },
-    {
-      title: "Operator Jaringan",
-      value: 6,
-    },
-    {
-      title: "Customer Service",
-      value: 7,
-    },
-    {
-      title: "Teknisi/Karyawan",
-      value: 8,
-    },
-    {
-      title: "Member Premium",
-      value: 9,
-    },
-    {
-      title: "Bill Collector",
-      value: 10,
-    },
-  ],
-});
 const pagination = ref({
   page: 1,
   items: 10,
   count: 0,
 });
-const user_table_data = ref({
+const odp_table_data = ref({
   headers: [
     {
       title: "NO",
@@ -84,36 +39,55 @@ const user_table_data = ref({
       width: "50px",
     },
     {
-      title: "NAMA",
+      title: "NAMA/KODE ODP",
       key: "name",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
-      width: "25%",
+      width: "15rem",
     },
     {
-      title: "EMAIL",
-      key: "email",
+      title: "NAMA/KODE ODC",
+      key: "odc",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
+      width: "15rem",
+    },
+    {
+      title: "ALAMAT",
+      key: "address",
       th_class: "text-left",
       td_class: "text-left",
-      width: "20%",
+      width: "20rem",
     },
     {
-      title: "NO TELEPHONE",
-      key: "phone_number",
+      title: "JUMLAH PORT",
+      key: "port",
       th_class: "text-center",
-      td_class: "text-center",
+      td_class: "text-center text-no-wrap",
     },
     {
-      title: "STATUS",
-      key: "status",
+      title: "REDAMAN",
+      key: "damping",
       th_class: "text-center",
-      td_class: "text-center",
+      td_class: "text-center text-no-wrap",
     },
     {
-      title: "LEVEL",
-      key: "role",
+      title: "KAPASITAS",
+      key: "capacity",
       th_class: "text-center",
-      td_class: "text-center",
+      td_class: "text-center text-no-wrap",
+    },
+    {
+      title: "TERSEDIA",
+      key: "available",
+      th_class: "text-center",
+      td_class: "text-center text-no-wrap",
+    },
+    {
+      title: "KETERANGAN",
+      key: "description",
+      th_class: "text-left",
+      td_class: "text-left",
     },
     {
       title: "AKSI",
@@ -125,9 +99,10 @@ const user_table_data = ref({
   ],
   body: [] as IUsers[],
 });
+const odp_maps_data = ref<any[]>([]);
 
 // FUNCTION
-const getUserData = (is_refresh: boolean = false) => {
+const getODPData = (is_refresh: boolean = false) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
@@ -140,7 +115,6 @@ const getUserData = (is_refresh: boolean = false) => {
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
-    ...(filter_data.value.role ? { role: filter_data.value.role } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -148,12 +122,13 @@ const getUserData = (is_refresh: boolean = false) => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   axiosIns
-    .get(`user?${query}`, {
+    .get(`hardware/odp?${query}`, {
       cancelToken: cancel_request_token.value.token,
     })
     .then((res) => {
       cancel_request_token.value = null;
-      user_table_data.value.body = res.data.user_data || [];
+      odp_table_data.value.body = res.data.odp_data || [];
+      odp_maps_data.value = res.data.odp_maps_data || [];
       pagination.value.count = res.data.pagination_info.count || 0;
     })
     .catch((err) => {
@@ -168,18 +143,18 @@ const getUserData = (is_refresh: boolean = false) => {
       }
     });
 };
-const deleteUser = async (id: string, name: string) => {
+const deleteODP = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
-    "Hapus Pengguna?",
-    `${name} akan dihapus dari daftar pengguna`,
+    "Hapus ODP?",
+    `${name} akan dihapus dari daftar ODP`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
     axiosIns
-      .delete(`user/delete/${id}`)
+      .delete(`hardware/odp/delete/${id}`)
       .then(() => {
-        showActionResult(undefined, undefined, "Pengguna Telah Dihapus");
-        getUserData();
+        showActionResult(undefined, undefined, "ODP Telah Dihapus");
+        getODPData();
       })
       .catch((err) => {
         const message = errorMessage(err);
@@ -187,126 +162,107 @@ const deleteUser = async (id: string, name: string) => {
       });
   }
 };
-const resetPassword = async (id: string, name: string) => {
-  const is_confirmed = await confirmAction(
-    "Reset Password?",
-    `Password pengguna ${name} akan di reset`,
-    "Ya, Reset!"
-  );
-  if (is_confirmed) {
-    axiosIns
-      .put(`user/reset-password/${id}`)
-      .then(() => {
-        showActionResult(
-          undefined,
-          undefined,
-          `Password ${name} Telah Direset!`
-        );
-      })
-      .catch((err) => {
-        const message = errorMessage(err);
-        showActionResult(undefined, "error", message);
-      });
-  }
-};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
-  getUserData();
+  getODPData();
 });
 </script>
 <template>
   <VCard>
     <VCardItem>
       <template #prepend>
-        <VIcon icon="tabler-users" />
+        <VIcon icon="tabler-rectangular-prism" />
       </template>
-      <template #title> Daftar Pengguna </template>
+      <template #title> Daftar Optical Distribution Point (ODP) </template>
+      <template #append>
+        <VSwitch v-model="is_show_maps">
+          <template #label>
+            <span class="fs-14">Lihat Maps</span>
+          </template>
+        </VSwitch>
+      </template>
     </VCardItem>
-    <VCardText class="pb-2">
+    <VCardText v-if="is_show_maps">
+      <GoogleMaps :zoom="18">
+        <template #marker>
+          <Marker
+            v-for="(item, index) in odp_maps_data"
+            :key="index"
+            :options="{ position: item }"
+          />
+        </template>
+      </GoogleMaps>
+    </VCardText>
+    <VCardText v-if="!is_show_maps" class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getUserData()"
+            @update:model-value="getODPData()"
           />
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getUserData(true)"
+          @click="getODPData(true)"
         />
         <VSpacer />
-        <AddUserModal @user-added="showActionResult(), getUserData()" />
-        <div class="wm-100" style="min-width: 10rem">
-          <VSelect
-            v-model="filter_data.role"
-            :items="options.role"
-            label="Level"
-            clearable
-            @update:model-value="getUserData()"
-          />
-        </div>
+        <AddODPModal @odp-added="showActionResult(), getODPData()" />
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getUserData()"
+            @update:model-value="getODPData()"
           />
         </div>
       </div>
     </VCardText>
-    <div>
+    <div v-if="!is_show_maps">
       <DataTable
-        height="60vh"
-        :headers="user_table_data.headers"
-        :body="user_table_data.body"
+        height="30rem"
+        :headers="odp_table_data.headers"
+        :body="odp_table_data.body"
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <template #cell-gender="{ data }">
-          {{ genderFormatter(data.gender) }}
-        </template>
-        <template #cell-status="{ data }">
-          <VChip variant="outlined" :color="data.status ? 'success' : 'error'">
-            {{ data.status ? "Aktif" : "Nonaktif" }}
+        <template #cell-name="{ data }">
+          <VChip color="warning">
+            <strong>{{ data.name || "-" }}</strong>
           </VChip>
         </template>
-        <template #cell-role="{ data }">
-          <VChip variant="outlined" :color="roleFormatter(data.role).color">
-            {{ roleFormatter(data.role).type }}
+        <template #cell-odc="{ data }">
+          <VChip color="primary">
+            <strong>{{ data.odc || "-" }}</strong>
           </VChip>
         </template>
-        <template #cell-saldo="{ data }">
-          <div class="text-no-wrap">
-            Rp {{ thousandSeparator(data.saldo || 0) }}
-          </div>
+        <template #cell-address="{ data }">
+          {{ data?.location?.address || "-" }}
         </template>
-        <template #cell-address="{data}">
-          <div style="min-width: 200px;">
-            {{ data.address || "-" }}
-          </div>
+        <template #cell-port="{ data }">
+          <small>PON</small> {{ data.port || 0 }}
+        </template>
+        <template #cell-damping="{ data }">
+          {{ data.damping || 0 }} <small>DB</small>
+        </template>
+        <template #cell-capacity="{ data }">
+          {{ data.capacity || 0 }} <small>Core/Port</small>
+        </template>
+        <template #cell-available="{ data }">
+          {{ data.available || 0 }} <small>Core</small>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditUserModal
+            <EditODPModal
               :data="data"
-              @user-updated="showActionResult(), getUserData()"
+              @odp-updated="showActionResult(), getODPData()"
             />
             <VBtn
               size="35"
-              prepend-icon="tabler-key"
-              color="warning"
-              @click="resetPassword(data._id, data.name)"
-            >
-              <VTooltip activator="parent"> Reset Password </VTooltip>
-            </VBtn>
-            <VBtn
-              size="35"
               color="error"
-              @click="deleteUser(data._id, data.name)"
+              @click="deleteODP(data._id, data.name)"
             >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
@@ -322,7 +278,7 @@ onMounted(() => {
                   pagination.page,
                   pagination.items,
                   pagination.count,
-                  user_table_data.body.length
+                  odp_table_data.body.length
                 )
               }}
             </h6>
@@ -332,7 +288,7 @@ onMounted(() => {
               :total-visible="3"
               size="small"
               class="ms-auto"
-              @update:model-value="getUserData()"
+              @update:model-value="getODPData()"
             />
           </div>
         </template>

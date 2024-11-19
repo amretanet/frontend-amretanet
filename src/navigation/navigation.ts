@@ -2,69 +2,57 @@ export default [
   {
     title: "Dashboard",
     icon: { icon: "tabler-dashboard" },
-    to: "dashboard",
+    to: "managements-dashboard",
+    access: [1],
   },
-  // {
-  //   title: "Keuangan",
-  //   icon: { icon: "tabler-cash" },
-  //   children: [
-  //     {
-  //       title: "Konfigurasi Sistem",
-  //       icon: { icon: "tabler-users" },
-  //       to: "settings-user",
-  //     },
-  //     {
-  //       title: "Profil Perusahaan",
-  //       icon: { icon: "tabler-users" },
-  //       to: "settings-user",
-  //     },
-  //     {
-  //       title: "Pengguna",
-  //       icon: { icon: "tabler-users" },
-  //       to: "settings-user",
-  //     },
-  //   ],
-  // },
   {
     title: "Master Data",
     icon: { icon: "tabler-server-cog" },
+    access: [1],
     children: [
       {
         title: "Invoice",
         icon: { icon: "tabler-file-dollar" },
-        to: "master-data-invoice",
+        to: "managements-master-data-invoice",
+        access: [1],
       },
       {
         title: "Pelanggan",
         icon: { icon: "tabler-user-square-rounded" },
-        to: "master-data-customer",
+        to: "managements-master-data-customer",
+        access: [1],
       },
     ],
   },
   {
     title: "Pengaturan",
     icon: { icon: "tabler-settings-cog" },
+    access: [1],
     children: [
       {
         title: "Konfigurasi Sistem",
         icon: { icon: "tabler-device-desktop-cog" },
-        to: "settings-system-configuration",
+        to: "managements-settings-system-configuration",
+        access: [1],
       },
       {
-        title: "Profil Perusahaan",
-        icon: { icon: "tabler-building-skyscraper" },
-        to: "settings-company-profile",
+        title: "Perangkat",
+        icon: { icon: "tabler-router" },
+        to: "managements-settings-hardware",
+        access: [1],
       },
       {
         title: "Pengguna",
         icon: { icon: "tabler-users" },
-        to: "settings-user",
+        to: "managements-settings-user",
+        access: [1],
       },
     ],
   },
   {
     title: "Informasi",
     icon: { icon: "tabler-info-circle" },
-    to: "information",
+    to: "managements-information",
+    access: [1],
   },
 ];

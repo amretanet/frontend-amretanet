@@ -6,6 +6,7 @@ import {
   thousandSeparator,
 } from "@/modules/index";
 import { isNumber } from "@vueuse/core";
+import EmptyAlert from "./EmptyAlert.vue";
 import SkeletonLoader from "./SkeletonLoader.vue";
 
 // INTERFACE
@@ -93,6 +94,7 @@ watch(props, () => {
             <th
               v-for="(item, index) in headers"
               :key="index"
+              class="font-weight-bold"
               :class="item.th_class"
               :style="{ width: item.width || '' }"
             >
@@ -142,7 +144,7 @@ watch(props, () => {
             "
           >
             <td :colspan="headers.length || 0" class="text-center px-2 py-2">
-              Data Tidak Tersedia
+              <EmptyAlert />
             </td>
           </tr>
         </tbody>

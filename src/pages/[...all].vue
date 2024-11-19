@@ -13,7 +13,7 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
       error-title="Halaman Tidak Ditemukan ❌"
       error-description="Kami tidak dapat menemukan halaman yang anda maksud "
     />
-    <VBtn to="/dashboard" class="mb-12"> Kembali Ke Home </VBtn>
+    <VBtn to="/managements/dashboard" class="mb-12"> Kembali Ke Home </VBtn>
     <div class="misc-avatar w-100 text-center">
       <VImg
         :src="pageNotFound"

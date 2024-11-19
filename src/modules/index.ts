@@ -1,6 +1,16 @@
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
 import Swal from "sweetalert2";
 
+export function errorMessage(err: any): string {
+  const message =
+    err &&
+    "response" in err &&
+    "data" in err.response &&
+    err.response.data.detail
+      ? err.response.data.detail.message || "Terjadi Kesalahan Pada Aplikasi"
+      : "Terjadi Kesalahan Pada Aplikasi";
+  return message;
+}
 export function kmbtFormatter(number: number) {
   if (number >= 1e12) {
     return (number / 1e12).toFixed(1).replace(/\.0$/, "") + "tr";
@@ -83,10 +93,12 @@ export async function confirmAction(
     return false;
   }
 }
-export function showToastification(
+export function showActionResult(
   is_center: boolean = true,
   type: any = "success",
-  title: string = "Data Telah Disimpan!"
+  title: string = "Data Telah Disimpan!",
+  timer: number = 1200,
+  show_confirm_button: boolean = false
 ) {
   const { theme } = useThemeConfig();
   if (is_center) {
@@ -94,8 +106,8 @@ export function showToastification(
       title: `${type === "error" ? "Gagal!" : "Berhasil!"}`,
       text: title,
       icon: type,
-      timer: 1200,
-      showConfirmButton: false,
+      timer: timer,
+      showConfirmButton: show_confirm_button,
       customClass: {
         title: "fs-22",
         popup: `popup-sweetalert ${
@@ -123,3 +135,63 @@ export function showToastification(
     });
   }
 }
+export function genderFormatter(gender: string) {
+  if (gender.toLocaleLowerCase() === "l") {
+    return "Laki-laki";
+  } else {
+    return "Perempuan";
+  }
+}
+export const roleFormatter = (role: number) => {
+  if (role === 1) {
+    return {
+      type: "Admin/Owner",
+      color: "primary",
+    };
+  } else if (role === 2) {
+    return {
+      type: "Member PPPOE",
+      color: "dark",
+    };
+  } else if (role === 3) {
+    return {
+      type: "Member Hotspot",
+      color: "dark",
+    };
+  } else if (role === 4) {
+    return {
+      type: "Reseller Hotspot",
+      color: "warning",
+    };
+  } else if (role === 5) {
+    return {
+      type: "Sales PPOE",
+      color: "warning",
+    };
+  } else if (role === 6) {
+    return {
+      type: "Operator Jaringan",
+      color: "warning",
+    };
+  } else if (role === 7) {
+    return {
+      type: "Customer Service",
+      color: "warning",
+    };
+  } else if (role === 8) {
+    return {
+      type: "Teknisi/Karyawan",
+      color: "warning",
+    };
+  } else if (role === 9) {
+    return {
+      type: "Member Premium",
+      color: "dark",
+    };
+  } else {
+    return {
+      type: "Bill Collector",
+      color: "warning",
+    };
+  }
+};

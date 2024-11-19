@@ -3,8 +3,9 @@ import { GoogleMap, Marker } from "vue3-google-map";
 
 // INTERFACE
 interface IProps {
-  lat: any;
-  lng: any;
+  lat?: any;
+  lng?: any;
+  zoom?: number;
   height?: string;
   width?: string;
 }
@@ -15,12 +16,14 @@ interface IEmits {
 // VARIABLE
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
+const google_maps_api = ref(import.meta.env.VITE_GOOGLE_MAPS_API);
 const maps_config = ref({
-  height: props.height || "500px",
-  width: props.width || "100%",
+  height: props?.height || "500px",
+  width: props?.width || "100%",
+  zoom: props?.zoom || 20,
 });
-const latitude = ref(props.lat || -6.942753834597646);
-const longitude = ref(props.lng || 107.76403963565826);
+const latitude = ref(props?.lat || -6.942853679893406);
+const longitude = ref(props?.lng || 107.76403158903122);
 const current_marker = computed(() => {
   return {
     lat: latitude.value,
@@ -43,19 +46,22 @@ watch(props, () => {
   }
   maps_config.value.height = props.height || "500px";
   maps_config.value.width = props.width || "100%";
+  maps_config.value.zoom = props.zoom || 20;
 });
 </script>
 
 <template>
   <div>
     <GoogleMap
-      api-key="AIzaSyCzZfGXTjrqa8ML17XiOXre7ulOLx1Z_eA"
+      :api-key="google_maps_api"
       :style="{ width: maps_config.width, height: maps_config.height }"
       :center="current_marker"
-      :zoom="20"
+      :zoom="maps_config.zoom"
       @click="handleMapsClick"
     >
-      <Marker :options="{ position: current_marker }" />
+      <slot name="marker">
+        <Marker :options="{ position: current_marker }" />
+      </slot>
     </GoogleMap>
   </div>
 </template>

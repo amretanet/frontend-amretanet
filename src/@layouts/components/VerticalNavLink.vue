@@ -1,32 +1,38 @@
 <script lang="ts" setup>
-import { useLayouts } from '@layouts'
-import { config } from '@layouts/config'
-import type { NavLink } from '@layouts/types'
-import { getComputedNavLinkToProp, isNavLinkActive } from '@layouts/utils'
+import { stateManagement } from "@/store";
+import { useLayouts } from "@layouts";
+import { config } from "@layouts/config";
+import type { NavLink } from "@layouts/types";
+import { getComputedNavLinkToProp, isNavLinkActive } from "@layouts/utils";
 
 defineProps<{
-  item: NavLink
-}>()
+  item: NavLink;
+}>();
 
-const { width: windowWidth } = useWindowSize()
-const { isVerticalNavMini, dynamicI18nProps } = useLayouts()
+const { width: windowWidth } = useWindowSize();
+const { isVerticalNavMini, dynamicI18nProps } = useLayouts();
 
-const hideTitleAndBadge = isVerticalNavMini(windowWidth)
+const hideTitleAndBadge = isVerticalNavMini(windowWidth);
+const store = stateManagement();
+const user_role = store.getUser.role;
 </script>
 
 <template>
-  <li
-    class="nav-link"
-    :class="{ disabled: item.disable }"
-  >
+  <li class="nav-link" :class="{ disabled: item.disable }">
     <Component
+      v-if="item.access && item.access.includes(user_role)"
       :is="item.to ? 'RouterLink' : 'a'"
       v-bind="getComputedNavLinkToProp(item)"
-      :class="{ 'router-link-active router-link-exact-active': isNavLinkActive(item, $router) }"
+      :class="{
+        'router-link-active router-link-exact-active': isNavLinkActive(
+          item,
+          $router
+        ),
+      }"
     >
       <Component
         :is="config.app.iconRenderer || 'div'"
-        v-bind="item.icon || config.verticalNav.defaultNavItemIconProps"
+        v-bind="item.icon || 'tabler-circle'"
         class="nav-item-icon"
       />
       <TransitionGroup name="transition-slide-x">

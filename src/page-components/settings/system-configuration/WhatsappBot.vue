@@ -1,12 +1,40 @@
 <script setup lang="ts">
-import { confirmAction, showToastification } from "@/modules";
+import { phoneNumberValidator, urlValidator } from "@/@core/utils/validators";
+import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
+import axiosIns from "@/plugins/axios";
+import { VForm } from "vuetify/components";
 
 // VARIABLES
 const is_on_process = ref(false);
 const whatsapp_gateway_url = ref("https://wa7.amretanet.my.id/login");
+const whatsapp_bot_form = ref<VForm>();
+const whatsapp_bot_data = ref({
+  bot_number: "",
+  admin_number: "",
+  url_gateway: "",
+  url_media: "",
+  url_server: "",
+  api_key: "",
+});
 
 // FUNCTION
+const getWhatsappbotConfig = () => {
+  axiosIns.get("configuration?type=WHATSAPP_BOT").then((res) => {
+    whatsapp_bot_data.value.bot_number =
+      res?.data?.configuration_data?.bot_number || "";
+    whatsapp_bot_data.value.admin_number =
+      res?.data?.configuration_data?.admin_number || "";
+    whatsapp_bot_data.value.url_gateway =
+      res?.data?.configuration_data?.url_gateway || "";
+    whatsapp_bot_data.value.url_media =
+      res?.data?.configuration_data?.url_media || "";
+    whatsapp_bot_data.value.url_server =
+      res?.data?.configuration_data?.url_server || "";
+    whatsapp_bot_data.value.api_key =
+      res?.data?.configuration_data?.api_key || "";
+  });
+};
 const updateWhatsappbotConfig = async () => {
   const is_confirmed = await confirmAction(
     "Simpan Perubahan?",
@@ -15,12 +43,27 @@ const updateWhatsappbotConfig = async () => {
   );
   if (is_confirmed) {
     is_on_process.value = true;
-    setTimeout(() => {
-      showToastification();
-      is_on_process.value = false;
-    }, 500);
+    axiosIns
+      .put("configuration/whatsapp-bot/update", {
+        data: whatsapp_bot_data.value,
+      })
+      .then(() => {
+        showActionResult();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        is_on_process.value = false;
+      });
   }
 };
+
+// LIFECYCLE HOOKS
+onMounted(() => {
+  getWhatsappbotConfig();
+});
 </script>
 
 <template>
@@ -44,35 +87,66 @@ const updateWhatsappbotConfig = async () => {
       </template>
     </VCardItem>
     <VCardText>
-      <VRow>
-        <VCol cols="12" md="4" sm="12">
-          <VTextField label="Nomor Bot" />
-        </VCol>
-        <VCol cols="12" md="4" sm="12">
-          <VTextField label="Nomor Admin" />
-        </VCol>
-        <VCol cols="12" md="4" sm="12">
-          <VTextField label="API Key Gateway" />
-        </VCol>
-        <VCol cols="12" md="6" sm="12">
-          <VTextField label="URL Server" />
-        </VCol>
-        <VCol cols="12" md="6" sm="12">
-          <VTextField label="URL Media" />
-        </VCol>
-        <VCol cols="12" md="12" sm="12">
-          <VTextField label="URL Gateway" />
-        </VCol>
-        <VCol cols="12">
-          <div class="d-flex justify-end gap-2">
-            <VBtn size="small" color="warning"> Reset </VBtn>
-            <ProcessButton
-              :is_on_process="is_on_process"
-              @click="updateWhatsappbotConfig()"
+      <VForm
+        ref="whatsapp_bot_form"
+        @submit.prevent="updateWhatsappbotConfig()"
+      >
+        <VRow>
+          <VCol cols="12" md="4" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.bot_number"
+              label="Nomor Bot"
+              :rules="[phoneNumberValidator]"
             />
-          </div>
-        </VCol>
-      </VRow>
+          </VCol>
+          <VCol cols="12" md="4" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.admin_number"
+              label="Nomor Admin"
+              :rules="[phoneNumberValidator]"
+            />
+          </VCol>
+          <VCol cols="12" md="4" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.api_key"
+              label="API Key Gateway"
+            />
+          </VCol>
+          <VCol cols="12" md="6" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.url_server"
+              label="URL Server"
+              :rules="[urlValidator]"
+            />
+          </VCol>
+          <VCol cols="12" md="6" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.url_media"
+              label="URL Media"
+              :rules="[urlValidator]"
+            />
+          </VCol>
+          <VCol cols="12" md="12" sm="12">
+            <VTextField
+              v-model="whatsapp_bot_data.url_gateway"
+              label="URL Gateway"
+              :rules="[urlValidator]"
+            />
+          </VCol>
+          <VCol cols="12">
+            <div class="d-flex justify-end gap-2">
+              <VBtn
+                size="small"
+                color="warning"
+                @click="getWhatsappbotConfig()"
+              >
+                Reset
+              </VBtn>
+              <ProcessButton :is_on_process="is_on_process" type="submit" />
+            </div>
+          </VCol>
+        </VRow>
+      </VForm>
     </VCardText>
   </VCard>
 </template>

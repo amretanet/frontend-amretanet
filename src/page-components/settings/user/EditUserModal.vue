@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import {
-  confirmedValidator,
   emailValidator,
   phoneNumberValidator,
   requiredValidator,
 } from "@/@core/utils/validators";
+import { IUsers } from "@/models";
 import { errorMessage, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
+interface IProps {
+  data: IUsers;
+}
 interface IEmits {
-  (e: "userAdded"): void;
+  (e: "userUpdated"): void;
 }
 
 // VARIABLE
+const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
-const is_show_password = ref(false);
-const is_show_confirm_password = ref(false);
 const options = ref({
   gender: [
     {
@@ -65,30 +67,27 @@ const options = ref({
 });
 const user_form = ref<VForm>();
 const user_data = ref({
-  name: "",
-  email: "",
-  password: "",
-  confirm_password: "",
-  phone_number: "",
-  status: 1,
-  gender: null,
-  saldo: 0,
-  role: null,
-  address: "",
+  name: props.data.name,
+  email: props.data.email,
+  phone_number: props.data.phone_number,
+  status: props.data.status,
+  gender: props.data.gender,
+  saldo: props.data.saldo,
+  role: props.data.role,
+  address: props.data.address,
 });
 
 // FUNCTION
-const saveUser = () => {
+const updateUser = () => {
   user_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
       axiosIns
-        .post("user/add", {
+        .put(`user/update/${props.data._id}`, {
           data: user_data.value,
         })
         .then(() => {
-          emits("userAdded");
-          resetForm();
+          emits("userUpdated");
         })
         .catch((err) => {
           const message = errorMessage(err);
@@ -101,18 +100,25 @@ const saveUser = () => {
     }
   });
 };
-const resetForm = () => {
-  user_form.value?.reset();
-  user_data.value.saldo = 0;
-  user_data.value.status = 1;
-};
+
+// LIFECYCLE HOOKS
+watch(props, () => {
+  user_data.value.name = props.data.name;
+  user_data.value.email = props.data.email;
+  user_data.value.phone_number = props.data.phone_number;
+  user_data.value.status = props.data.status;
+  user_data.value.gender = props.data.gender;
+  user_data.value.saldo = props.data.saldo;
+  user_data.value.role = props.data.role;
+  user_data.value.address = props.data.address;
+});
 </script>
 <template>
   <div>
-    <div class="wm-100" @click="is_showing_modal = true">
+    <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
-          <VTooltip activator="parent"> Tambah Pengguna </VTooltip>
+        <VBtn size="35" prepend-icon="tabler-edit" color="info">
+          <VTooltip activator="parent"> Edit </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -121,12 +127,12 @@ const resetForm = () => {
       <VCard>
         <VCardItem>
           <template #prepend>
-            <VIcon icon="tabler-user-plus" />
+            <VIcon icon="tabler-edit" />
           </template>
-          <template #title> Tambah Pengguna </template>
+          <template #title> Edit Pengguna </template>
         </VCardItem>
         <VCardText>
-          <VForm ref="user_form" @submit.prevent="saveUser">
+          <VForm ref="user_form" @submit.prevent="updateUser">
             <VRow>
               <VCol cols="12">
                 <VTextField
@@ -193,47 +199,6 @@ const resetForm = () => {
                   </template>
                 </VSelect>
               </VCol>
-
-              <VCol cols="12">
-                <VTextField
-                  v-model="user_data.password"
-                  :type="is_show_password ? 'text' : 'password'"
-                  clearable
-                  :append-inner-icon="
-                    is_show_password ? 'tabler-eye-off' : 'tabler-eye'
-                  "
-                  :rules="[requiredValidator]"
-                  @click:append-inner="is_show_password = !is_show_password"
-                >
-                  <template #label>
-                    Password <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <VCol cols="12">
-                <VTextField
-                  v-model="user_data.confirm_password"
-                  :type="is_show_confirm_password ? 'text' : 'password'"
-                  clearable
-                  :append-inner-icon="
-                    is_show_confirm_password ? 'tabler-eye-off' : 'tabler-eye'
-                  "
-                  :rules="[
-                    requiredValidator,
-                    confirmedValidator(
-                      user_data.confirm_password,
-                      user_data.password
-                    ),
-                  ]"
-                  @click:append-inner="
-                    is_show_confirm_password = !is_show_confirm_password
-                  "
-                >
-                  <template #label>
-                    Konfirmasi Password <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
               <VCol cols="12">
                 <VTextarea v-model="user_data.address" label="Alamat" />
               </VCol>
@@ -242,7 +207,7 @@ const resetForm = () => {
                   <VBtn
                     size="small"
                     color="error"
-                    @click="(is_showing_modal = false), resetForm()"
+                    @click="is_showing_modal = false"
                   >
                     Batal
                   </VBtn>

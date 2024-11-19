@@ -13,6 +13,7 @@ export default {
   VCard: {
     rounded: "xl",
     variant: "elevated",
+    density: "compact",
   },
   VBtn: {
     color: "primary",
