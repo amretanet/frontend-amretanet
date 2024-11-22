@@ -1,5 +1,6 @@
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
 import Swal from "sweetalert2";
+import { user_role_options } from "./options";
 
 export function errorMessage(err: any): string {
   const message =
@@ -143,55 +144,26 @@ export function genderFormatter(gender: string) {
   }
 }
 export const roleFormatter = (role: number) => {
-  if (role === 1) {
+  const role_options = user_role_options;
+  const current_data = role_options.find((el: any) => el.value == role);
+  if (current_data) {
     return {
-      type: "Admin/Owner",
-      color: "primary",
-    };
-  } else if (role === 2) {
-    return {
-      type: "Member PPPOE",
-      color: "dark",
-    };
-  } else if (role === 3) {
-    return {
-      type: "Member Hotspot",
-      color: "dark",
-    };
-  } else if (role === 4) {
-    return {
-      type: "Reseller Hotspot",
-      color: "warning",
-    };
-  } else if (role === 5) {
-    return {
-      type: "Sales PPOE",
-      color: "warning",
-    };
-  } else if (role === 6) {
-    return {
-      type: "Operator Jaringan",
-      color: "warning",
-    };
-  } else if (role === 7) {
-    return {
-      type: "Customer Service",
-      color: "warning",
-    };
-  } else if (role === 8) {
-    return {
-      type: "Teknisi/Karyawan",
-      color: "warning",
-    };
-  } else if (role === 9) {
-    return {
-      type: "Member Premium",
-      color: "dark",
+      type: current_data.title,
+      color: current_data.value === 1 ? "primary" : "warning",
     };
   } else {
     return {
-      type: "Bill Collector",
-      color: "warning",
+      type: "Member",
+      color: "dark",
     };
   }
+};
+export const stringCutter = (text: string, substring: number) => {
+  if (text) {
+    if (text.length <= substring) {
+      return text;
+    }
+    return text.substring(0, substring) + "...";
+  }
+  return " ";
 };

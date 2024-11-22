@@ -1,29 +1,29 @@
 <script lang="ts" setup>
-import CustomerList from "@/page-components/master-data/customer/CustomerList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
+import UserList from "@/page-components/settings/user/UserList.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-server-cog",
-    name: "Master Data",
+    icon: "tabler-adjustments-horizontal",
+    name: "Layanan",
   },
   {
-    name: "Pelanggan",
+    name: "Whatsapp Broadcast",
   },
 ]);
 </script>
 
 <template>
   <VRow>
-    <VCol cols="12">
+    <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <CustomerList />
+      <UserList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Pelanggan
+  title: Whatsapp Broadcast
 </route>

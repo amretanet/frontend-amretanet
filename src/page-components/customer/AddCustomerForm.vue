@@ -134,7 +134,7 @@ const changeLocation = (data: any) => {
         <VBtn
           variant="text"
           prepend-icon="tabler-arrow-left"
-          :to="{ name: 'managements-master-data-customer' }"
+          :to="{ name: 'managements-customer' }"
         >
           Kembali
         </VBtn>
@@ -266,20 +266,6 @@ const changeLocation = (data: any) => {
           </VCol>
           <VCol cols="12" md="6" sm="12">
             <VRow>
-              <VCol cols="12" md="6" sm="12">
-                <VTextField :rules="[requiredValidator]">
-                  <template #label>
-                    Local Address PPP <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <VCol cols="12" md="6" sm="12">
-                <VTextField :rules="[requiredValidator]">
-                  <template #label>
-                    Remote Address PPP <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
               <VCol cols="12" md="7" sm="12">
                 <VSelect :items="options.gender" :rules="[requiredValidator]">
                   <template #label>
@@ -291,34 +277,6 @@ const changeLocation = (data: any) => {
                 <VTextField :rules="[requiredValidator]">
                   <template #label>
                     Port ODP <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <VCol cols="12" md="5" sm="12">
-                <VSelect :items="options.gender" :rules="[requiredValidator]">
-                  <template #label>
-                    Server <span class="text-error">*</span>
-                  </template>
-                </VSelect>
-              </VCol>
-              <VCol cols="12" md="7" sm="12">
-                <VSelect :items="options.gender" :rules="[requiredValidator]">
-                  <template #label>
-                    Profile/Parent <span class="text-error">*</span>
-                  </template>
-                </VSelect>
-              </VCol>
-              <VCol cols="12" md="6" sm="12">
-                <VTextField :rules="[requiredValidator]">
-                  <template #label>
-                    Username (PPP/HS) <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <VCol cols="12" md="6" sm="12">
-                <VTextField :rules="[requiredValidator]">
-                  <template #label>
-                    Password (PPP/HS) <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>

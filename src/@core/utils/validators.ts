@@ -27,16 +27,16 @@ export const emailValidator = (value: unknown) => {
 export const phoneNumberValidator = (value: unknown) => {
   if (isEmpty(value)) return true;
 
-  // Format nomor Indonesia: dimulai dengan '62' atau '0', diikuti oleh 8-13 digit angka
-  const re = /^(62|0)\d{8,13}$/;
+  // Format nomor Indonesia: dimulai dengan '62', diikuti oleh 8-13 digit angka
+  const re = /^(8)\d{8,11}$/;
 
   if (Array.isArray(value))
     return (
       value.every((val) => re.test(String(val))) ||
-      "Format nomor telepon tidak sesuai"
+      "Format nomor telepon tidak sesuai (Cth:81218xxxxx)"
     );
 
-  return re.test(String(value)) || "Format nomor telepon tidak sesuai";
+  return re.test(String(value)) || "Format nomor telepon tidak sesuai (Cth:81218xxxxxx)";
 };
 
 // 👉 Password Validator

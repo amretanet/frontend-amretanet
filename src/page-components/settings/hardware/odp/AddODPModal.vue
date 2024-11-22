@@ -43,7 +43,7 @@ const odp_data = ref({
 
 // FUNCTION
 const getODCOptions = () => {
-  axiosIns.get("utility/odc-options").then((res) => {
+  axiosIns.get("options/odc").then((res) => {
     options.value.odc = res.data.odc_options || [];
   });
 };
@@ -137,9 +137,9 @@ watch(is_showing_modal, () => {
 </script>
 <template>
   <div>
-    <div class="wm-100" @click="is_showing_modal = true">
+    <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
+        <VBtn size="40" prepend-icon="tabler-plus">
           <VTooltip activator="parent"> Tambah ODP </VTooltip>
         </VBtn>
       </slot>

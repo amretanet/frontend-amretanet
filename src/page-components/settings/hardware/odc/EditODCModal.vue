@@ -88,7 +88,6 @@ const updateData = () => {
     })
     .then(() => {
       emits("odcUpdated");
-      resetForm();
     })
     .catch((err) => {
       const message = errorMessage(err);
@@ -98,14 +97,6 @@ const updateData = () => {
       is_on_process.value = false;
       is_showing_modal.value = false;
     });
-};
-const resetForm = () => {
-  odc_form.value?.reset();
-  odc_data.value.location.latitude = 0;
-  odc_data.value.location.longitude = 0;
-  odc_data.value.port = 0;
-  odc_data.value.capacity = 0;
-  odc_data.value.available = 0;
 };
 const changeLocation = (data: any) => {
   odc_data.value.location.latitude = data.lat;
@@ -147,10 +138,10 @@ watch(props, () => {
 </script>
 <template>
   <div>
-    <div class="wm-100" @click="is_showing_modal = true">
+    <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="35" color="info" prepend-icon="tabler-edit" class="wm-100">
-          <VTooltip activator="parent"> Edit ODC </VTooltip>
+        <VBtn size="35" color="info" prepend-icon="tabler-edit">
+          <VTooltip activator="parent"> Edit </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -325,7 +316,7 @@ watch(props, () => {
                   <VBtn
                     size="small"
                     color="error"
-                    @click="(is_showing_modal = false), resetForm()"
+                    @click="is_showing_modal = false"
                   >
                     Batal
                   </VBtn>

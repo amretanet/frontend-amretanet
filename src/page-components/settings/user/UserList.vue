@@ -4,11 +4,9 @@ import {
   confirmAction,
   dataCountFormatter,
   errorMessage,
-  genderFormatter,
   roleFormatter,
   setPaginationLength,
   showActionResult,
-  thousandSeparator,
 } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
@@ -16,8 +14,14 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddUserModal from "./AddUserModal.vue";
 import EditUserModal from "./EditUserModal.vue";
+import {
+  user_role_customer_options,
+  user_role_options,
+} from "@/modules/options";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -26,48 +30,7 @@ const filter_data = ref({
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const options = ref({
-  role: [
-    {
-      title: "Admin/Owner",
-      value: 1,
-    },
-    {
-      title: "Member PPOE",
-      value: 2,
-    },
-    {
-      title: "Member Hotspot",
-      value: 3,
-    },
-    {
-      title: "Reseller Hotspot",
-      value: 4,
-    },
-    {
-      title: "Sales PPOE",
-      value: 5,
-    },
-    {
-      title: "Operator Jaringan",
-      value: 6,
-    },
-    {
-      title: "Customer Service",
-      value: 7,
-    },
-    {
-      title: "Teknisi/Karyawan",
-      value: 8,
-    },
-    {
-      title: "Member Premium",
-      value: 9,
-    },
-    {
-      title: "Bill Collector",
-      value: 10,
-    },
-  ],
+  role: [...user_role_options, ...user_role_customer_options],
 });
 const pagination = ref({
   page: 1,
@@ -98,10 +61,10 @@ const user_table_data = ref({
       width: "20%",
     },
     {
-      title: "NO TELEPHONE",
+      title: "NO TELEPHONE/WHATSAPP",
       key: "phone_number",
       th_class: "text-center",
-      td_class: "text-center",
+      td_class: "text-center text-no-wrap",
     },
     {
       title: "STATUS",
@@ -179,6 +142,39 @@ const deleteUser = async (id: string, name: string) => {
       .delete(`user/delete/${id}`)
       .then(() => {
         showActionResult(undefined, undefined, "Pengguna Telah Dihapus");
+        getUserData();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(true, "error", message);
+      });
+  }
+};
+const activateUser = async (data: IUsers) => {
+  if (store.getUser.role !== 1) {
+    return;
+  }
+  const is_confirmed = await confirmAction(
+    `${data.status ? "Nonaktifkan" : "Aktifkan"} Pengguna?`,
+    `${data.name} akan ${data.status ? "dinonaktifkan" : "diaktifkan"}`,
+    `Ya, ${data.status ? "Nonaktifkan" : "Aktifkan"}!`
+  );
+
+  if (is_confirmed) {
+    let payload = data;
+    if (data.status) {
+      payload.status = 0;
+    } else {
+      payload.status = 1;
+    }
+    axiosIns
+      .put(`user/update/${data._id}`, { data: payload })
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          `Pengguna Telah ${payload.status ? "Diaktifkan" : "Dinonaktifkan"}!`
+        );
         getUserData();
       })
       .catch((err) => {
@@ -266,11 +262,16 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <template #cell-gender="{ data }">
-          {{ genderFormatter(data.gender) }}
+        <template #cell-phone_number="{ data }">
+          +62{{ data.phone_number }}
         </template>
         <template #cell-status="{ data }">
-          <VChip variant="outlined" :color="data.status ? 'success' : 'error'">
+          <VChip
+            variant="outlined"
+            :color="data.status ? 'success' : 'error'"
+            class="clickable"
+            @click="activateUser(data)"
+          >
             {{ data.status ? "Aktif" : "Nonaktif" }}
           </VChip>
         </template>
@@ -278,16 +279,6 @@ onMounted(() => {
           <VChip variant="outlined" :color="roleFormatter(data.role).color">
             {{ roleFormatter(data.role).type }}
           </VChip>
-        </template>
-        <template #cell-saldo="{ data }">
-          <div class="text-no-wrap">
-            Rp {{ thousandSeparator(data.saldo || 0) }}
-          </div>
-        </template>
-        <template #cell-address="{data}">
-          <div style="min-width: 200px;">
-            {{ data.address || "-" }}
-          </div>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">

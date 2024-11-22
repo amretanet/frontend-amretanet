@@ -88,10 +88,10 @@ onMounted(() => {
     <VCardText>
       <VForm ref="telebot_form" @submit.prevent="updateTelebotConfig()">
         <VRow>
-          <VCol cols="12" md="7" sm="12">
+          <VCol cols="12" md="8" sm="12">
             <VTextField v-model="telebot_data.bot_token" label="Token Bot" />
           </VCol>
-          <VCol cols="12" md="5" sm="12">
+          <VCol cols="12" md="4" sm="12">
             <VTextField
               v-model="telebot_data.bot_username"
               label="Username Bot"

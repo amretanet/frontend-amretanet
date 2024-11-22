@@ -59,9 +59,9 @@ onMounted(() => {
   <VCard class="h-100">
     <VCardItem>
       <template #prepend>
-        <VIcon icon="tabler-key" />
+        <VIcon icon="tabler-map-2" />
       </template>
-      <template #title> API Keys </template>
+      <template #title> Google Maps </template>
     </VCardItem>
     <VCardText>
       <VForm ref="api_keys_form" @submit.prevent="updateAPIKeysConfig()">

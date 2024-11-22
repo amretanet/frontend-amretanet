@@ -1,11 +1,12 @@
 <script lang="ts" setup>
+import { roleFormatter, stringCutter } from "@/modules";
+import { stateManagement } from "@/store";
 import { injectionKeyIsVerticalNavHovered, useLayouts } from "@layouts";
 import {
   VerticalNavGroup,
   VerticalNavLink,
   VerticalNavSectionTitle,
 } from "@layouts/components";
-import { config } from "@layouts/config";
 import type {
   NavGroup,
   NavLink,
@@ -22,14 +23,12 @@ interface Props {
   toggleIsOverlayNavActive: (value: boolean) => void;
 }
 
+const store = stateManagement();
 const props = withDefaults(defineProps<Props>(), {
   tag: "aside",
 });
-
 const refNav = ref();
-
 const { width: windowWidth } = useWindowSize();
-
 const isHovered = useElementHover(refNav);
 
 provide(injectionKeyIsVerticalNavHovered, isHovered);
@@ -42,7 +41,6 @@ const {
 } = useLayouts();
 
 const hideTitleAndIcon = isVerticalNavMini(windowWidth, isHovered);
-
 const resolveNavItemComponent = (
   item: NavLink | NavSectionTitle | NavGroup
 ) => {
@@ -51,11 +49,6 @@ const resolveNavItemComponent = (
 
   return VerticalNavLink;
 };
-
-/*
-  ℹ️ Close overlay side when route is changed
-  Close overlay vertical nav when link is clicked
-*/
 const route = useRoute();
 
 watch(
@@ -88,54 +81,66 @@ const handleNavScroll = (evt: Event) => {
       },
     ]"
   >
-    <!-- 👉 Header -->
-    <div class="nav-header">
-      <slot name="nav-header">
-        <RouterLink
-          to="/"
-          class="app-logo d-flex align-center gap-x-1 app-title-wrapper"
-        >
-          <!-- <VNodeRenderer :nodes="config.app.logo" /> -->
-          <Transition name="vertical-nav-app-title">
-            <h1
-              v-show="!hideTitleAndIcon"
-              class="app-title font-weight-bold leading-normal text-xl"
-            >
-              <img src="/public/logo.png" style="height: 30px" />
-            </h1>
-          </Transition>
-        </RouterLink>
-        <!-- 👉 Vertical nav actions -->
-        <!-- Show toggle collapsible in >md and close button in <md -->
-        <template v-if="!isLessThanOverlayNavBreakpoint(windowWidth)">
-          <Component
-            :is="config.app.iconRenderer || 'div'"
-            v-show="isCollapsed && !hideTitleAndIcon"
-            class="header-action"
-            v-bind="config.icons.verticalNavUnPinned"
-            @click="isCollapsed = !isCollapsed"
-          />
-          <Component
-            :is="config.app.iconRenderer || 'div'"
-            v-show="!isCollapsed && !hideTitleAndIcon"
-            class="header-action"
-            v-bind="config.icons.verticalNavPinned"
-            @click="isCollapsed = !isCollapsed"
-          />
-        </template>
-        <template v-else>
-          <Component
-            :is="config.app.iconRenderer || 'div'"
-            class="header-action"
-            v-bind="config.icons.close"
-            @click="toggleIsOverlayNavActive(false)"
-          />
-        </template>
-      </slot>
+    <div v-if="!hideTitleAndIcon" class="px-4 py-4">
+      <VCard
+        variant="outlined"
+        class="border border-dashed border-info border-md bg-light-primary"
+      >
+        <div class="px-3 py-3 d-flex flex-column gap-2">
+          <div class="text-center">
+            <img src="/public/short-logo.png" style="height: 50px" />
+            <div>
+              <span class="font-weight-black text-black fs-22">AMRETA NET</span>
+            </div>
+          </div>
+          <VDivider></VDivider>
+          <div class="d-flex gap-2 align-center">
+            <VAvatar
+              color="primary"
+              size="50"
+              variant="tonal"
+              icon="tabler-user"
+            ></VAvatar>
+            <div>
+              <div class="fs-16 text-no-wrap">
+                Hai,
+                <strong>
+                  {{ stringCutter(store.getUser.name || "Anonymous", 15) }}
+                </strong>
+              </div>
+              <div>
+                <VChip
+                  variant="outlined"
+                  size="x-small"
+                  :color="roleFormatter(store.getUser.role).color"
+                >
+                  {{ roleFormatter(store.getUser.role).type }}
+                </VChip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </VCard>
     </div>
-    <slot name="before-nav-items">
-      <div class="vertical-nav-items-shadow" />
-    </slot>
+    <div v-else class="px-3 py-3">
+      <VCard
+        variant="outlined"
+        class="border border-dashed border-info border-md"
+        style="display: grid; place-items: center"
+      >
+        <img src="/public/short-logo.png" class="mt-2" style="height: 50px" />
+      </VCard>
+    </div>
+    <VBtn
+      v-if="!isLessThanOverlayNavBreakpoint(windowWidth) && !hideTitleAndIcon"
+      size="35"
+      style="position: absolute; right: 0; top: 105px; margin-right: -10px"
+      @click="isCollapsed = !isCollapsed"
+    >
+      <VIcon
+        :icon="isCollapsed ? 'tabler-chevrons-left' : 'tabler-chevrons-right'"
+      ></VIcon>
+    </VBtn>
     <slot
       name="nav-items"
       :update-is-vertical-nav-scrolled="updateIsVerticalNavScrolled"

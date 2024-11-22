@@ -15,7 +15,7 @@ const path_data = ref([
 
 <template>
   <VRow>
-    <VCol cols="12">
+    <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">

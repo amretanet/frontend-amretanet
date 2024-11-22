@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import MikrotikList from "@/page-components/settings/hardware/MikrotikList.vue";
-import ODCList from "@/page-components/settings/hardware/ODCList.vue";
-import ODPList from "@/page-components/settings/hardware/ODPList.vue";
+import CoverageAreaList from "@/page-components/settings/coverage-area/CoverageAreaList.vue";
 
 const path_data = ref([
   {
@@ -10,7 +8,7 @@ const path_data = ref([
     name: "Pengaturan",
   },
   {
-    name: "Perangkat",
+    name: "Cakupan Area",
   },
 ]);
 </script>
@@ -21,17 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <ODCList />
-    </VCol>
-    <VCol cols="12">
-      <ODPList />
-    </VCol>
-    <VCol cols="12">
-      <MikrotikList />
+      <CoverageAreaList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Perangkat
+  title: Cakupan Area
 </route>

@@ -1,22 +1,16 @@
 <script setup lang="ts">
-import {
-  emailValidator,
-  phoneNumberValidator,
-  requiredValidator,
-} from "@/@core/utils/validators";
-import { IUsers } from "@/models";
+import { requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult } from "@/modules";
-import { gender_options, user_role_options } from "@/modules/options";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
 interface IProps {
-  data: IUsers;
+  data: any;
 }
 interface IEmits {
-  (e: "userUpdated"): void;
+  (e: "mikrotikUpdated"): void;
 }
 
 // VARIABLE
@@ -24,33 +18,40 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
+const is_show_password = ref(false);
 const options = ref({
-  gender: gender_options,
-  role: user_role_options,
+  status: [
+    {
+      title: "Aktif",
+      value: 1,
+    },
+    {
+      title: "Nonaktif",
+      value: 0,
+    },
+  ],
 });
-const user_form = ref<VForm>();
-const user_data = ref({
-  name: props.data.name,
-  email: props.data.email,
-  phone_number: props.data.phone_number,
-  status: props.data.status,
-  gender: props.data.gender,
-  saldo: props.data.saldo,
-  role: props.data.role,
-  address: props.data.address,
+const mikrotik_form = ref<VForm>();
+const mikrotik_data = ref({
+  name: props.data.name || "",
+  ip_address: props.data.ip_address || "",
+  api_port: props.data.api_port || 0,
+  username: props.data.username || "",
+  password: props.data.password || "",
+  status: props.data.status || 1,
 });
 
 // FUNCTION
-const updateUser = () => {
-  user_form.value?.validate().then(({ valid: is_valid }) => {
+const updateMikrotik = () => {
+  mikrotik_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
       axiosIns
-        .put(`user/update/${props.data._id}`, {
-          data: user_data.value,
+        .put(`hardware/mikrotik/update/${props.data._id}`, {
+          data: mikrotik_data.value,
         })
         .then(() => {
-          emits("userUpdated");
+          emits("mikrotikUpdated");
         })
         .catch((err) => {
           const message = errorMessage(err);
@@ -66,106 +67,114 @@ const updateUser = () => {
 
 // LIFECYCLE HOOKS
 watch(props, () => {
-  user_data.value.name = props.data.name;
-  user_data.value.email = props.data.email;
-  user_data.value.phone_number = props.data.phone_number;
-  user_data.value.status = props.data.status;
-  user_data.value.gender = props.data.gender;
-  user_data.value.saldo = props.data.saldo;
-  user_data.value.role = props.data.role;
-  user_data.value.address = props.data.address;
+  mikrotik_data.value.name = props.data.name || "";
+  mikrotik_data.value.ip_address = props.data.ip_address || "";
+  mikrotik_data.value.api_port = props.data.api_port || 0;
+  mikrotik_data.value.username = props.data.username || "";
+  mikrotik_data.value.password = props.data.password || "";
+  mikrotik_data.value.status = props.data.status || 1;
 });
 </script>
 <template>
   <div>
     <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="35" prepend-icon="tabler-edit" color="info">
+        <VBtn size="35" color="info" prepend-icon="tabler-edit">
           <VTooltip activator="parent"> Edit </VTooltip>
         </VBtn>
       </slot>
     </div>
-    <VDialog :model-value="is_showing_modal" max-width="500" persistent>
+    <VDialog :model-value="is_showing_modal" max-width="450" persistent>
       <DialogCloseBtn @click="is_showing_modal = false" />
       <VCard>
         <VCardItem>
           <template #prepend>
             <VIcon icon="tabler-edit" />
           </template>
-          <template #title> Edit Pengguna </template>
+          <template #title> Edit Mikrotik </template>
         </VCardItem>
         <VCardText>
-          <VForm ref="user_form" @submit.prevent="updateUser">
+          <VForm ref="mikrotik_form" @submit.prevent="updateMikrotik">
             <VRow>
+              <!-- NAME -->
               <VCol cols="12">
                 <VTextField
-                  v-model="user_data.name"
+                  v-model="mikrotik_data.name"
                   clearable
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Nama Lengkap <span class="text-error">*</span>
+                    Nama/Kode Mikrotik <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>
+              <!-- IP ADDRESS -->
               <VCol cols="12">
                 <VTextField
-                  v-model="user_data.email"
+                  v-model="mikrotik_data.ip_address"
                   clearable
-                  :rules="[requiredValidator, emailValidator]"
+                  :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Email <span class="text-error">*</span>
+                    Host/IP Address <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>
-              <VCol cols="12">
+              <!-- PORT API -->
+              <VCol cols="12" md="5" sm="12">
                 <VTextField
-                  v-model="user_data.phone_number"
+                  v-model="mikrotik_data.api_port"
                   clearable
-                  :rules="[requiredValidator, phoneNumberValidator]"
+                  :rules="[requiredValidator]"
                 >
-                  <template #prepend-inner> +62 </template>
                   <template #label>
-                    No. Telp/Whatsapp <span class="text-error">*</span>
+                    Port API <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>
-              <VCol cols="12" md="6" sm="12">
+              <!-- STATUS -->
+              <VCol cols="12" md="7" sm="12">
                 <VSelect
-                  v-model="user_data.gender"
-                  :items="options.gender"
+                  v-model="mikrotik_data.status"
+                  :items="options.status"
                   clearable
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Jenis Kelamin <span class="text-error">*</span>
+                    Status <span class="text-error">*</span>
                   </template>
                 </VSelect>
               </VCol>
-              <VCol cols="12" md="6" sm="12">
-                <VTextField v-model="user_data.saldo" type="number" clearable>
-                  <template #prepend-inner> Rp </template>
-                  <template #label>
-                    Jumlah Saldo <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
+              <!-- USERNAME -->
               <VCol cols="12">
-                <VSelect
-                  v-model="user_data.role"
-                  :items="options.role"
+                <VTextField
+                  v-model="mikrotik_data.username"
                   clearable
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Level <span class="text-error">*</span>
+                    Username <span class="text-error">*</span>
                   </template>
-                </VSelect>
+                </VTextField>
               </VCol>
+              <!-- PASSWORD -->
               <VCol cols="12">
-                <VTextarea v-model="user_data.address" label="Alamat" />
+                <VTextField
+                  v-model="mikrotik_data.password"
+                  :type="is_show_password ? 'text' : 'password'"
+                  clearable
+                  :append-inner-icon="
+                    is_show_password ? 'tabler-eye-off' : 'tabler-eye'
+                  "
+                  :rules="[requiredValidator]"
+                  @click:append-inner="is_show_password = !is_show_password"
+                >
+                  <template #label>
+                    Password <span class="text-error">*</span>
+                  </template>
+                </VTextField>
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
                 <div class="d-flex gap-2 justify-end">
                   <VBtn

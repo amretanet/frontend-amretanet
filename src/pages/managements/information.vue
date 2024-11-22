@@ -17,7 +17,7 @@ const current_tab = ref("announcement");
 
 <template>
   <VRow>
-    <VCol cols="12">
+    <VCol cols="12" class="py-0">
       <PageHeader :data="path_data">
         <template #extend-header>
           <VTabs v-model="current_tab">

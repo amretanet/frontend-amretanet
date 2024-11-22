@@ -3,23 +3,48 @@ export default [
     title: "Dashboard",
     icon: { icon: "tabler-dashboard" },
     to: "managements-dashboard",
-    access: [1],
+    access: [1, 2],
   },
   {
-    title: "Master Data",
-    icon: { icon: "tabler-server-cog" },
+    title: "Pelanggan",
+    icon: { icon: "tabler-user-square-rounded" },
+    to: "managements-customer",
+    access: [1, 2],
+  },
+  {
+    title: "Keuangan",
+    icon: { icon: "tabler-coins" },
     access: [1],
     children: [
       {
         title: "Invoice",
-        icon: { icon: "tabler-file-dollar" },
-        to: "managements-master-data-invoice",
+        icon: { icon: "tabler-file-invoice" },
+        to: "managements-finance-invoice",
+        access: [1],
+      },
+    ],
+  },
+  {
+    title: "Layanan",
+    icon: { icon: "tabler-adjustments-horizontal" },
+    access: [1],
+    children: [
+      {
+        title: "Whatsapp Broadcast",
+        icon: { icon: "tabler-brand-whatsapp" },
+        to: "managements-service-whatsapp-broadcast",
         access: [1],
       },
       {
-        title: "Pelanggan",
-        icon: { icon: "tabler-user-square-rounded" },
-        to: "managements-master-data-customer",
+        title: "Paket",
+        icon: { icon: "tabler-box" },
+        to: "managements-service-package",
+        access: [1],
+      },
+      {
+        title: "Tiket",
+        icon: { icon: "tabler-ticket" },
+        to: "managements-service-ticket",
         access: [1],
       },
     ],
@@ -27,7 +52,7 @@ export default [
   {
     title: "Pengaturan",
     icon: { icon: "tabler-settings-cog" },
-    access: [1],
+    access: [1, 2],
     children: [
       {
         title: "Konfigurasi Sistem",
@@ -36,8 +61,14 @@ export default [
         access: [1],
       },
       {
+        title: "Cakupan Area",
+        icon: { icon: "tabler-map-star" },
+        to: "managements-settings-coverage-area",
+        access: [1],
+      },
+      {
         title: "Perangkat",
-        icon: { icon: "tabler-router" },
+        icon: { icon: "tabler-access-point" },
         to: "managements-settings-hardware",
         access: [1],
       },
@@ -45,7 +76,7 @@ export default [
         title: "Pengguna",
         icon: { icon: "tabler-users" },
         to: "managements-settings-user",
-        access: [1],
+        access: [1, 2],
       },
     ],
   },

@@ -4,16 +4,18 @@ import {
   confirmAction,
   dataCountFormatter,
   errorMessage,
+  roleFormatter,
   setPaginationLength,
   showActionResult,
 } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
-import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
+import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
-import AddODCModal from "./odc/AddODCModal.vue";
-import EditODCModal from "./odc/EditODCModal.vue";
+import AddCoverageModal from "./AddCoverageModal.vue";
+import EditCoverageModal from "./EditCoverageModal.vue";
+import { stateManagement } from "@/store";
 import { Marker } from "vue3-google-map";
 
 // VARIABLES
@@ -21,15 +23,15 @@ const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
 });
-const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const is_show_maps = ref(false);
 const pagination = ref({
   page: 1,
   items: 10,
   count: 0,
 });
-const odc_table_data = ref({
+const coverage_area_table_data = ref({
   headers: [
     {
       title: "NO",
@@ -39,7 +41,7 @@ const odc_table_data = ref({
       width: "50px",
     },
     {
-      title: "NAMA/KODE ODC",
+      title: "NAMA/KODE AREA",
       key: "name",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
@@ -49,18 +51,6 @@ const odc_table_data = ref({
       key: "address",
       th_class: "text-left",
       td_class: "text-left",
-    },
-    {
-      title: "JUMLAH PORT",
-      key: "port",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
-    },
-    {
-      title: "REDAMAN",
-      key: "damping",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
     },
     {
       title: "KAPASITAS",
@@ -75,12 +65,6 @@ const odc_table_data = ref({
       td_class: "text-center text-no-wrap",
     },
     {
-      title: "KETERANGAN",
-      key: "description",
-      th_class: "text-left",
-      td_class: "text-left",
-    },
-    {
       title: "AKSI",
       key: "action",
       th_class: "text-center",
@@ -90,10 +74,10 @@ const odc_table_data = ref({
   ],
   body: [] as IUsers[],
 });
-const odc_maps_data = ref<any[]>([]);
+const coverage_area_maps_data = ref<any[]>([]);
 
 // FUNCTION
-const getODCData = (is_refresh: boolean = false) => {
+const getCoverageAreaData = (is_refresh: boolean = false) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
@@ -113,13 +97,13 @@ const getODCData = (is_refresh: boolean = false) => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   axiosIns
-    .get(`hardware/odc?${query}`, {
+    .get(`coverage-area?${query}`, {
       cancelToken: cancel_request_token.value.token,
     })
     .then((res) => {
       cancel_request_token.value = null;
-      odc_table_data.value.body = res.data.odc_data || [];
-      odc_maps_data.value = res.data.odc_maps_data || [];
+      coverage_area_table_data.value.body = res.data.coverage_area_data || [];
+      coverage_area_maps_data.value = res.data.coverage_area_maps_data || [];
       pagination.value.count = res.data.pagination_info.count || 0;
     })
     .catch((err) => {
@@ -134,18 +118,18 @@ const getODCData = (is_refresh: boolean = false) => {
       }
     });
 };
-const deleteODC = async (id: string, name: string) => {
+const deleteCoverageArea = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
-    "Hapus ODC?",
-    `${name} akan dihapus dari daftar ODC`,
+    "Hapus Area?",
+    `${name} akan dihapus dari daftar Cakupan Area`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
     axiosIns
-      .delete(`hardware/odc/delete/${id}`)
+      .delete(`coverage-area/delete/${id}`)
       .then(() => {
-        showActionResult(undefined, undefined, "ODC Telah Dihapus");
-        getODCData();
+        showActionResult(undefined, undefined, "Area Telah Dihapus");
+        getCoverageAreaData();
       })
       .catch((err) => {
         const message = errorMessage(err);
@@ -153,24 +137,26 @@ const deleteODC = async (id: string, name: string) => {
       });
   }
 };
+const addressFormatter = (data: any) => {
+  const address = `${data.address.street_name}, RT ${data.address.rt} /RW ${data.address.rw}, Desa. ${data.address.village}, Kec. ${data.address.subdistrict}, Kab. ${data.address.regency}, Prov. ${data.address.province} - Indonesia ${data.address.postal_code}`;
+  return address;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
-  getODCData();
+  getCoverageAreaData();
 });
 </script>
 <template>
   <VCard>
     <VCardItem class="py-4">
       <template #prepend>
-        <VIcon icon="tabler-server-2" />
+        <VIcon icon="tabler-map-star" />
       </template>
-      <template #title> Daftar Optical Distribution Cabinet (ODC) </template>
+      <template #title> Daftar Cakupan Area </template>
       <template #append>
         <VSwitch v-model="is_show_maps">
-          <template #label>
-            <span class="fs-14">Lihat Maps</span>
-          </template>
+          <template #label> <span class="fs-14">Lihat Maps</span> </template>
         </VSwitch>
       </template>
     </VCardItem>
@@ -178,9 +164,11 @@ onMounted(() => {
       <GoogleMaps :zoom="18">
         <template #marker>
           <Marker
-            v-for="(item, index) in odc_maps_data"
+            v-for="(item, index) in coverage_area_maps_data"
             :key="index"
-            :options="{ position: item }"
+            :options="{
+              position: item,
+            }"
           />
         </template>
       </GoogleMaps>
@@ -191,64 +179,49 @@ onMounted(() => {
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getODCData()"
+            @update:model-value="getCoverageAreaData()"
           />
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getODCData(true)"
+          @click="getCoverageAreaData(true)"
         />
         <VSpacer />
-        <AddODCModal @odc-added="showActionResult(), getODCData()" />
+        <AddCoverageModal
+          @area-added="showActionResult(), getCoverageAreaData()"
+        />
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getODCData()"
+            @update:model-value="getCoverageAreaData()"
           />
         </div>
       </div>
     </VCardText>
     <div v-if="!is_show_maps">
       <DataTable
-        height="30rem"
-        :headers="odc_table_data.headers"
-        :body="odc_table_data.body"
+        height="60vh"
+        :headers="coverage_area_table_data.headers"
+        :body="coverage_area_table_data.body"
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <template #cell-name="{ data }">
-          <VChip color="primary">
-            <strong>{{ data.name || "-" }}</strong>
-          </VChip>
-        </template>
         <template #cell-address="{ data }">
-          {{ data?.location?.address || "-" }}
-        </template>
-        <template #cell-port="{ data }">
-          <small>PON</small> {{ data.port || 0 }}
-        </template>
-        <template #cell-damping="{ data }">
-          {{ data.damping || 0 }} <small>DB</small>
-        </template>
-        <template #cell-capacity="{ data }">
-          {{ data.capacity || 0 }} <small>Core/Port</small>
-        </template>
-        <template #cell-available="{ data }">
-          {{ data.available || 0 }} <small>Core</small>
+          {{ addressFormatter(data) }}
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditODCModal
+            <EditCoverageModal
               :data="data"
-              @odc-updated="showActionResult(), getODCData()"
+              @area-updated="showActionResult(), getCoverageAreaData()"
             />
             <VBtn
               size="35"
               color="error"
-              @click="deleteODC(data._id, data.name)"
+              @click="deleteCoverageArea(data._id, data.name)"
             >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
@@ -264,7 +237,7 @@ onMounted(() => {
                   pagination.page,
                   pagination.items,
                   pagination.count,
-                  odc_table_data.body.length
+                  coverage_area_table_data.body.length
                 )
               }}
             </h6>
@@ -274,7 +247,7 @@ onMounted(() => {
               :total-visible="3"
               size="small"
               class="ms-auto"
-              @update:model-value="getODCData()"
+              @update:model-value="getCoverageAreaData()"
             />
           </div>
         </template>

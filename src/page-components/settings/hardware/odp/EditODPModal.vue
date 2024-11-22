@@ -47,7 +47,7 @@ const odp_data = ref({
 
 // FUNCTION
 const getODCOptions = () => {
-  axiosIns.get("utility/odc-options").then((res) => {
+  axiosIns.get("options/odc").then((res) => {
     options.value.odc = res.data.odc_options || [];
   });
 };
@@ -95,7 +95,6 @@ const updateData = () => {
     })
     .then(() => {
       emits("odpUpdated");
-      resetForm();
     })
     .catch((err) => {
       const message = errorMessage(err);
@@ -105,14 +104,6 @@ const updateData = () => {
       is_on_process.value = false;
       is_showing_modal.value = false;
     });
-};
-const resetForm = () => {
-  odp_form.value?.reset();
-  odp_data.value.location.latitude = 0;
-  odp_data.value.location.longitude = 0;
-  odp_data.value.port = 0;
-  odp_data.value.capacity = 0;
-  odp_data.value.available = 0;
 };
 const changeLocation = (data: any) => {
   odp_data.value.location.latitude = data.lat;
@@ -160,10 +151,10 @@ watch(is_showing_modal, () => {
 </script>
 <template>
   <div>
-    <div class="wm-100" @click="is_showing_modal = true">
+    <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="35" color="info" prepend-icon="tabler-edit" class="wm-100">
-          <VTooltip activator="parent"> Edit ODP </VTooltip>
+        <VBtn size="35" color="info" prepend-icon="tabler-edit">
+          <VTooltip activator="parent"> Edit </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -345,7 +336,7 @@ watch(is_showing_modal, () => {
                   <VBtn
                     size="small"
                     color="error"
-                    @click="(is_showing_modal = false), resetForm()"
+                    @click="is_showing_modal = false"
                   >
                     Batal
                   </VBtn>

@@ -20,10 +20,14 @@ import { Marker } from "vue3-google-map";
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
+  id_odc: null,
 });
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const options = ref({
+  odc: [],
+});
 const pagination = ref({
   page: 1,
   items: 10,
@@ -102,6 +106,11 @@ const odp_table_data = ref({
 const odp_maps_data = ref<any[]>([]);
 
 // FUNCTION
+const getODCOptions = () => {
+  axiosIns.get("options/odc").then((res) => {
+    options.value.odc = res.data.odc_options || [];
+  });
+};
 const getODPData = (is_refresh: boolean = false) => {
   is_loading.value = true;
   if (is_refresh) {
@@ -115,6 +124,7 @@ const getODPData = (is_refresh: boolean = false) => {
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
+    ...(filter_data.value.id_odc ? { id_odc: filter_data.value.id_odc } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -165,12 +175,13 @@ const deleteODP = async (id: string, name: string) => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
+  getODCOptions();
   getODPData();
 });
 </script>
 <template>
   <VCard>
-    <VCardItem>
+    <VCardItem class="py-4">
       <template #prepend>
         <VIcon icon="tabler-rectangular-prism" />
       </template>
@@ -189,7 +200,9 @@ onMounted(() => {
           <Marker
             v-for="(item, index) in odp_maps_data"
             :key="index"
-            :options="{ position: item }"
+            :options="{
+              position: item,
+            }"
           />
         </template>
       </GoogleMaps>
@@ -209,6 +222,15 @@ onMounted(() => {
         />
         <VSpacer />
         <AddODPModal @odp-added="showActionResult(), getODPData()" />
+        <div class="wm-100" style="min-width: 10rem">
+          <VAutocomplete
+            v-model="filter_data.id_odc"
+            :items="options.odc"
+            label="ODC"
+            clearable
+            @update:model-value="getODPData()"
+          />
+        </div>
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"

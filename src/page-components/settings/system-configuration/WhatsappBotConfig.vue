@@ -7,14 +7,11 @@ import { VForm } from "vuetify/components";
 
 // VARIABLES
 const is_on_process = ref(false);
-const whatsapp_gateway_url = ref("https://wa7.amretanet.my.id/login");
 const whatsapp_bot_form = ref<VForm>();
 const whatsapp_bot_data = ref({
   bot_number: "",
   admin_number: "",
   url_gateway: "",
-  url_media: "",
-  url_server: "",
   api_key: "",
 });
 
@@ -27,10 +24,6 @@ const getWhatsappbotConfig = () => {
       res?.data?.configuration_data?.admin_number || "";
     whatsapp_bot_data.value.url_gateway =
       res?.data?.configuration_data?.url_gateway || "";
-    whatsapp_bot_data.value.url_media =
-      res?.data?.configuration_data?.url_media || "";
-    whatsapp_bot_data.value.url_server =
-      res?.data?.configuration_data?.url_server || "";
     whatsapp_bot_data.value.api_key =
       res?.data?.configuration_data?.api_key || "";
   });
@@ -67,7 +60,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <VCard>
+  <VCard class="h-100">
     <VCardItem>
       <template #prepend>
         <VIcon icon="tabler-brand-whatsapp" />
@@ -78,7 +71,7 @@ onMounted(() => {
           size="small"
           prepend-icon="tabler-brand-whatsapp"
           color="success"
-          :href="whatsapp_gateway_url"
+          :href="whatsapp_bot_data.url_gateway"
           target="_blank"
           variant="outlined"
         >
@@ -92,38 +85,28 @@ onMounted(() => {
         @submit.prevent="updateWhatsappbotConfig()"
       >
         <VRow>
-          <VCol cols="12" md="4" sm="12">
+          <VCol cols="12" md="6" sm="12">
             <VTextField
               v-model="whatsapp_bot_data.bot_number"
               label="Nomor Bot"
               :rules="[phoneNumberValidator]"
-            />
+            >
+              <template #prepend-inner> +62 </template>
+            </VTextField>
           </VCol>
-          <VCol cols="12" md="4" sm="12">
+          <VCol cols="12" md="6" sm="12">
             <VTextField
               v-model="whatsapp_bot_data.admin_number"
               label="Nomor Admin"
               :rules="[phoneNumberValidator]"
-            />
+            >
+              <template #prepend-inner> +62 </template>
+            </VTextField>
           </VCol>
-          <VCol cols="12" md="4" sm="12">
+          <VCol cols="12" md="12" sm="12">
             <VTextField
               v-model="whatsapp_bot_data.api_key"
               label="API Key Gateway"
-            />
-          </VCol>
-          <VCol cols="12" md="6" sm="12">
-            <VTextField
-              v-model="whatsapp_bot_data.url_server"
-              label="URL Server"
-              :rules="[urlValidator]"
-            />
-          </VCol>
-          <VCol cols="12" md="6" sm="12">
-            <VTextField
-              v-model="whatsapp_bot_data.url_media"
-              label="URL Media"
-              :rules="[urlValidator]"
             />
           </VCol>
           <VCol cols="12" md="12" sm="12">

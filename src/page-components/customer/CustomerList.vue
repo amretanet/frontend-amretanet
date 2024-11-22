@@ -242,7 +242,7 @@ onMounted(() => {
 </script>
 <template>
   <VCard>
-    <VCardItem>
+    <VCardItem class="py-4">
       <template #prepend>
         <VIcon icon="tabler-user-square-rounded" />
       </template>
@@ -278,7 +278,7 @@ onMounted(() => {
           size="40"
           prepend-icon="tabler-plus"
           class="wm-100"
-          :to="{ name: 'managements-master-data-customer-add-customer' }"
+          :to="{ name: 'managements-customer-add-customer' }"
         >
           <VTooltip activator="parent"> Tambah Pelanggan </VTooltip>
         </VBtn>

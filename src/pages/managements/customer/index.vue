@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import CustomerList from "@/page-components/customer/CustomerList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-dashboard",
-    name: "Dashboard",
+    icon: "tabler-user-square-rounded",
+    name: "Pelanggan",
   },
 ]);
 </script>
@@ -14,9 +15,12 @@ const path_data = ref([
     <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
     </VCol>
+    <VCol cols="12">
+      <CustomerList />
+    </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Dashboard
+  title: Pelanggan
 </route>
