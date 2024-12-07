@@ -1,7 +1,37 @@
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
 import Swal from "sweetalert2";
-import { user_role_options } from "./options";
+import { customer_status_options, user_role_options } from "./options";
+import moment from "moment";
 
+export function dateFormatterID(
+  date: string,
+  month_shorted: boolean = false,
+  show_time: boolean = false,
+  is_plus_7: boolean = false
+): string {
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+  const new_date = is_plus_7 ? moment(date).add(7, "hours") : date;
+  const _year = moment(new_date).year();
+  const _month = months[moment(new_date).month()];
+  const _date = moment(new_date).date().toString().padStart(2, "0");
+  const formatted_date = `${_date} ${
+    month_shorted ? _month.substring(0, 3) : _month
+  } ${_year} ${show_time ? moment(new_date).format("HH:mm:ss") : ""}`;
+  return formatted_date;
+}
 export function errorMessage(err: any): string {
   const message =
     err &&
@@ -153,7 +183,7 @@ export const roleFormatter = (role: number) => {
     };
   } else {
     return {
-      type: "Member",
+      type: "Pelanggan",
       color: "dark",
     };
   }
@@ -166,4 +196,150 @@ export const stringCutter = (text: string, substring: number) => {
     return text.substring(0, substring) + "...";
   }
   return " ";
+};
+export const customerStatusFormatter = (status: number) => {
+  const status_options = customer_status_options;
+  const current_status = status_options.find((el: any) => el.value === status);
+  let temp = {
+    type: "",
+    color: "dark",
+  };
+  if (status === 0) {
+    temp.color = "error";
+  } else if (status === 1) {
+    temp.color = "success";
+  } else if (status === 2) {
+    temp.color = "info";
+  } else if (status === 3) {
+    temp.color = "primary";
+  } else if (status === 4) {
+    temp.color = "warning";
+  } else {
+    temp.color = "secondary";
+  }
+  if (current_status) {
+    temp.type = current_status.title;
+  } else {
+    temp.type = "-Tidak Diketahui-";
+  }
+  return temp;
+};
+export const ticketStatusFormatter = (status: string) => {
+  let temp = {
+    type: "",
+    color: "",
+  };
+  if (status == "open") {
+    temp.type = "Ditugaskan";
+    temp.color = "primary";
+  } else if (status == "pending") {
+    temp.type = "Menunggu";
+    temp.color = "dark";
+  } else if (status == "on_progress") {
+    temp.type = "Dikerjakan";
+    temp.color = "warning";
+  } else if (status == "closed") {
+    temp.type = "Selesai";
+    temp.color = "success";
+  }
+  return temp;
+};
+export const invoiceStatusFormatter = (status: string) => {
+  let temp = {
+    type: "",
+    color: "",
+  };
+  if (status == "UNPAID") {
+    temp.type = "BELUM DIBAYAR";
+    temp.color = "error";
+  } else if (status == "PAID") {
+    temp.type = "TELAH DIBAYAR";
+    temp.color = "success";
+  } else if (status == "PENDING") {
+    temp.type = "KONFIRMASI";
+    temp.color = "warning";
+  }
+  return temp;
+};
+export const getLocation = (): Promise<GeolocationPosition> => {
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (error) => reject(error)
+      );
+    } else {
+      reject(new Error("Geolocation is not supported by this browser."));
+    }
+  });
+};
+export const numberToWords = (number: number) => {
+  const satuan = [
+    "",
+    "Satu",
+    "Dua",
+    "Tiga",
+    "Empat",
+    "Lima",
+    "Enam",
+    "Tujuh",
+    "Delapan",
+    "Sembilan",
+  ];
+  const levels = ["", "Ribu", "Juta", "Milyar", "Triliun"];
+
+  if (number === 0) return "Nol";
+
+  let result = "";
+  let level = 0;
+
+  while (number > 0) {
+    let part = number % 1000;
+
+    if (part !== 0) {
+      let partStr = "";
+      const ratusan = Math.floor(part / 100);
+      const puluhanDanSatuan = part % 100;
+
+      if (ratusan > 0) {
+        partStr +=
+          (ratusan === 1 ? "Seratus" : satuan[ratusan] + " Ratus") + " ";
+      }
+
+      if (puluhanDanSatuan > 0) {
+        if (puluhanDanSatuan < 10) {
+          partStr += satuan[puluhanDanSatuan] + " ";
+        } else if (puluhanDanSatuan === 10) {
+          partStr += "Sepuluh ";
+        } else if (puluhanDanSatuan < 20) {
+          if (puluhanDanSatuan === 11) {
+            partStr += "Sebelas ";
+          } else {
+            partStr += satuan[puluhanDanSatuan % 10] + " Belas ";
+          }
+        } else {
+          const puluhan = Math.floor(puluhanDanSatuan / 10);
+          const satuanAngka = puluhanDanSatuan % 10;
+
+          partStr += satuan[puluhan] + " Puluh ";
+          if (satuanAngka > 0) {
+            partStr += satuan[satuanAngka] + " ";
+          }
+        }
+      }
+
+      if (level === 1 && part === 1) {
+        partStr = "Seribu ";
+      } else {
+        partStr += levels[level] + " ";
+      }
+
+      result = partStr + result;
+    }
+
+    level++;
+    number = Math.floor(number / 1000);
+  }
+
+  return result.trim();
 };

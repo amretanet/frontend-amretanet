@@ -41,7 +41,7 @@ const coverage_area_data = ref({
     village: props?.data?.address?.village || null,
     rw: props?.data?.address?.rw || 0,
     rt: props?.data?.address?.rt || 0,
-    street_name: props?.data?.address?.street_name || null,
+    location_name: props?.data?.address?.location_name || null,
     postal_code: props?.data?.address?.postal_code || 0,
     latitude: props?.data?.address?.latitude || 0,
     longitude: props?.data?.address?.longitude || 0,
@@ -132,7 +132,7 @@ watch(props, () => {
     village: props?.data?.address?.village || null,
     rw: props?.data?.address?.rw || 0,
     rt: props?.data?.address?.rt || 0,
-    street_name: props?.data?.address?.street_name || null,
+    location_name: props?.data?.address?.location_name || null,
     postal_code: props?.data?.address?.postal_code || 0,
     latitude: props?.data?.address?.latitude || 0,
     longitude: props?.data?.address?.longitude || 0,
@@ -307,7 +307,7 @@ watch(
               </VCol>
               <VCol v-if="coverage_area_data.address.village" cols="12">
                 <VTextarea
-                  v-model="coverage_area_data.address.street_name"
+                  v-model="coverage_area_data.address.location_name"
                   rows="2"
                   :rules="[requiredValidator]"
                 >

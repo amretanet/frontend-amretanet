@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IObjectKeys, IUsers } from "@/models";
+import { IObjectKeys } from "@/models";
 import {
   confirmAction,
   dataCountFormatter,
@@ -61,7 +61,7 @@ const user_table_data = ref({
       width: "20%",
     },
     {
-      title: "NO TELEPHONE/WHATSAPP",
+      title: "NO TELEPON/WHATSAPP",
       key: "phone_number",
       th_class: "text-center",
       td_class: "text-center text-no-wrap",
@@ -86,7 +86,7 @@ const user_table_data = ref({
       width: "150px",
     },
   ],
-  body: [] as IUsers[],
+  body: [],
 });
 
 // FUNCTION
@@ -150,7 +150,7 @@ const deleteUser = async (id: string, name: string) => {
       });
   }
 };
-const activateUser = async (data: IUsers) => {
+const activateUser = async (data: any) => {
   if (store.getUser.role !== 1) {
     return;
   }
@@ -262,8 +262,19 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
+        <template #cell-email="{ data }">
+          <VChip variant="outlined" color="dark" prepend-icon="tabler-mail">
+            {{ data.email }}
+          </VChip>
+        </template>
         <template #cell-phone_number="{ data }">
-          +62{{ data.phone_number }}
+          <VChip
+            variant="outlined"
+            color="success"
+            prepend-icon="tabler-brand-whatsapp"
+          >
+            0{{ data.phone_number }}
+          </VChip>
         </template>
         <template #cell-status="{ data }">
           <VChip

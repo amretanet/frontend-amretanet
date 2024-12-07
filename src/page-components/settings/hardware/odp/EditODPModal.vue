@@ -6,7 +6,7 @@ import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
 import uploadfile from "@/assets/images/illustrations/uploadfile.png";
-import { tube_color_options } from "@/modules/options";
+import { topology_options, tube_color_options } from "@/modules/options";
 
 // INTERFACE
 interface IProps {
@@ -24,13 +24,16 @@ const image_path = ref(props.data.image_url || "");
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
+  odp: [],
   odc: [],
   tube_color: tube_color_options,
+  topology: topology_options,
 });
 const odp_form = ref<VForm>();
 const odp_data = ref({
-  id_odc: props.data.id_odc || null,
+  id_parent: props.data.id_parent || null,
   name: props.data.name || "",
+  topology: props.data.topology || null,
   image_url: props.data.image_url || "",
   location: {
     address: props.data.location.address || "",
@@ -40,7 +43,7 @@ const odp_data = ref({
   port: props.data.port || 0,
   capacity: props.data.capacity || 0,
   available: props.data.available || 0,
-  damping: props.data.damping || 0,
+  damping: props.data.damping || null,
   tube: props.data.tube || null,
   description: props.data.description || "",
 });
@@ -49,6 +52,11 @@ const odp_data = ref({
 const getODCOptions = () => {
   axiosIns.get("options/odc").then((res) => {
     options.value.odc = res.data.odc_options || [];
+  });
+};
+const getODPOptions = () => {
+  axiosIns.get("options/odp").then((res) => {
+    options.value.odp = res.data.odp_options || [];
   });
 };
 const uploadImage = (file: any) => {
@@ -90,7 +98,7 @@ const updateODP = () => {
 };
 const updateData = () => {
   axiosIns
-    .put(`hardware/odp/update/${props.data._id}`, {
+    .put(`odp/update/${props.data._id}`, {
       data: odp_data.value,
     })
     .then(() => {
@@ -126,8 +134,9 @@ const inputImageFile = () => {
 // LIFECYCLE HOOKS
 watch(props, () => {
   odp_data.value = {
-    id_odc: props.data.id_odc || null,
+    id_parent: props.data.id_parent || null,
     name: props.data.name || "",
+    topology: props.data.topology || null,
     image_url: props.data.image_url || "",
     location: {
       address: props.data.location.address || "",
@@ -137,7 +146,7 @@ watch(props, () => {
     port: props.data.port || 0,
     capacity: props.data.capacity || 0,
     available: props.data.available || 0,
-    damping: props.data.damping || 0,
+    damping: props.data.damping || null,
     tube: props.data.tube || null,
     description: props.data.description || "",
   };
@@ -146,6 +155,7 @@ watch(props, () => {
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
     getODCOptions();
+    getODPOptions();
   }
 });
 </script>
@@ -177,12 +187,20 @@ watch(is_showing_modal, () => {
                       v-if="image_path"
                       :src="image_path"
                       alt="profile"
-                      style="height: 100px; max-width: 230px"
+                      style="
+                        width: 100%;
+                        max-height: 110px;
+                        object-fit: contain;
+                      "
                       @error="handleImgError"
                     />
-                    <div v-else style="height: 100px; max-width: 230px">
-                      <img :src="uploadfile" alt="" style="height: 70px" />
-                      <div>Upload Gambar</div>
+                    <div
+                      v-else
+                      class="border rounded-lg py-2"
+                      style="height: 105px; max-width: 230px"
+                    >
+                      <img :src="uploadfile" alt="" style="height: 70%" />
+                      <div class="fsm-12">Upload Gambar</div>
                     </div>
                   </div>
                   <!-- PROFILE INPUT -->
@@ -226,12 +244,30 @@ watch(is_showing_modal, () => {
                   </VCol>
                 </VRow>
               </VCol>
-              <VCol cols="12">
-                <VSelect v-model="odp_data.id_odc" :items="options.odc">
-                  <template #label>
-                    Optical Distribution Cabinet (ODC)
-                  </template>
+              <VCol cols="12" :md="odp_data.topology ? '4' : '12'" sm="12">
+                <VSelect
+                  v-model="odp_data.topology"
+                  :items="options.topology"
+                  @update:model-value="odp_data.id_parent = null"
+                >
+                  <template #label> Topologi </template>
                 </VSelect>
+              </VCol>
+              <VCol v-if="odp_data.topology" cols="12" md="8" sm="12">
+                <VAutocomplete
+                  v-if="odp_data.topology === 'STAR'"
+                  v-model="odp_data.id_parent"
+                  :items="options.odc"
+                >
+                  <template #label> Nama/Kode ODC </template>
+                </VAutocomplete>
+                <VAutocomplete
+                  v-if="odp_data.topology === 'TREE'"
+                  v-model="odp_data.id_parent"
+                  :items="options.odp.filter((el:any)=>el.title !== odp_data.name)"
+                >
+                  <template #label> Nama/Kode ODP </template>
+                </VAutocomplete>
               </VCol>
               <!-- OLT PORT -->
               <VCol cols="12" md="6" sm="12">
@@ -297,7 +333,7 @@ watch(is_showing_modal, () => {
               <VCol cols="12">
                 <VTextarea
                   v-model="odp_data.description"
-                  label="Keterangan"
+                  label="Deskripsi"
                   rows="2"
                 />
               </VCol>

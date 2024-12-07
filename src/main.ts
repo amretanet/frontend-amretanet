@@ -8,6 +8,7 @@ import router from "@/router";
 import { abilitiesPlugin } from "@casl/vue";
 import "@core/scss/template/index.scss";
 import "@styles/custom.scss";
+import "@styles/animation.scss";
 import "@styles/font-custom.scss";
 import "@styles/library-custom.scss";
 import "@styles/mobile-responsive.scss";

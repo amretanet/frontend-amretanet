@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { roleFormatter, stringCutter } from "@/modules";
+import RouterSelect from "@/page-components/navbar/RouterSelect.vue";
 import { stateManagement } from "@/store";
 import { injectionKeyIsVerticalNavHovered, useLayouts } from "@layouts";
 import {
@@ -93,7 +94,7 @@ const handleNavScroll = (evt: Event) => {
               <span class="font-weight-black text-black fs-22">AMRETA NET</span>
             </div>
           </div>
-          <VDivider></VDivider>
+          <VDivider />
           <div class="d-flex gap-2 align-center">
             <VAvatar
               color="primary"
@@ -119,6 +120,8 @@ const handleNavScroll = (evt: Event) => {
               </div>
             </div>
           </div>
+          <VDivider />
+          <RouterSelect class="mt-1" />
         </div>
       </VCard>
     </div>

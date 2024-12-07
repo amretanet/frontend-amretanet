@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import MikrotikList from "@/page-components/settings/hardware/MikrotikList.vue";
-import ODCList from "@/page-components/settings/hardware/ODCList.vue";
-import ODPList from "@/page-components/settings/hardware/ODPList.vue";
+import RouterList from "@/page-components/settings/hardware/router/RouterList.vue";
+import ODCList from "@/page-components/settings/hardware/odc/ODCList.vue";
+import ODPList from "@/page-components/settings/hardware/odp/ODPList.vue";
 
 const path_data = ref([
   {
@@ -27,7 +27,7 @@ const path_data = ref([
       <ODPList />
     </VCol>
     <VCol cols="12">
-      <MikrotikList />
+      <RouterList />
     </VCol>
   </VRow>
 </template>

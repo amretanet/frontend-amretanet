@@ -17,7 +17,7 @@ watch(props, () => {
 });
 </script>
 <template>
-  <VAlert color="error" variant="tonal">
+  <VAlert color="error" variant="tonal" rounded="lg" class="text-center">
     <div>
       <img
         src="@/assets/images/illustrations/empty-data.png"

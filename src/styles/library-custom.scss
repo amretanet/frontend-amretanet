@@ -24,6 +24,10 @@
 .v-field__outline__end {
   border-radius: 0 12px 12px 0 !important;
 }
+.v-input__control,
+.v-field {
+  border-radius: 12px !important;
+}
 .btn-sweetalert {
   border-radius: 12px;
   padding: 8px 20px 8px 20px;
@@ -68,4 +72,10 @@
 }
 .mapdiv {
   border-radius: 12px !important;
+}
+.v-list {
+  overflow: scroll;
+  max-block-size: 20rem !important;
+  max-inline-size: 30rem !important;
+  overflow-x: hidden !important;
 }

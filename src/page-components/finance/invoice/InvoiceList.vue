@@ -1,46 +1,79 @@
 <script setup lang="ts">
-import { thousandSeparator } from "@/modules";
+import { IObjectKeys } from "@/models";
+import {
+  confirmAction,
+  dataCountFormatter,
+  dateFormatterID,
+  errorMessage,
+  invoiceStatusFormatter,
+  roleFormatter,
+  setPaginationLength,
+  showActionResult,
+  thousandSeparator,
+} from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
+import axiosIns from "@/plugins/axios";
+import axios from "axios";
+import {
+  user_role_customer_options,
+  user_role_options,
+} from "@/modules/options";
+import { stateManagement } from "@/store";
+import InvoiceDetailModal from "./InvoiceDetailModal.vue";
+import ProcessButton from "@/page-components/ProcessButton.vue";
 
 // VARIABLES
+const store = stateManagement();
+const cancel_request_token = ref<any>(null);
+const filter_data = ref({
+  key: "",
+});
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const is_syncronize = ref(false);
+const options = ref({
+  role: [...user_role_options, ...user_role_customer_options],
+});
 const pagination = ref({
   page: 1,
   items: 10,
-  count: 100,
+  count: 0,
 });
 const invoice_table_data = ref({
   headers: [
     {
-      title: "CHECK",
-      key: "check",
-      width: "80px",
+      title: "NO",
+      key: "no",
+      th_class: "text-center",
+      td_class: "text-center",
+      width: "50px",
     },
     {
       title: "NAMA PELANGGAN",
       key: "name",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
+      width: "25%",
     },
     {
       title: "PERIODE",
-      key: "periode",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
-    },
-    {
-      title: "TOTAL",
-      key: "billing",
+      key: "due_date",
       th_class: "text-left",
       td_class: "text-left",
+      width: "20%",
+    },
+    {
+      title: "TOTAL PEMBAYARAN",
+      key: "amount",
+      th_class: "text-center",
+      td_class: "text-center text-no-wrap",
     },
     {
       title: "STATUS",
       key: "status",
       th_class: "text-center",
-      td_class: "text-center text-no-wrap",
+      td_class: "text-center",
     },
     {
       title: "AKSI",
@@ -50,54 +83,7 @@ const invoice_table_data = ref({
       width: "150px",
     },
   ],
-  body: [
-    {
-      name: "Testing 1",
-      periode: "07 November 2024",
-      billing: 125000,
-      status: 1,
-    },
-    {
-      name: "Testing 2",
-      periode: "07 November 2024",
-      service_number: "20039657",
-      billing: 125000,
-      status: 0,
-    },
-    {
-      name: "Testing 3",
-      periode: "07 November 2024",
-      service_number: "20039657",
-      billing: 125000,
-      status: 1,
-    },
-    {
-      name: "Testing 4",
-      periode: "07 November 2024",
-      service_number: "20039657",
-      billing: 125000,
-      status: 1,
-    },
-    {
-      name: "Testing 5",
-      periode: "07 November 2024",
-      service_number: "20039657",
-      billing: 125000,
-      status: 0,
-    },
-  ],
-});
-const options = ref({
-  status: [
-    {
-      title: "Sudah Bayar",
-      value: 1,
-    },
-    {
-      title: "Belum Bayar",
-      value: 0,
-    },
-  ],
+  body: [],
 });
 
 // FUNCTION
@@ -106,11 +92,85 @@ const getInvoiceData = (is_refresh: boolean = false) => {
   if (is_refresh) {
     is_on_refresh.value = true;
   }
-
-  setTimeout(() => {
-    is_on_refresh.value = false;
-    is_loading.value = false;
-  }, 1000);
+  if (cancel_request_token.value) {
+    cancel_request_token.value.cancel();
+  }
+  cancel_request_token.value = axios.CancelToken.source();
+  const params: IObjectKeys = {
+    ...(filter_data.value.key
+      ? { key: encodeURIComponent(filter_data.value.key) }
+      : {}),
+    page: pagination.value.page,
+    items: pagination.value.items,
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns
+    .get(`invoice?${query}`, {
+      cancelToken: cancel_request_token.value.token,
+    })
+    .then((res) => {
+      cancel_request_token.value = null;
+      invoice_table_data.value.body = res?.data?.invoice_data || [];
+      pagination.value.count = res?.data?.pagination_info?.count || 0;
+    })
+    .catch((err) => {
+      if (err.code !== "ERR_CANCELED") {
+        cancel_request_token.value = null;
+      }
+    })
+    .finally(() => {
+      if (!cancel_request_token.value) {
+        is_on_refresh.value = false;
+        is_loading.value = false;
+      }
+    });
+};
+const deleteInvoice = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Hapus Invoice?",
+    `Invoice ${name} akan dihapus dari daftar invoice pelanggan`,
+    "Ya, Hapus!"
+  );
+  if (is_confirmed) {
+    axiosIns
+      .delete(`user/delete/${id}`)
+      .then(() => {
+        showActionResult(undefined, undefined, "Invoice Telah Dihapus");
+        getInvoiceData();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(true, "error", message);
+      });
+  }
+};
+const syncInvoice = async () => {
+  const is_confirmed = await confirmAction(
+    "Sinkronkan Tagihan?",
+    "Tagihan Pelanggan akan disinkronkan ulang",
+    "Ya, Sinkronkan!"
+  );
+  if (is_confirmed) {
+    is_syncronize.value = true;
+    axiosIns
+      .get("invoice/auto-generate")
+      .then((res) => {
+        showActionResult(
+          undefined,
+          undefined,
+          "Tagihan Telah Disinkronkan Ulang"
+        );
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        is_syncronize.value = false;
+      });
+  }
 };
 
 // LIFECYCLE HOOKS
@@ -120,80 +180,109 @@ onMounted(() => {
 </script>
 <template>
   <VCard>
-    <VCardItem>
+    <VCardItem class="py-4">
       <template #prepend>
-        <VIcon icon="tabler-file-dollar" />
+        <VIcon icon="tabler-file-invoice" />
       </template>
-      <template #title> Daftar Transaksi Pelanggan </template>
+      <template #title> Daftar Invoice Pelanggan </template>
+      <template #append>
+        <ProcessButton
+          text="Sinkronkan Tagihan"
+          color="warning"
+          :is_on_process="is_syncronize"
+          @click="syncInvoice()"
+        >
+          <template #prepend>
+            <VIcon icon="tabler-refresh" />
+          </template>
+        </ProcessButton>
+      </template>
     </VCardItem>
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
         <div>
-          <VSelect v-model="pagination.items" :items="[5, 10, 25, 50, 100]" />
+          <VSelect
+            v-model="pagination.items"
+            :items="[5, 10, 25, 50, 100]"
+            @update:model-value="getInvoiceData()"
+          />
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
           @click="getInvoiceData(true)"
         />
         <VSpacer />
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
-          <VTooltip activator="parent"> Tambah Pelanggan </VTooltip>
-        </VBtn>
-        <div class="wm-100" style="min-width: 10rem">
-          <VSelect
-            label="Status"
-            :items="options.status"
-            item-title="title"
-            item-value="value"
-            clearable
-          />
-        </div>
-        <form class="wm-100" style="width: 15rem">
+        <div class="wm-100" style="width: 15rem">
           <VTextField
+            v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
+            @update:model-value="getInvoiceData()"
           />
-        </form>
+        </div>
       </div>
     </VCardText>
     <div>
       <DataTable
+        height="60vh"
         :headers="invoice_table_data.headers"
         :body="invoice_table_data.body"
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <template #head-CHECK>
-          <div class="d-flex justify-center">
-            <VCheckbox />
-          </div>
+        <template #cell-due_date="{ data }">
+          {{ dateFormatterID(data?.due_date) }}
         </template>
-        <template #cell-check="{ data }">
-          <div class="d-flex justify-center">
-            <VCheckbox />
-          </div>
+        <template #cell-amount="{ data }">
+          Rp.{{ thousandSeparator(data?.amount || 0) }}
         </template>
         <template #cell-status="{ data }">
-          <VChip :color="data.status ? 'success' : 'error'">
-            {{ data.status ? "Sudah Bayar" : "Belum Bayar" }}
+          <VChip
+            :color="invoiceStatusFormatter(data.status).color"
+            variant="outlined"
+          >
+            <strong>{{ invoiceStatusFormatter(data.status).type }}</strong>
           </VChip>
         </template>
-        <template #cell-billing="{ data }">
-          <div class="text-no-wrap">
-            {{ data.billing ? `Rp. ${thousandSeparator(data.billing)}` : "-" }}
-          </div>
-        </template>
-        <template #cell-action="data">
-          <div class="d-flex gap-2 py-1 justify-center">
+        <template #cell-action="{ data }">
+          <div class="d-flex gap-1 py-1 justify-center">
+            <InvoiceDetailModal :data="data" />
             <VBtn size="35" color="info">
               <VIcon icon="tabler-edit" />
               <VTooltip activator="parent"> Edit </VTooltip>
             </VBtn>
-            <VBtn size="35" color="error">
+            <VBtn
+              size="35"
+              color="error"
+              @click="deleteInvoice(data._id, data.name)"
+            >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
+          </div>
+        </template>
+        <!-- CUSTOM PAGINATION -->
+        <template #pagination>
+          <div class="d-flex align-center pt-2">
+            <h6 class="fs-14 fw-500">
+              {{
+                dataCountFormatter(
+                  pagination.page,
+                  pagination.items,
+                  pagination.count,
+                  invoice_table_data.body.length
+                )
+              }}
+            </h6>
+            <VPagination
+              v-model="pagination.page"
+              :length="setPaginationLength(pagination.items, pagination.count)"
+              :total-visible="3"
+              size="small"
+              class="ms-auto"
+              @update:model-value="getInvoiceData()"
+            />
           </div>
         </template>
       </DataTable>

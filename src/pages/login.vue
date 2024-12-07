@@ -108,7 +108,7 @@ const onSubmit = () => {
                   @click:append-inner="is_show_password = !is_show_password"
                 />
 
-                <div
+                <!-- <div
                   class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4"
                 >
                   <RouterLink
@@ -117,9 +117,9 @@ const onSubmit = () => {
                   >
                     Lupa Password?
                   </RouterLink>
-                </div>
+                </div> -->
 
-                <VBtn block type="submit">
+                <VBtn class="mt-4" block type="submit">
                   <template #prepend>
                     <VIcon
                       v-if="is_loading"
@@ -131,13 +131,10 @@ const onSubmit = () => {
                 </VBtn>
               </VCol>
               <!-- create account -->
-              <VCol cols="12" class="text-center">
+              <VCol cols="12">
                 <span>Belum punya akun?</span>
-                <RouterLink
-                  class="text-primary ms-2"
-                  :to="{ name: 'register' }"
-                >
-                  Buat Akun
+                <RouterLink :to="{ name: 'register' }">
+                  Daftar Sekarang
                 </RouterLink>
               </VCol>
             </VRow>

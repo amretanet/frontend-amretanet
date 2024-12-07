@@ -30,9 +30,9 @@ export default [
     access: [1],
     children: [
       {
-        title: "Whatsapp Broadcast",
+        title: "Pesan Whatsapp",
         icon: { icon: "tabler-brand-whatsapp" },
-        to: "managements-service-whatsapp-broadcast",
+        to: "managements-service-whatsapp-message",
         access: [1],
       },
       {

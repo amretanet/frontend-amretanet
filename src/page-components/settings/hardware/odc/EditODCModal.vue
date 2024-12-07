@@ -83,7 +83,7 @@ const updateODC = () => {
 };
 const updateData = () => {
   axiosIns
-    .put(`hardware/odc/update/${props.data._id}`, {
+    .put(`odc/update/${props.data._id}`, {
       data: odc_data.value,
     })
     .then(() => {
@@ -164,12 +164,20 @@ watch(props, () => {
                       v-if="image_path"
                       :src="image_path"
                       alt="profile"
-                      style="height: 100px; max-width: 230px"
+                      style="
+                        width: 100%;
+                        max-height: 110px;
+                        object-fit: contain;
+                      "
                       @error="handleImgError"
                     />
-                    <div v-else style="height: 100px; max-width: 230px">
-                      <img :src="uploadfile" alt="" style="height: 70px" />
-                      <div>Upload Gambar</div>
+                    <div
+                      v-else
+                      class="border rounded-lg py-2"
+                      style="height: 105px; max-width: 230px"
+                    >
+                      <img :src="uploadfile" alt="" style="height: 70%" />
+                      <div class="fsm-12">Upload Gambar</div>
                     </div>
                   </div>
                   <!-- PROFILE INPUT -->
@@ -277,7 +285,7 @@ watch(props, () => {
               <VCol cols="12">
                 <VTextarea
                   v-model="odc_data.description"
-                  label="Keterangan"
+                  label="Deskripsi"
                   rows="2"
                 />
               </VCol>

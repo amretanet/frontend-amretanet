@@ -22,12 +22,18 @@ const maps_config = ref({
   width: props?.width || "100%",
   zoom: props?.zoom || 20,
 });
-const latitude = ref(props?.lat || -6.942853679893406);
-const longitude = ref(props?.lng || 107.76403158903122);
+const latitude = ref(props?.lat || 0);
+const longitude = ref(props?.lng || 0);
 const current_marker = computed(() => {
   return {
     lat: latitude.value,
     lng: longitude.value,
+  };
+});
+const maps_center = computed(() => {
+  return {
+    lat: props?.lat || -6.942853679893406,
+    lng: props.lng || 107.76403158903122,
   };
 });
 
@@ -55,12 +61,15 @@ watch(props, () => {
     <GoogleMap
       :api-key="google_maps_api"
       :style="{ width: maps_config.width, height: maps_config.height }"
-      :center="current_marker"
+      :center="maps_center"
       :zoom="maps_config.zoom"
       @click="handleMapsClick"
     >
       <slot name="marker">
-        <Marker :options="{ position: current_marker }" />
+        <Marker
+          v-if="current_marker.lat && current_marker.lng"
+          :options="{ position: current_marker }"
+        />
       </slot>
     </GoogleMap>
   </div>

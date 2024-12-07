@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import TicketList from "@/page-components/service/TicketList.vue";
+import TicketList from "@/page-components/service/ticket/TicketList.vue";
 
 const path_data = ref([
   {

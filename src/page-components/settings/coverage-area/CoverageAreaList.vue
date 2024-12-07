@@ -138,7 +138,7 @@ const deleteCoverageArea = async (id: string, name: string) => {
   }
 };
 const addressFormatter = (data: any) => {
-  const address = `${data.address.street_name}, RT ${data.address.rt} /RW ${data.address.rw}, Desa. ${data.address.village}, Kec. ${data.address.subdistrict}, Kab. ${data.address.regency}, Prov. ${data.address.province} - Indonesia ${data.address.postal_code}`;
+  const address = `${data.address.location_name}, RT ${data.address.rt} /RW ${data.address.rw}, Desa. ${data.address.village}, Kec. ${data.address.subdistrict}, Kab. ${data.address.regency}, Prov. ${data.address.province} - Indonesia ${data.address.postal_code}`;
   return address;
 };
 
@@ -209,8 +209,20 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
+        <!-- CUSTOM CELL -->
+        <template #cell-name="{ data }">
+          <VChip color="primary">
+            <strong>{{ data.name || "-Tidak Diketahui-" }}</strong>
+          </VChip>
+        </template>
         <template #cell-address="{ data }">
           {{ addressFormatter(data) }}
+        </template>
+        <template #cell-capacity="{ data }">
+          <VChip variant="outlined"> {{ data.capacity || 0 }} Port </VChip>
+        </template>
+        <template #cell-available="{ data }">
+          <VChip variant="outlined"> {{ data.available || 0 }} Port </VChip>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">

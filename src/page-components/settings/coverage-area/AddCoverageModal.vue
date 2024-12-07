@@ -37,7 +37,7 @@ const coverage_area_data = ref({
     village: null,
     rw: 0,
     rt: 0,
-    street_name: "",
+    location_name: "",
     postal_code: 0,
     latitude: 0,
     longitude: 0,
@@ -287,7 +287,7 @@ watch(
               </VCol>
               <VCol v-if="coverage_area_data.address.village" cols="12">
                 <VTextarea
-                  v-model="coverage_area_data.address.street_name"
+                  v-model="coverage_area_data.address.location_name"
                   rows="2"
                   :rules="[requiredValidator]"
                 >

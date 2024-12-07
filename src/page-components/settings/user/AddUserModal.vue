@@ -72,9 +72,9 @@ const resetForm = () => {
 </script>
 <template>
   <div>
-    <div class="wm-100" @click="is_showing_modal = true">
+    <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="40" prepend-icon="tabler-plus" class="wm-100">
+        <VBtn size="40" prepend-icon="tabler-plus">
           <VTooltip activator="parent"> Tambah Pengguna </VTooltip>
         </VBtn>
       </slot>

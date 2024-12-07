@@ -7,9 +7,14 @@ export const stateManagement = defineStore({
     access_token: cookie.get("amr_access_token") || "",
     refresh_token: cookie.get("amr_refresh_token") || "",
     user: cookie.get("amr_user") ? JSON.parse(cookie.get("amr_user")) : null,
+    current_router: cookie.get("amr_router") || "AMRETA-2021",
     is_loading: false,
   }),
   actions: {
+    routerHandler(value: string) {
+      cookie.set("amr_router", value);
+      this.$state.current_router = value;
+    },
     loadingHandler(value: boolean) {
       this.$state.is_loading = value;
     },
@@ -34,6 +39,7 @@ export const stateManagement = defineStore({
     getUser: (state) => state.user,
     getAccessToken: (state) => state.access_token,
     getRefreshToken: (state) => state.refresh_token,
+    getCurrentRouter: (state) => state.current_router,
     getIsLoading: (state) => state.is_loading,
     isAdmin: (state) => (state.user.role == 1 ? true : false),
     isMemberPPOE: (state) => (state.user.role == 2 ? true : false),

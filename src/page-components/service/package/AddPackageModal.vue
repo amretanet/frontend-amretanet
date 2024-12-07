@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { integerValidator, requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult } from "@/modules";
+import { package_category_options } from "@/modules/options";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
@@ -11,18 +13,32 @@ interface IEmits {
 }
 
 // VARIABLE
+const store = stateManagement();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
-  mikrotik_profile: [],
+  category: package_category_options,
+  router_profile: [],
+  boolean: [
+    {
+      title: "Ya",
+      value: true,
+    },
+    {
+      title: "Tidak",
+      value: false,
+    },
+  ],
 });
 const package_form = ref<VForm>();
 const package_data = ref({
-  name: "",
-  mikrotik_profile: null,
+  name: null,
+  category: null,
+  router_profile: null,
   bandwidth: 0,
-  instalation_cost: 0 as number,
+  instalation_cost: 0,
+  maximum_device: 0,
   price: {
     regular: 0,
     reseller: 0,
@@ -32,10 +48,12 @@ const package_data = ref({
 });
 
 // FUNCTION
-const getMikrotikProfileOptions = () => {
-  axiosIns.get("options/mikrotik-profile").then((res) => {
-    options.value.mikrotik_profile = res.data.mikrotik_profile_options || [];
-  });
+const getRouterProfileOptions = () => {
+  axiosIns
+    .get(`options/router-profile?name=${store.getCurrentRouter}`)
+    .then((res) => {
+      options.value.router_profile = res.data.router_profile_options || [];
+    });
 };
 const savePackage = () => {
   package_form.value?.validate().then(({ valid: is_valid }) => {
@@ -64,6 +82,7 @@ const resetForm = () => {
   package_form.value?.reset();
   package_data.value.bandwidth = 0;
   package_data.value.instalation_cost = 0;
+  package_data.value.maximum_device = 0;
   package_data.value.price.regular = 0;
   package_data.value.price.reseller = 0;
   package_data.value.is_displayed = false;
@@ -72,7 +91,7 @@ const resetForm = () => {
 // LIFECYCLE HOOKS
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
-    getMikrotikProfileOptions();
+    getRouterProfileOptions();
   }
 });
 </script>
@@ -85,7 +104,7 @@ watch(is_showing_modal, () => {
         </VBtn>
       </slot>
     </div>
-    <VDialog :model-value="is_showing_modal" max-width="550" persistent>
+    <VDialog :model-value="is_showing_modal" max-width="600" persistent>
       <DialogCloseBtn @click="is_showing_modal = false" />
       <VCard>
         <VCardItem>
@@ -97,7 +116,7 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="package_form" @submit.prevent="savePackage">
             <VRow>
-              <VCol cols="12">
+              <VCol cols="12" md="8" sm="12">
                 <VTextField
                   v-model="package_data.name"
                   :rules="[requiredValidator]"
@@ -107,18 +126,39 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
-              <VCol cols="12" md="7" sm="12">
-                <VAutocomplete
-                  v-model="package_data.mikrotik_profile"
-                  :items="options.mikrotik_profile"
+              <VCol cols="12" md="4" sm="12">
+                <VSelect
+                  v-model="package_data.category"
+                  :items="options.category"
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Profil Mikrotik <span class="text-error">*</span>
+                    Kategori <span class="text-error">*</span>
+                  </template>
+                </VSelect>
+              </VCol>
+              <VCol
+                v-if="package_data.category === 'PPPOE'"
+                cols="12"
+                md="7"
+                sm="12"
+              >
+                <VAutocomplete
+                  v-model="package_data.router_profile"
+                  :items="options.router_profile"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Profil Router <span class="text-error">*</span>
                   </template>
                 </VAutocomplete>
               </VCol>
-              <VCol cols="12" md="5" sm="12">
+              <VCol
+                v-if="package_data.category === 'PPPOE'"
+                cols="12"
+                md="5"
+                sm="12"
+              >
                 <VTextField
                   v-model="package_data.bandwidth"
                   :rules="[requiredValidator, integerValidator]"
@@ -153,7 +193,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
-              <VCol cols="12" md="7" sm="12">
+              <VCol cols="12" md="5" sm="12">
                 <VTextField
                   v-model="package_data.instalation_cost"
                   type="number"
@@ -165,15 +205,30 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
-              <VCol cols="12" md="5" sm="12">
-                <VSwitch v-model="package_data.is_displayed">
-                  <template #label> Tampilkan Paket </template>
-                </VSwitch>
+              <VCol cols="12" md="4" sm="12">
+                <VTextField
+                  v-model="package_data.maximum_device"
+                  type="number"
+                  :rules="[requiredValidator, integerValidator]"
+                >
+                  <template #label>
+                    Maksimum Perangkat <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <VCol cols="12" md="3" sm="12">
+                <VSelect
+                  v-model="package_data.is_displayed"
+                  :items="options.boolean"
+                >
+                  <template #label>
+                    Ditampilkan <span class="text-error">*</span>
+                  </template>
+                </VSelect>
               </VCol>
               <VCol cols="12">
                 <VTextarea
                   v-model="package_data.description"
-                  type="number"
                   label="Deskripsi"
                 />
               </VCol>
