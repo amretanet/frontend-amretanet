@@ -57,7 +57,13 @@ const invoice_table_data = ref({
       width: "25%",
     },
     {
-      title: "PERIODE",
+      title: "NOMOR LAYANAN",
+      key: "service_number",
+      th_class: "text-center",
+      td_class: "text-center text-no-wrap",
+    },
+    {
+      title: "JATUH TEMPO",
       key: "due_date",
       th_class: "text-left",
       td_class: "text-left",
@@ -66,8 +72,8 @@ const invoice_table_data = ref({
     {
       title: "TOTAL PEMBAYARAN",
       key: "amount",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
     },
     {
       title: "STATUS",
@@ -135,7 +141,7 @@ const deleteInvoice = async (id: string, name: string) => {
   );
   if (is_confirmed) {
     axiosIns
-      .delete(`user/delete/${id}`)
+      .delete(`invoice/delete/${id}`)
       .then(() => {
         showActionResult(undefined, undefined, "Invoice Telah Dihapus");
         getInvoiceData();
@@ -155,8 +161,9 @@ const syncInvoice = async () => {
   if (is_confirmed) {
     is_syncronize.value = true;
     axiosIns
-      .get("invoice/auto-generate")
-      .then((res) => {
+      .get(`invoice/generate?is_send_whatsapp=${false}`)
+      .then(() => {
+        getInvoiceData();
         showActionResult(
           undefined,
           undefined,
@@ -231,6 +238,11 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
+        <template #cell-service_number="{ data }">
+          <VChip color="primary" variant="outlined" class="font-weight-bold">
+            {{ data.service_number }}
+          </VChip>
+        </template>
         <template #cell-due_date="{ data }">
           {{ dateFormatterID(data?.due_date) }}
         </template>
@@ -247,6 +259,40 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <VBtn size="35" color="warning">
+              <VIcon icon="mdi-printer" />
+              <VTooltip activator="parent"> Cetak Invoice </VTooltip>
+              <VMenu activator="parent">
+                <VCard>
+                  <VCardText class="d-flex gap-2 px-2 py-2">
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                    >
+                      A4
+                    </VBtn>
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                    >
+                      58MM
+                    </VBtn>
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                    >
+                      THERMAL
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VMenu>
+            </VBtn>
             <InvoiceDetailModal :data="data" />
             <VBtn size="35" color="info">
               <VIcon icon="tabler-edit" />

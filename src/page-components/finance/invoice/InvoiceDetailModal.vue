@@ -4,6 +4,7 @@ import {
   invoiceStatusFormatter,
   thousandSeparator,
 } from "@/modules";
+import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
 
 // INTERFACE
 interface IProps {
@@ -14,22 +15,6 @@ interface IProps {
 const props = defineProps<IProps>();
 const is_showing_modal = ref(false);
 const invoice_data = ref(props.data);
-
-// FUNCTION
-function printElement() {
-  const printContent = document.getElementById("invoice-detail");
-  const originalContent = document.body.innerHTML;
-
-  // Tampilkan hanya elemen yang ingin dicetak
-  document.body.innerHTML = printContent.outerHTML;
-
-  // Cetak halaman
-  window.print();
-
-  // Kembalikan halaman ke tampilan awal
-  document.body.innerHTML = originalContent;
-  window.location.reload(); // Reload untuk merefresh event handler
-}
 
 // LIFECYCLE HOOKS
 watch(props, () => {
@@ -54,9 +39,6 @@ watch(props, () => {
           </template>
           <template #title>
             Rincian Tagihan #{{ invoice_data?.service_number || "" }}
-          </template>
-          <template #append>
-            <VBtn @click="printElement">Print</VBtn>
           </template>
         </VCardItem>
         <VCardText id="invoice-detail">
@@ -94,26 +76,22 @@ watch(props, () => {
                 </VChip>
               </div>
               <div class="mt-2">
-                <VRow>
-                  <VCol cols="3"> Nama Pelanggan </VCol>
-                  <VCol cols="9">: {{ invoice_data.name }}</VCol>
-                </VRow>
-                <VRow>
-                  <VCol cols="3"> Nomor Layanan </VCol>
-                  <VCol cols="9"> : {{ invoice_data.service_number }}</VCol>
-                </VRow>
-                <VRow>
-                  <VCol cols="3"> Tanggal Invoice </VCol>
-                  <VCol cols="9">
-                    : {{ dateFormatterID(invoice_data.created_at) }}</VCol
-                  >
-                </VRow>
-                <VRow>
-                  <VCol cols="3"> Jatuh Tempo </VCol>
-                  <VCol cols="9">
-                    : {{ dateFormatterID(invoice_data.due_date) }}</VCol
-                  >
-                </VRow>
+                <HorizontalTextFormat
+                  title="Nama Pelanggan"
+                  :value="invoice_data.name"
+                />
+                <HorizontalTextFormat
+                  title="Nomor Layanan"
+                  :value="invoice_data.service_number"
+                />
+                <HorizontalTextFormat
+                  title="Tanggal Invoice"
+                  :value="dateFormatterID(invoice_data.created_at)"
+                />
+                <HorizontalTextFormat
+                  title="Jatuh Tempo"
+                  :value="dateFormatterID(invoice_data.due_date)"
+                />
                 <div class="mt-10 mb-2">
                   <div>Paket Langganan</div>
                 </div>
@@ -123,15 +101,13 @@ watch(props, () => {
                     <tr>
                       <th>NO</th>
                       <th>NAMA PAKET</th>
-                      <th class="text-center">JUMLAH</th>
                       <th class="text-right">HARGA</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in invoice_data.package">
-                      <td>{{ index + 1 }}</td>
+                      <td width="10px">{{ index + 1 }}</td>
                       <td>{{ item.name }}</td>
-                      <td class="text-center">1</td>
                       <td class="text-right">
                         Rp{{ thousandSeparator(item.price.regular) }}
                       </td>
@@ -164,15 +140,13 @@ watch(props, () => {
                     <tr>
                       <th>NO</th>
                       <th>NAMA PAKET</th>
-                      <th class="text-center">JUMLAH</th>
                       <th class="text-right">HARGA</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in invoice_data.add_on_packages">
-                      <td>{{ index + 1 }}</td>
+                      <td width="10px">{{ index + 1 }}</td>
                       <td>{{ item.name }}</td>
-                      <td class="text-center">1</td>
                       <td class="text-right">
                         Rp{{ thousandSeparator(item.price.regular) }}
                       </td>
@@ -192,13 +166,21 @@ watch(props, () => {
                 </VTable>
               </div>
               <div class="mt-3">
-                <div class="text-right fs-14 font-weight-black px-4">
+                <div class="text-right fs-16 font-weight-black px-4">
+                  Total : Rp.{{
+                    thousandSeparator(
+                      invoice_data.package_amount +
+                        invoice_data.add_on_package_amount
+                    )
+                  }}
+                </div>
+                <div class="text-right fs-14 font-weight-black px-4 mt-5">
                   Kode Unik : {{ invoice_data.unique_code }}
                 </div>
-                <div class="text-right fs-16 font-weight-black px-4">
-                  Total Tagihan : Rp.{{
-                    thousandSeparator(invoice_data.amount)
-                  }}
+                <div
+                  class="text-right fs-16 font-weight-black px-4 mt-2 text-primary"
+                >
+                  Total Bayar : Rp.{{ thousandSeparator(invoice_data.amount) }}
                 </div>
               </div>
             </VCardText>
