@@ -2,10 +2,13 @@
 import instalation_image from "@/assets/images/illustrations/instalation.png";
 import payment_image from "@/assets/images/illustrations/payment.png";
 import registration_image from "@/assets/images/illustrations/registration-form.png";
+import { IObjectKeys } from "@/models";
 import { thousandSeparator } from "@/modules";
 import CheckCustomerDataModal from "@/page-components/CheckCustomerDataModal.vue";
+import EmptyAlert from "@/page-components/EmptyAlert.vue";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import PrivacyModal from "@/page-components/PrivacyModal.vue";
+import SkeletonLoader from "@/page-components/SkeletonLoader.vue";
 import TermConditionModal from "@/page-components/TermConditionModal.vue";
 import axiosIns from "@/plugins/axios";
 import { useThemeConfig } from "@core/composable/useThemeConfig";
@@ -18,6 +21,7 @@ const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
 const { width: windowWidth } = useWindowSize();
 const today = new Date();
 const is_drawer_open = ref(false);
+const is_package_loading = ref(true);
 const current_nav = ref("#home");
 const navigations = ref([
   {
@@ -146,62 +150,7 @@ const our_features = ref([
     ],
   },
 ]);
-const packages = ref([
-  {
-    name: "Hemat",
-    bandwidth: "7 Mbps",
-    price: 140000,
-    pricing_type: "Bulan",
-    instalation_price: 100000,
-    max_connected_device: 2,
-    is_popular: false,
-  },
-  {
-    name: "Medium",
-    bandwidth: "20 Mbps",
-    price: 240000,
-    pricing_type: "Bulan",
-    instalation_price: 0,
-    max_connected_device: 5,
-    is_popular: true,
-  },
-  {
-    name: "Boost",
-    bandwidth: "50 Mbps",
-    price: 140000,
-    pricing_type: "Bulan",
-    instalation_price: 0,
-    max_connected_device: 10,
-    is_popular: false,
-  },
-  {
-    name: "Speed",
-    bandwidth: "15 Mbps",
-    price: 175000,
-    pricing_type: "Bulan",
-    instalation_price: 0,
-    max_connected_device: 4,
-    is_popular: false,
-  },
-  {
-    name: "November Sale Hemat",
-    bandwidth: "8 Mbps",
-    price: 140000,
-    pricing_type: "Bulan",
-    instalation_price: 0,
-    max_connected_device: 2,
-    is_popular: false,
-  },
-  {
-    name: "November Sale Boost",
-    bandwidth: "30 Mbps",
-    price: 250000,
-    pricing_type: "Bulan",
-    instalation_price: 0,
-    max_connected_device: 6,
-    is_popular: false,
-  },
-]);
+const package_data = ref<any[]>([]);
 const coverage_area_maps_data = ref([]);
 
 // function
@@ -209,6 +158,25 @@ const getCoverageAreaData = (is_refresh: boolean = false) => {
   axiosIns.get(`coverage-area?is_maps_only=${true}`).then((res) => {
     coverage_area_maps_data.value = res?.data?.coverage_area_maps_data || [];
   });
+};
+const getPackageData = () => {
+  is_package_loading.value = true;
+  const params: IObjectKeys = {
+    is_displayed: 1,
+    page: 1,
+    items: 100,
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns
+    .get(`package?${query}`)
+    .then((res) => {
+      package_data.value = res?.data?.package_data || [];
+    })
+    .finally(() => {
+      is_package_loading.value = false;
+    });
 };
 const isElementInViewport = (el: any) => {
   if (!el) return false;
@@ -257,7 +225,7 @@ window.onscroll = function () {
     removeAnimationClass("subscribe-item-1", "slide-in-bottom");
     removeAnimationClass("subscribe-item-2", "slide-in-right");
     removeAnimationClass("area-item", "fade-in");
-    for (let i in packages.value) {
+    for (let i in package_data.value) {
       removeAnimationClass(`package-item${i}`, "scale-up");
     }
   }
@@ -268,13 +236,14 @@ window.onscroll = function () {
   addAnimationClass("subscribe-title", "subscribe-item-1", "slide-in-bottom");
   addAnimationClass("subscribe-title", "subscribe-item-2", "slide-in-right");
   addAnimationClass("area-title", "area-item", "fade-in");
-  for (let i in packages.value) {
+  for (let i in package_data.value) {
     addAnimationClass("package-title", `package-item${i}`, "scale-up");
   }
 };
 
 onMounted(() => {
   theme.value = "light";
+  getPackageData();
   getCoverageAreaData();
 });
 </script>
@@ -412,7 +381,13 @@ onMounted(() => {
         <VDivider thickness="2" />
         <div class="mt-2 d-flex flex-column gap-2">
           <a v-for="item in navigations" :href="item.to">
-            <VBtn block variant="tonal" size="small" :prepend-icon="item.icon">
+            <VBtn
+              block
+              variant="tonal"
+              size="small"
+              :color="current_nav === item.to ? 'primary' : 'dark'"
+              :prepend-icon="item.icon"
+            >
               {{ item.name }}
             </VBtn>
           </a>
@@ -649,79 +624,106 @@ onMounted(() => {
             Internet Tanpa Batas, Koneksi Tanpa Hambatan
           </div>
         </div>
-        <div class="d-flex gap-5 flex-wrap justify-center">
-          <VCard
-            v-for="(item, index) in packages"
-            :id="'package-item' + index"
-            width="350"
-            color="#16243d"
-            class="hover-scale-up cursor-pointer text-white"
-          >
-            <VCardItem>
-              <template #title>
-                <span class="font-weight-black fsm-16 text-white">
-                  Paket {{ item.name }}
-                </span>
-              </template>
-              <div class="fs-16 fsm-12 mt-3">
-                Rp{{ thousandSeparator(item.price) }}
-              </div>
-              <div class="mt-3">
-                <VChip
-                  color="primary"
-                  variant="tonal"
-                  class="font-weight-black fsm-10"
-                >
-                  Kecepatan Hingga {{ item.bandwidth }}
-                </VChip>
-              </div>
-            </VCardItem>
-            <VDivider></VDivider>
-            <VCardText>
-              <div class="d-flex gap-2 justify-space-between align-center">
-                <div class="fs-14 fsm-10 d-flex align-center gap-1">
-                  <VIcon icon="tabler-tool" /> Biaya Pasang:
-                </div>
-                <div class="fs-16 font-weight-black">
-                  <VChip v-if="item.instalation_price" class="fsm-12">
-                    Rp{{ thousandSeparator(item.instalation_price) }}
-                  </VChip>
-                  <div v-else class="font-weight-black fsm-12">GRATIS ✅</div>
-                </div>
-              </div>
-              <div class="mt-5 d-flex gap-2 justify-space-between align-center">
-                <div class="fs-14 fsm-10 d-flex align-center gap-1">
-                  <VIcon icon="tabler-wallet" /> Mulai Dari:
-                </div>
-                <div class="fs-16 font-weight-black">
-                  <VChip class="fsm-12">
-                    Rp{{ thousandSeparator(item.price) }}/{{
-                      item.pricing_type
-                    }}
-                  </VChip>
-                </div>
-              </div>
-              <div class="mt-5 d-flex gap-2 justify-space-between align-center">
-                <div class="fs-14 fsm-10 d-flex align-center gap-1">
-                  <VIcon icon="tabler-router" /> Perangkat:
-                </div>
-                <div class="fs-16 font-weight-black">
-                  <VChip class="fsm-12">
-                    1-{{ item.max_connected_device }} Perangkat
-                  </VChip>
-                </div>
-              </div>
-              <VBtn
-                block
-                rounded="pill"
-                size="small"
-                class="mt-10"
-                :to="{ name: 'register' }"
-              >
-                Daftar Sekarang
-              </VBtn>
-            </VCardText>
+        <div
+          v-if="is_package_loading"
+          class="d-flex gap-6 flex-wrap justify-center"
+        >
+          <VCard v-for="item in 3">
+            <SkeletonLoader height="450px" width="350px" />
           </VCard>
+        </div>
+        <div v-else>
+          <EmptyAlert
+            v-if="package_data.length === 0"
+            title="Mohon Maaf, Untuk Saat Ini Paket Sedang Tidak Tersedia"
+          />
+          <div v-else class="d-flex gap-6 flex-wrap justify-center">
+            <VCard
+              v-for="(item, index) in package_data"
+              :id="'package-item' + index"
+              width="350"
+              class="hover-scale-up cursor-pointer d-flex flex-column"
+            >
+              <VCardItem>
+                <template #title>
+                  <span class="font-weight-black fsm-18">
+                    Paket {{ item.name }}
+                  </span>
+                </template>
+                <div class="fs-16 fsm-14 mt-3">
+                  Rp{{ thousandSeparator(item?.price?.regular || 0) }}
+                </div>
+                <div class="mt-3">
+                  <VChip
+                    color="warning"
+                    variant="tonal"
+                    class="font-weight-black fsm-12"
+                  >
+                    Kecepatan Hingga {{ item.bandwidth }}Mbps
+                  </VChip>
+                </div>
+              </VCardItem>
+              <VDivider></VDivider>
+              <div class="px-6 py-6 d-flex flex-column gap-5 flex-grow-1">
+                <div>
+                  <div class="d-flex gap-2 justify-space-between align-center">
+                    <div class="fs-14 fsm-12 d-flex align-center gap-1">
+                      <VIcon icon="tabler-tool" /> Biaya Pasang:
+                    </div>
+                    <div class="fs-16 font-weight-black">
+                      <VChip v-if="item.instalation_cost" class="fsm-12">
+                        Rp{{ thousandSeparator(item.instalation_cost) }}
+                      </VChip>
+                      <div v-else class="font-weight-black fsm-12">
+                        GRATIS ✅
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="mt-5 d-flex gap-2 justify-space-between align-center"
+                  >
+                    <div class="fs-14 fsm-12 d-flex align-center gap-1">
+                      <VIcon icon="tabler-wallet" /> Mulai Dari:
+                    </div>
+                    <div class="fs-16 font-weight-black">
+                      <VChip class="fsm-12">
+                        Rp{{ thousandSeparator(item?.price?.regular) }}/Bulan
+                      </VChip>
+                    </div>
+                  </div>
+                  <div
+                    class="mt-5 d-flex gap-2 justify-space-between align-center"
+                  >
+                    <div class="fs-14 fsm-12 d-flex align-center gap-1">
+                      <VIcon icon="tabler-router" /> Perangkat:
+                    </div>
+                    <div class="fs-16 font-weight-black">
+                      <VChip v-if="item.maximum_device" class="fsm-12">
+                        1-{{ item.maximum_device }} Perangkat
+                      </VChip>
+                      <VChip v-else class="fsm-12"> Tidak Terbatas </VChip>
+                    </div>
+                  </div>
+                  <VCard v-if="item.description" variant="tonal" class="mt-5">
+                    <VCardText class="px-3 py-3 fs-12 text-center">
+                      <div v-html="item.description"></div>
+                    </VCardText>
+                  </VCard>
+                </div>
+                <div class="mt-auto">
+                  <VBtn
+                    block
+                    rounded="pill"
+                    size="small"
+                    color="success"
+                    :to="{ name: 'register' }"
+                  >
+                    Daftar Sekarang
+                  </VBtn>
+                </div>
+              </div>
+            </VCard>
+          </div>
         </div>
       </VContainer>
     </div>
