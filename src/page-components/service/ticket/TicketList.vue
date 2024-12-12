@@ -23,6 +23,9 @@ const filter_data = ref({
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const options = ref({
+  user: [],
+});
 const pagination = ref({
   page: 1,
   items: 10,
@@ -49,21 +52,18 @@ const ticket_table_data = ref({
       key: "reporter",
       th_class: "text-left",
       td_class: "text-left",
-      width: "20%",
     },
     {
       title: "PENERIMA TUGAS",
       key: "assignee",
       th_class: "text-left",
       td_class: "text-left",
-      width: "20%",
     },
     {
       title: "DESKRIPSI",
       key: "description",
       th_class: "text-left",
       td_class: "text-left",
-      width: "20%",
     },
     {
       title: "AKSI",
@@ -136,10 +136,31 @@ const deleteTicket = async (id: string, name: string) => {
       });
   }
 };
+const getUserOptions = () => {
+  axiosIns.get("options/user").then((res) => {
+    const temp = res?.data?.user_options || [];
+    options.value.user = temp.filter((el: any) => el.role != 99);
+  });
+};
+const updateTicket = (customer_data: any) => {
+  axiosIns
+    .put(`ticket/update/${customer_data._id}`, {
+      data: customer_data,
+    })
+    .then(() => {
+      showActionResult();
+      getTicketData();
+    })
+    .catch((err) => {
+      const message = errorMessage(err);
+      showActionResult(undefined, "error", message);
+    });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
   getTicketData();
+  getUserOptions();
 });
 </script>
 <template>
@@ -219,9 +240,22 @@ onMounted(() => {
           </VChip>
         </template>
         <template #cell-assignee="{ data }">
-          <VChip variant="outlined" color="warning" prepend-icon="tabler-user">
+          <VChip
+            v-if="data.assignee"
+            variant="outlined"
+            color="warning"
+            prepend-icon="tabler-user"
+          >
             {{ data.assignee }}
           </VChip>
+          <div v-else style="min-width: 12rem">
+            <VAutocomplete
+              v-model="data.id_assignee"
+              :items="options.user"
+              label="Penerima Tugas"
+              @update:model-value="updateTicket(data)"
+            />
+          </div>
         </template>
         <template #cell-description="{ data }">
           <div class="d-flex flex-column gap-2 fs-15">

@@ -18,7 +18,11 @@ router.beforeEach((to, from, next) => {
         setTimeout(() => {
           window.scrollTo(0, 0);
         }, 100);
-        if (to.name !== "login" && to.name !== "index") {
+        if (
+          to.name !== "login" &&
+          to.name !== "index" &&
+          to.name !== "register"
+        ) {
           store.loadingHandler(true);
           axiosIns
             .get("auth/verify")

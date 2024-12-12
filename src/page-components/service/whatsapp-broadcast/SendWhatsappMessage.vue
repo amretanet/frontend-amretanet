@@ -3,7 +3,7 @@ import {
   phoneNumberValidator,
   requiredValidator,
 } from "@/@core/utils/validators";
-import { errorMessage, showActionResult } from "@/modules";
+import { errorMessage, roleFormatter, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
@@ -61,6 +61,7 @@ const options = ref({
       value: "single",
     },
   ],
+  contact: [],
 });
 const message_form = ref<VForm>();
 const message_data = ref({
@@ -72,17 +73,22 @@ const message_data = ref({
 });
 
 // FUNCTION
-const getMessageTemplate = () => {
-  axiosIns.get("whatsapp-message/template").then((res) => {
-    template_data.value.activate = res?.data?.template_data?.activate || "";
-    template_data.value.billing = res?.data?.template_data?.billing || "";
-    template_data.value.isolir = res?.data?.template_data?.isolir || "";
-    template_data.value.overdue = res?.data?.template_data?.overdue || "";
-    template_data.value.paid = res?.data?.template_data?.paid || "";
-    template_data.value.register = res?.data?.template_data?.register || "";
-    template_data.value.reminder = res?.data?.template_data?.reminder || "";
+const getContactOptions = () => {
+  axiosIns.get("options/whatsapp-contact").then((res) => {
+    options.value.contact = res?.data?.contact_options || [];
   });
 };
+// const getMessageTemplate = () => {
+//   axiosIns.get("whatsapp-message/template").then((res) => {
+//     template_data.value.activate = res?.data?.template_data?.activate || "";
+//     template_data.value.billing = res?.data?.template_data?.billing || "";
+//     template_data.value.isolir = res?.data?.template_data?.isolir || "";
+//     template_data.value.overdue = res?.data?.template_data?.overdue || "";
+//     template_data.value.paid = res?.data?.template_data?.paid || "";
+//     template_data.value.register = res?.data?.template_data?.register || "";
+//     template_data.value.reminder = res?.data?.template_data?.reminder || "";
+//   });
+// };
 const selectTemplate = (value: string) => {
   if (current_template.value === value) {
     current_template.value = null;
@@ -96,9 +102,31 @@ const sendMessage = () => {
   message_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
+      const domain = import.meta.env.VITE_API_DOMAIN;
+      let url = "";
+      let params = {};
+      if (message_data.value.type == "single") {
+        url = `${domain}/whatsapp-message/single/send`;
+        params = {
+          destination: message_data.value.single_to,
+          title: message_data.value.title,
+          message: message_data.value.message,
+        };
+      } else {
+        const selected_options: any = options.value.contact.find(
+          (el: any) => el.value === message_data.value.broadcast_to
+        );
+        url = `${domain}/whatsapp-message/broadcast/send`;
+        params = {
+          destination: message_data.value.broadcast_to,
+          title: message_data.value.title,
+          group: selected_options?.group || null,
+          message: message_data.value.message,
+        };
+      }
       axiosIns
-        .post("whatsapp-message/send-message", {
-          data: message_data.value,
+        .post(url, {
+          data: params,
         })
         .then(() => {
           showActionResult(undefined, undefined, "Pesan Telah Dikirimkan!");
@@ -116,7 +144,8 @@ const sendMessage = () => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
-  getMessageTemplate();
+  // getMessageTemplate();
+  getContactOptions();
 });
 </script>
 <template>
@@ -143,8 +172,101 @@ onMounted(() => {
               v-if="message_data.type === 'broadcast'"
               v-model="message_data.broadcast_to"
               label="Tujuan Pesan"
+              :items="options.contact"
               :rules="[requiredValidator]"
-            />
+            >
+              <template v-slot:selection="{ props, item }">
+                <span class="fs-14">
+                  <span v-if="item?.raw?.group == 'user'">
+                    Semua
+                    <strong>
+                      {{
+                        item?.raw?.value == "all"
+                          ? "Kontak"
+                          : roleFormatter(item?.raw?.title).type
+                      }}
+                    </strong>
+                  </span>
+                  <span v-else-if="item?.raw?.group == 'package'">
+                    Pelanggan Dengan Paket
+                    <strong> {{ item?.raw?.title }} </strong>
+                  </span>
+                  <span v-else-if="item?.raw?.group == 'coverage_area'">
+                    Pelanggan Di Wilayah
+                    <strong> {{ item?.raw?.title }} </strong>
+                  </span>
+                  <span v-else-if="item?.raw?.group == 'odp'">
+                    Pelanggan Di ODP
+                    <strong> {{ item?.raw?.title }} </strong>
+                  </span>
+                </span>
+              </template>
+              <template v-slot:item="{ props, item }">
+                <VListItem v-bind="props" class="px-2">
+                  <template #title>
+                    <span class="fs-14">
+                      <span v-if="item?.raw?.group == 'user'">
+                        Semua
+                        <strong>
+                          {{
+                            item?.raw?.value == "all"
+                              ? "Kontak"
+                              : roleFormatter(item?.raw?.title).type
+                          }}
+                        </strong>
+                      </span>
+                      <span v-else-if="item?.raw?.group == 'package'">
+                        Pelanggan Dengan Paket
+                        <strong> {{ item?.raw?.title }} </strong>
+                      </span>
+                      <span v-else-if="item?.raw?.group == 'coverage_area'">
+                        Pelanggan Di Wilayah
+                        <strong> {{ item?.raw?.title }} </strong>
+                      </span>
+                      <span v-else-if="item?.raw?.group == 'odp'">
+                        Pelanggan Di ODP
+                        <strong> {{ item?.raw?.title }} </strong>
+                      </span>
+                      ({{ item?.raw?.count }} Orang)
+                    </span>
+                  </template>
+                  <template #subtitle>
+                    <VChip
+                      v-if="item?.raw?.group == 'user'"
+                      size="x-small"
+                      variant="flat"
+                      color="primary"
+                    >
+                      Berdasarkan Pengguna
+                    </VChip>
+                    <VChip
+                      v-if="item?.raw?.group == 'package'"
+                      size="x-small"
+                      variant="flat"
+                      color="warning"
+                    >
+                      Berdasarkan Paket
+                    </VChip>
+                    <VChip
+                      v-if="item?.raw?.group == 'coverage_area'"
+                      size="x-small"
+                      variant="flat"
+                      color="success"
+                    >
+                      Berdasarkan Wilayah
+                    </VChip>
+                    <VChip
+                      v-if="item?.raw?.group == 'odp'"
+                      size="x-small"
+                      variant="flat"
+                      color="info"
+                    >
+                      Berdasarkan ODP
+                    </VChip>
+                  </template>
+                </VListItem>
+              </template>
+            </VAutocomplete>
             <VTextField
               v-else
               v-model="message_data.single_to"
@@ -161,7 +283,7 @@ onMounted(() => {
               :rules="[requiredValidator]"
             />
           </VCol>
-          <VCol cols="12">
+          <!-- <VCol cols="12">
             <div class="d-flex flex-wrap gap-2 justify-space-between">
               <VBtn
                 v-for="item in template_shortcut"
@@ -172,7 +294,7 @@ onMounted(() => {
                 Pesan {{ item.title }}
               </VBtn>
             </div>
-          </VCol>
+          </VCol> -->
           <VCol cols="12">
             <div>
               <VTextarea

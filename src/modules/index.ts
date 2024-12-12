@@ -229,16 +229,16 @@ export const ticketStatusFormatter = (status: string) => {
     type: "",
     color: "",
   };
-  if (status == "open") {
+  if (status == "OPEN") {
     temp.type = "Ditugaskan";
     temp.color = "primary";
-  } else if (status == "pending") {
+  } else if (status == "PENDING") {
     temp.type = "Menunggu";
     temp.color = "dark";
-  } else if (status == "on_progress") {
+  } else if (status == "ON_PROGRESS") {
     temp.type = "Dikerjakan";
     temp.color = "warning";
-  } else if (status == "closed") {
+  } else if (status == "CLOSED") {
     temp.type = "Selesai";
     temp.color = "success";
   }

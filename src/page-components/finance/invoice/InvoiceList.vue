@@ -179,6 +179,16 @@ const syncInvoice = async () => {
       });
   }
 };
+const printInvoice = async (id: string, type: string) => {
+  const domain = import.meta.env.VITE_API_DOMAIN;
+  if (type === "A4") {
+    const url = `${domain}/invoice/pdf/${id}`;
+    window.open(url);
+  } else if (type === "THERMAL") {
+    const url = `${domain}/invoice/thermal/${id}`;
+    window.open(url);
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -270,6 +280,7 @@ onMounted(() => {
                       variant="outlined"
                       color="dark"
                       prepend-icon="mdi-file"
+                      @click="printInvoice(data._id, 'A4')"
                     >
                       A4
                     </VBtn>
@@ -286,6 +297,7 @@ onMounted(() => {
                       variant="outlined"
                       color="dark"
                       prepend-icon="mdi-file"
+                      @click="printInvoice(data._id, 'THERMAL')"
                     >
                       THERMAL
                     </VBtn>

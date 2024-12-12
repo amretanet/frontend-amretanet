@@ -144,7 +144,7 @@ watch(is_showing_modal, () => {
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_assignee"
-                  :items="options.user.filter((el:any)=>el.role ==5)"
+                  :items="options.user.filter((el:any)=>el.role !==99)"
                   :rules="[requiredValidator]"
                   clearable
                 >
