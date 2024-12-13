@@ -6,7 +6,6 @@ import {
   dateFormatterID,
   errorMessage,
   invoiceStatusFormatter,
-  roleFormatter,
   setPaginationLength,
   showActionResult,
   thousandSeparator,
@@ -86,7 +85,6 @@ const invoice_table_data = ref({
       key: "action",
       th_class: "text-center",
       td_class: "text-center",
-      width: "150px",
     },
   ],
   body: [],
@@ -149,6 +147,107 @@ const deleteInvoice = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      });
+  }
+};
+const activateCustomer = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Aktifkan Pengguna?",
+    `${name} akan diaktifkan ulang`,
+    "Ya, Aktifkan!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      encoded_id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`invoice/activate-customer?${query}`)
+      .then(() => {
+        showActionResult(undefined, undefined, "Pengguna Telah Diaktifkan!");
+        getInvoiceData();
+      })
+      .catch(() => {
+        showActionResult(undefined, "error", "Gagal Aktifkan Pengguna!");
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
+const isolirCustomer = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Isolir Pengguna?",
+    `${name} akan diisolir`,
+    "Ya, Isolir!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      encoded_id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`invoice/isolir-customer?${query}`)
+      .then(() => {
+        showActionResult(undefined, undefined, "Pengguna Telah Diisolir!");
+        getInvoiceData();
+      })
+      .catch(() => {
+        showActionResult(undefined, "error", "Gagal Isolir Pengguna!");
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
+const payOffInvoice = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Lunasi Tagihan Pengguna?",
+    `Tagihan ${name} akan dilunasi otomatis`,
+    "Ya, Lunasi!"
+  );
+  if (is_confirmed) {
+    console.log("confirmed");
+  }
+};
+const sendReminderMessage = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Kirim Whatsapp Pengingat?",
+    `Pesan whatsapp pengingat kepada ${name} akan dikirimkan`,
+    "Ya, Kirimkan!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      encoded_id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`invoice/whatsapp-reminder?${query}`)
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          "Pesan Whatsapp Pengingat Telah Dikirimkan!"
+        );
+      })
+      .catch(() => {
+        showActionResult(
+          undefined,
+          "error",
+          "Pesan Whatsapp Gagal Dikirimkan!"
+        );
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };
@@ -269,47 +368,14 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <VBtn size="35" color="warning">
-              <VIcon icon="mdi-printer" />
-              <VTooltip activator="parent"> Cetak Invoice </VTooltip>
-              <VMenu activator="parent">
-                <VCard>
-                  <VCardText class="d-flex gap-2 px-2 py-2">
-                    <VBtn
-                      size="small"
-                      variant="outlined"
-                      color="dark"
-                      prepend-icon="mdi-file"
-                      @click="printInvoice(data._id, 'A4')"
-                    >
-                      A4
-                    </VBtn>
-                    <VBtn
-                      size="small"
-                      variant="outlined"
-                      color="dark"
-                      prepend-icon="mdi-file"
-                    >
-                      58MM
-                    </VBtn>
-                    <VBtn
-                      size="small"
-                      variant="outlined"
-                      color="dark"
-                      prepend-icon="mdi-file"
-                      @click="printInvoice(data._id, 'THERMAL')"
-                    >
-                      THERMAL
-                    </VBtn>
-                  </VCardText>
-                </VCard>
-              </VMenu>
-            </VBtn>
+            <!-- DETAIL BUTTON -->
             <InvoiceDetailModal :data="data" />
+            <!-- EDIT BUTTON -->
             <VBtn size="35" color="info">
               <VIcon icon="tabler-edit" />
               <VTooltip activator="parent"> Edit </VTooltip>
             </VBtn>
+            <!-- DELETE BUTTON -->
             <VBtn
               size="35"
               color="error"
@@ -317,6 +383,102 @@ onMounted(() => {
             >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
+            </VBtn>
+            <!-- MORE BUTTON -->
+            <VBtn size="35" color="primary">
+              <VIcon icon="mdi-dots-vertical" />
+              <VTooltip activator="parent"> Lainnya </VTooltip>
+              <VMenu activator="parent">
+                <VCard>
+                  <VCardText class="d-flex flex-column gap-2 px-2 py-2">
+                    <!-- PRINT BUTTON -->
+                    <VBtn
+                      size="small"
+                      color="warning"
+                      block
+                      prepend-icon="mdi-printer"
+                    >
+                      Cetak Invoice
+                      <VMenu activator="parent">
+                        <VCard>
+                          <VCardText class="d-flex gap-2 px-2 py-2">
+                            <VBtn
+                              size="small"
+                              variant="outlined"
+                              color="dark"
+                              prepend-icon="mdi-file"
+                              @click="printInvoice(data._id, 'A4')"
+                            >
+                              A4
+                            </VBtn>
+                            <VBtn
+                              size="small"
+                              variant="outlined"
+                              color="dark"
+                              prepend-icon="mdi-file"
+                            >
+                              58MM
+                            </VBtn>
+                            <VBtn
+                              size="small"
+                              variant="outlined"
+                              color="dark"
+                              prepend-icon="mdi-file"
+                              @click="printInvoice(data._id, 'THERMAL')"
+                            >
+                              THERMAL
+                            </VBtn>
+                          </VCardText>
+                        </VCard>
+                      </VMenu>
+                    </VBtn>
+                    <!-- PAY BUTTON -->
+                    <VBtn
+                      v-if="data?.status !== 'PAID'"
+                      size="small"
+                      color="info"
+                      block
+                      prepend-icon="tabler-premium-rights"
+                      @click="payOffInvoice(data._id, data.name)"
+                    >
+                      Lunasi Tagihan
+                    </VBtn>
+                    <!-- REMINDER BUTTON -->
+                    <VBtn
+                      v-if="data?.status === 'UNPAID'"
+                      size="small"
+                      color="success"
+                      block
+                      prepend-icon="mdi-whatsapp"
+                      @click="sendReminderMessage(data._id, data.name)"
+                    >
+                      Ingatkan Pengguna
+                    </VBtn>
+                    <!-- ACTIVATE BUTTON -->
+                    <VBtn
+                      v-if="data?.customer?.status !== 1"
+                      size="small"
+                      color="primary"
+                      block
+                      prepend-icon="tabler-circle-check"
+                      @click="activateCustomer(data._id, data.name)"
+                    >
+                      Aktifkan
+                    </VBtn>
+                    <!-- ISOLIR BUTTON -->
+                    <VBtn
+                      v-if="data?.customer?.status === 1"
+                      size="small"
+                      color="secondary"
+                      block
+                      prepend-icon="tabler-circle-half-vertical"
+                      @click="isolirCustomer(data._id, data.name)"
+                    >
+                      Isolir
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VMenu>
             </VBtn>
           </div>
         </template>
