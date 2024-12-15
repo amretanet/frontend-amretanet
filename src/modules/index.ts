@@ -253,12 +253,9 @@ export const invoiceStatusFormatter = (status: string) => {
     temp.type = "BELUM DIBAYAR";
     temp.color = "error";
   } else if (status == "PAID") {
-    temp.type = "TELAH DIBAYAR";
+    temp.type = "SUDAH DIBAYAR";
     temp.color = "success";
   } else if (status == "PENDING") {
-    temp.type = "MENUNGGU PEMBAYARAN";
-    temp.color = "dark";
-  } else if (status == "CONFIRM") {
     temp.type = "MENUNGGU KONFIRMASI";
     temp.color = "warning";
   }

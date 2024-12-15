@@ -76,8 +76,7 @@ const uploadImage = async (file: any, type: string) => {
       },
     });
     return res?.data?.file_url || null;
-  } catch (error) {
-    console.error("Image upload failed:", error);
+  } catch (err) {
     return null;
   }
 };

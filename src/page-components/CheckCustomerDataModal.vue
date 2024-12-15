@@ -14,6 +14,8 @@ import { VForm } from "vuetify/components";
 import { requiredValidator } from "@/@core/utils/validators";
 import HorizontalTextFormat from "./HorizontalTextFormat.vue";
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
+import { IObjectKeys } from "@/models";
+import { payment_method_options } from "@/modules/options";
 
 // VARIABLE
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
@@ -21,17 +23,27 @@ const { width: windowWidth } = useWindowSize();
 const check_form = ref<VForm>();
 const key = ref("");
 const customer_data = ref<any>(null);
-const payment_data = ref({
+const automatic_payment_form = ref<VForm>();
+const automatic_payment_data = ref({
   channel: null,
 });
+const manual_payment_form = ref<VForm>();
+const manual_payment_data = ref({
+  file: [] as File[],
+  description: "",
+  method: null,
+});
 const is_payment_error = ref(false);
+const is_confirm_error = ref(false);
 const is_payment = ref(false);
 const is_checked = ref(false);
 const is_loading = ref(false);
 const is_showing_modal = ref(false);
 const is_payment_on_creating = ref(false);
+const is_confirm_on_creating = ref(false);
 const options = ref({
   payment_channel: [],
+  payment_method: payment_method_options,
 });
 
 // FUNCTION
@@ -61,34 +73,110 @@ const checkCustomerData = () => {
   });
 };
 const createPayment = () => {
-  const payload = {
-    id_invoice: customer_data.value?.invoice?._id || null,
-    method: payment_data.value.channel,
-  };
-  if (!payload.id_invoice || !payload.method) {
-    return;
-  }
-  is_payment_error.value = false;
-  is_payment_on_creating.value = true;
-  axiosIns
-    .post("payment/add", {
-      data: payload,
-    })
-    .then((res) => {
-      const checkout_url = res?.data?.checkout_url || null;
-      if (!checkout_url) {
-        is_payment_error.value = true;
+  automatic_payment_form.value?.validate().then((form) => {
+    if (form.valid) {
+      const payload = {
+        id_invoice: customer_data.value?.invoice?._id || null,
+        method: automatic_payment_data.value.channel,
+      };
+      if (!payload.id_invoice || !payload.method) {
         return;
       }
-      window.open(checkout_url);
-    })
-    .catch((err) => {
-      console.log(err);
-      is_payment_error.value = true;
-    })
-    .finally(() => {
-      is_payment_on_creating.value = false;
+      is_payment_error.value = false;
+      is_payment_on_creating.value = true;
+      axiosIns
+        .post("payment/virtual-account/add", {
+          data: payload,
+        })
+        .then((res) => {
+          const checkout_url = res?.data?.checkout_url || null;
+          if (!checkout_url) {
+            is_payment_error.value = true;
+            return;
+          }
+          window.open(checkout_url);
+        })
+        .catch((err) => {
+          console.log(err);
+          is_payment_error.value = true;
+        })
+        .finally(() => {
+          is_payment_on_creating.value = false;
+        });
+    }
+  });
+};
+const printInvoice = (id: string) => {
+  const domain = import.meta.env.VITE_API_DOMAIN;
+  const params: IObjectKeys = {
+    id: btoa(id),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  const url = `${domain}/invoice/pdf?${query}`;
+  window.open(url);
+};
+const uploadImage = async (file: any, type: string) => {
+  let form_data = new FormData();
+  form_data.append("file", file);
+
+  try {
+    const res = await axiosIns.post(`utility/upload-image/${type}`, form_data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
+    return res?.data?.file_url || null;
+  } catch (err) {
+    return null;
+  }
+};
+const confirmPayment = async () => {
+  try {
+    is_confirm_on_creating.value = true;
+    is_confirm_error.value = false;
+    const image_url = await uploadImage(
+      manual_payment_data.value.file[0],
+      "payment"
+    );
+    if (!image_url) {
+      is_confirm_error.value = true;
+      return;
+    }
+    const params = {
+      image_url: image_url,
+      description: manual_payment_data.value.description,
+      method: manual_payment_data.value.method,
+    };
+    axiosIns
+      .put(`payment/request-confirm/${customer_data.value.invoice?._id}`, {
+        data: params,
+      })
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          "Konfirmasi Pembayaran Telah Dikirimkan!"
+        );
+        is_showing_modal.value = false;
+      })
+      .catch(() => {
+        is_confirm_error.value = true;
+      })
+      .finally(() => {
+        is_confirm_on_creating.value = false;
+      });
+  } catch (error) {
+    is_confirm_error.value = true;
+  }
+};
+const validateConfirmForm = async () => {
+  manual_payment_form.value?.validate().then((form) => {
+    if (form.valid) {
+      confirmPayment();
+    }
+  });
 };
 
 // LIFECYCLE HOOKS
@@ -96,10 +184,12 @@ watch(is_showing_modal, () => {
   if (is_showing_modal) {
     getPaymentChannel();
   }
-  payment_data.value.channel = null;
+  automatic_payment_data.value.channel = null;
   is_checked.value = false;
   is_payment.value = false;
   check_form.value?.reset();
+  automatic_payment_form.value?.reset();
+  manual_payment_form.value?.reset();
 });
 </script>
 <template>
@@ -230,10 +320,12 @@ watch(is_showing_modal, () => {
                     block
                     color="warning"
                     prepend-icon="mdi-printer"
+                    @click="printInvoice(customer_data.invoice._id)"
                   >
                     Cetak Invoice
                   </VBtn>
                   <VBtn
+                    v-if="customer_data?.invoice?.status === 'UNPAID'"
                     size="small"
                     block
                     color="primary"
@@ -252,6 +344,7 @@ watch(is_showing_modal, () => {
           </VCardText>
           <div v-if="is_payment">
             <div class="text-center font-weight-black">-- PEMBAYARAN --</div>
+            <!-- AUTOMATIC PAYMENT -->
             <VCardText class="fade-in">
               <VCard variant="tonal">
                 <VCardItem>
@@ -259,42 +352,118 @@ watch(is_showing_modal, () => {
                     <span class="fs-18"> Pembayaran Otomatis</span>
                   </template>
                 </VCardItem>
-                <VCardText class="d-flex gap-2 flex-column">
-                  <VAlert v-if="is_payment_error" variant="tonal" color="error">
-                    Mohon Maaf, Pembayaran Belum Dapat Dilakukan!
-                  </VAlert>
-                  <VAutocomplete
-                    v-model="payment_data.channel"
-                    label="Metode Pembayaran"
-                    :items="options.payment_channel"
-                    item-title="name"
-                    item-value="code"
-                  />
-                  <div class="d-flex justify-end gap-2">
-                    <VBtn
-                      size="small"
+                <VForm
+                  ref="automatic_payment_form"
+                  @submit.prevent="createPayment()"
+                >
+                  <VCardText class="d-flex gap-2 flex-column">
+                    <VAlert
+                      v-if="is_payment_error"
+                      variant="tonal"
                       color="error"
-                      @click="is_payment = false"
                     >
-                      Batal
-                    </VBtn>
-                    <ProcessButton
-                      text="Buat Pembayaran"
-                      :disabled="!payment_data.channel"
-                      :is_on_process="is_payment_on_creating"
-                      @click="createPayment()"
+                      Mohon Maaf, Pembayaran Belum Dapat Dilakukan!
+                    </VAlert>
+                    <VAutocomplete
+                      v-model="automatic_payment_data.channel"
+                      label="Metode Pembayaran"
+                      :items="options.payment_channel"
+                      item-title="name"
+                      item-value="code"
+                      :rules="[requiredValidator]"
                     />
-                  </div>
-                </VCardText>
+                    <div class="d-flex justify-end gap-2">
+                      <VBtn
+                        size="small"
+                        color="error"
+                        @click="is_payment = false"
+                      >
+                        Batal
+                      </VBtn>
+                      <ProcessButton
+                        text="Buat Pembayaran"
+                        color="primary"
+                        :is_on_process="is_payment_on_creating"
+                        type="submit"
+                      />
+                    </div>
+                  </VCardText>
+                </VForm>
               </VCard>
             </VCardText>
+            <!-- MANUAL PAYMENT -->
             <VCardText class="fade-in">
               <VCard variant="tonal">
                 <VCardItem>
                   <template #title>
-                    <span class="fs-18">Pembayaran QRIS Manual</span>
+                    <span class="fs-18"> Konfirmasi Pembayaran Manual </span>
                   </template>
                 </VCardItem>
+                <VForm
+                  ref="manual_payment_form"
+                  @submit.prevent="validateConfirmForm()"
+                >
+                  <VCardText class="d-flex gap-2 flex-column">
+                    <VAlert
+                      v-if="is_confirm_error"
+                      variant="tonal"
+                      color="error"
+                    >
+                      Mohon Maaf, Gagal Melakukan Konfirmasi Pembayaran!
+                    </VAlert>
+                    <VSelect
+                      v-model="manual_payment_data.method"
+                      :items="
+                        options.payment_method.filter((el) =>
+                          ['TRANSFER', 'QRIS'].includes(el.value)
+                        )
+                      "
+                      :rules="[requiredValidator]"
+                    >
+                      <template #label>
+                        Metode Pembayaran <span class="text-error">*</span>
+                      </template>
+                    </VSelect>
+                    <VFileInput
+                      v-model="manual_payment_data.file"
+                      accept="image/*"
+                      :rules="[requiredValidator]"
+                    >
+                      <template #label>
+                        Bukti Pembayaran <span class="text-error">*</span>
+                      </template>
+                    </VFileInput>
+                    <VTextarea
+                      v-model="manual_payment_data.description"
+                      rows="2"
+                      :rules="[requiredValidator]"
+                    >
+                      <template #label>
+                        Catatan <span class="text-error">*</span>
+                      </template>
+                    </VTextarea>
+                    <div class="d-flex justify-end gap-2">
+                      <VBtn
+                        size="small"
+                        color="error"
+                        @click="is_payment = false"
+                      >
+                        Batal
+                      </VBtn>
+                      <ProcessButton
+                        text="Konfirmasi Pembayaran"
+                        color="primary"
+                        type="submit"
+                        :is_on_process="is_confirm_on_creating"
+                      />
+                    </div>
+                  </VCardText>
+                </VForm>
+              </VCard>
+            </VCardText>
+            <!-- QRIS -->
+            <VCardText class="fade-in">
+              <VCard variant="tonal">
                 <VCardText>
                   <img
                     src="@/assets/images/qris-amretanet.jpg"

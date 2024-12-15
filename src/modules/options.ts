@@ -1,3 +1,21 @@
+export const payment_method_options = [
+  {
+    title: "CASH",
+    value: "CASH",
+  },
+  {
+    title: "TRANSFER",
+    value: "TRANSFER",
+  },
+  {
+    title: "QRIS",
+    value: "QRIS",
+  },
+  {
+    title: "VIRTUAL ACCOUNT",
+    value: "VIRTUAL ACCOUNT",
+  },
+];
 export const tube_color_options = [
   {
     title: "Biru",
@@ -313,4 +331,106 @@ export const package_category_options = [
     title: "ADD-ONS",
     value: "ADD-ONS",
   },
+];
+export const invoice_status_options = [
+  {
+    title: "BELUM DIBAYAR",
+    value: "UNPAID",
+  },
+  {
+    title: "SUDAH DIBAYAR",
+    value: "PAID",
+  },
+  {
+    title: "MENUNGGU KONFIRMASI",
+    value: "PENDING",
+  },
+];
+export const month_options = [
+  {
+    title: "Januari",
+    value: "01",
+  },
+  {
+    title: "Februari",
+    value: "02",
+  },
+  {
+    title: "Maret",
+    value: "03",
+  },
+  {
+    title: "April",
+    value: "04",
+  },
+  {
+    title: "Mei",
+    value: "05",
+  },
+  {
+    title: "Juni",
+    value: "06",
+  },
+  {
+    title: "Juli",
+    value: "07",
+  },
+  {
+    title: "Agustus",
+    value: "08",
+  },
+  {
+    title: "September",
+    value: "09",
+  },
+  {
+    title: "Oktober",
+    value: "10",
+  },
+  {
+    title: "November",
+    value: "11",
+  },
+  {
+    title: "Desember",
+    value: "12",
+  },
+];
+export const year_options = [
+  "2015",
+  "2016",
+  "2017",
+  "2018",
+  "2019",
+  "2020",
+  "2021",
+  "2022",
+  "2023",
+  "2024",
+  "2025",
+  "2026",
+  "2027",
+  "2028",
+  "2029",
+  "2030",
+  "2031",
+  "2032",
+  "2033",
+  "2034",
+  "2035",
+  "2036",
+  "2037",
+  "2038",
+  "2039",
+  "2040",
+  "2041",
+  "2042",
+  "2043",
+  "2044",
+  "2045",
+  "2046",
+  "2047",
+  "2048",
+  "2049",
+  "2050",
 ];

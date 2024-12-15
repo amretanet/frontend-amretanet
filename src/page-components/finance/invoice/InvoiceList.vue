@@ -15,24 +15,33 @@ import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import {
-  user_role_customer_options,
-  user_role_options,
+  invoice_status_options,
+  month_options,
+  year_options,
 } from "@/modules/options";
 import { stateManagement } from "@/store";
 import InvoiceDetailModal from "./InvoiceDetailModal.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
+import EditInvoiceModal from "./EditInvoiceModal.vue";
+import PayOffInvoiceModal from "./PayOffInvoiceModal.vue";
 
 // VARIABLES
 const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
+  status: null,
+  month: null,
+  year: null,
 });
+const is_check_all = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const is_syncronize = ref(false);
 const options = ref({
-  role: [...user_role_options, ...user_role_customer_options],
+  status: invoice_status_options,
+  month: month_options,
+  year: year_options,
 });
 const pagination = ref({
   page: 1,
@@ -42,11 +51,10 @@ const pagination = ref({
 const invoice_table_data = ref({
   headers: [
     {
-      title: "NO",
-      key: "no",
+      title: "CHECKBOX",
+      key: "checkbox",
       th_class: "text-center",
       td_class: "text-center",
-      width: "50px",
     },
     {
       title: "NAMA PELANGGAN",
@@ -65,7 +73,7 @@ const invoice_table_data = ref({
       title: "JATUH TEMPO",
       key: "due_date",
       th_class: "text-left",
-      td_class: "text-left",
+      td_class: "text-left text-no-wrap",
       width: "20%",
     },
     {
@@ -89,6 +97,12 @@ const invoice_table_data = ref({
   ],
   body: [],
 });
+const checked_invoice_data = computed(() => {
+  const checked_data = invoice_table_data.value.body
+    .filter((el: any) => el.is_checked === true)
+    .map((el: any) => el._id);
+  return checked_data;
+});
 
 // FUNCTION
 const getInvoiceData = (is_refresh: boolean = false) => {
@@ -104,6 +118,9 @@ const getInvoiceData = (is_refresh: boolean = false) => {
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
+    ...(filter_data.value.month ? { month: filter_data.value.month } : {}),
+    ...(filter_data.value.year ? { year: filter_data.value.year } : {}),
+    ...(filter_data.value.status ? { status: filter_data.value.status } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -138,8 +155,15 @@ const deleteInvoice = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
     axiosIns
-      .delete(`invoice/delete/${id}`)
+      .delete(`invoice/delete?${query}`)
       .then(() => {
         showActionResult(undefined, undefined, "Invoice Telah Dihapus");
         getInvoiceData();
@@ -147,6 +171,9 @@ const deleteInvoice = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };
@@ -159,7 +186,7 @@ const activateCustomer = async (id: string, name: string) => {
   if (is_confirmed) {
     store.loadingHandler(true);
     const params: IObjectKeys = {
-      encoded_id: btoa(id),
+      id: btoa(id),
     };
     const query = Object.keys(params)
       .map((key) => `${key}=${params[key]}`)
@@ -187,7 +214,7 @@ const isolirCustomer = async (id: string, name: string) => {
   if (is_confirmed) {
     store.loadingHandler(true);
     const params: IObjectKeys = {
-      encoded_id: btoa(id),
+      id: btoa(id),
     };
     const query = Object.keys(params)
       .map((key) => `${key}=${params[key]}`)
@@ -206,16 +233,6 @@ const isolirCustomer = async (id: string, name: string) => {
       });
   }
 };
-const payOffInvoice = async (id: string, name: string) => {
-  const is_confirmed = await confirmAction(
-    "Lunasi Tagihan Pengguna?",
-    `Tagihan ${name} akan dilunasi otomatis`,
-    "Ya, Lunasi!"
-  );
-  if (is_confirmed) {
-    console.log("confirmed");
-  }
-};
 const sendReminderMessage = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
     "Kirim Whatsapp Pengingat?",
@@ -225,7 +242,7 @@ const sendReminderMessage = async (id: string, name: string) => {
   if (is_confirmed) {
     store.loadingHandler(true);
     const params: IObjectKeys = {
-      encoded_id: btoa(id),
+      id: btoa(id),
     };
     const query = Object.keys(params)
       .map((key) => `${key}=${params[key]}`)
@@ -280,18 +297,154 @@ const syncInvoice = async () => {
 };
 const printInvoice = async (id: string, type: string) => {
   const domain = import.meta.env.VITE_API_DOMAIN;
+  const params: IObjectKeys = {
+    id: btoa(id),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
   if (type === "A4") {
-    const url = `${domain}/invoice/pdf/${id}`;
+    const url = `${domain}/invoice/pdf?${query}`;
     window.open(url);
   } else if (type === "THERMAL") {
-    const url = `${domain}/invoice/thermal/${id}`;
+    const url = `${domain}/invoice/thermal?${query}`;
     window.open(url);
+  }
+};
+const checkAll = () => {
+  const check_all = !is_check_all.value;
+  invoice_table_data.value.body.forEach(
+    (el: any) => (el.is_checked = check_all)
+  );
+};
+const checkItemChecked = () => {
+  if (
+    invoice_table_data.value.body.length !== 0 &&
+    checked_invoice_data.value.length === invoice_table_data.value.body.length
+  ) {
+    is_check_all.value = true;
+  } else {
+    is_check_all.value = false;
+  }
+};
+const deleteSelectedInvoice = async () => {
+  const is_confirmed = await confirmAction(
+    "Hapus Invoice Terpilih?",
+    `Invoice yang dipilih akan dihapus dari daftar invoice pelanggan`,
+    "Ya, Hapus!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      id: btoa(checked_invoice_data.value.join(",")),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .delete(`invoice/delete?${query}`)
+      .then(() => {
+        showActionResult(undefined, undefined, "Invoice Telah Dihapus");
+        getInvoiceData();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
+const printSelectedInvoice = (type: string) => {
+  const domain = import.meta.env.VITE_API_DOMAIN;
+  const params: IObjectKeys = {
+    id: btoa(checked_invoice_data.value.join(",")),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  if (type === "A4") {
+    const url = `${domain}/invoice/pdf?${query}`;
+    window.open(url);
+  } else if (type === "THERMAL") {
+    const url = `${domain}/invoice/thermal?${query}`;
+    window.open(url);
+  }
+};
+const sendReminderMessageSelectedInvoice = async () => {
+  const is_confirmed = await confirmAction(
+    "Kirim Whatsapp Pengingat?",
+    `Pesan whatsapp pengingat kepada ${name} akan dikirimkan`,
+    "Ya, Kirimkan!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      id: btoa(checked_invoice_data.value.join(",")),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`invoice/whatsapp-reminder?${query}`)
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          "Pesan Whatsapp Pengingat Telah Dikirimkan!"
+        );
+      })
+      .catch(() => {
+        showActionResult(
+          undefined,
+          "error",
+          "Pesan Whatsapp Gagal Dikirimkan!"
+        );
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
+const updateStatusSelectedInvoice = async (status: string) => {
+  const formatted_status = invoiceStatusFormatter(status).type;
+  const is_confirmed = await confirmAction(
+    "Ubah Status Invoice Terpilih?",
+    `Status invoice yang dipilih akan diubah menjadi ${formatted_status}`,
+    "Ya, Ubah!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      id: btoa(checked_invoice_data.value.join(",")),
+      status: status,
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .put(`invoice/update/status?${query}`)
+      .then(() => {
+        showActionResult(undefined, undefined, "Status Invoice Telah Diubah");
+        getInvoiceData();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
   }
 };
 
 // LIFECYCLE HOOKS
 onMounted(() => {
   getInvoiceData();
+});
+watch(checked_invoice_data, () => {
+  checkItemChecked();
 });
 </script>
 <template>
@@ -316,6 +469,7 @@ onMounted(() => {
     </VCardItem>
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- PAGE ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
@@ -323,22 +477,136 @@ onMounted(() => {
             @update:model-value="getInvoiceData()"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
           @click="getInvoiceData(true)"
         />
+        <!-- BULK ACTION BUTTON -->
+        <VBtn
+          size="40"
+          prepend-icon="mdi-dots-vertical"
+          :disabled="checked_invoice_data.length === 0"
+        >
+          <VMenu activator="parent">
+            <VCard>
+              <VCardText class="px-2 py-2 d-flex flex-column gap-2">
+                <!-- UNPAID BUTTON -->
+                <VBtn
+                  size="small"
+                  color="error"
+                  prepend-icon="tabler-x"
+                  @click="updateStatusSelectedInvoice('UNPAID')"
+                >
+                  Tandai Belum Bayar
+                </VBtn>
+                <!-- PAID BUTTON -->
+                <VBtn
+                  size="small"
+                  color="success"
+                  prepend-icon="tabler-checks"
+                  @click="updateStatusSelectedInvoice('PAID')"
+                >
+                  Tandai Sudah Bayar
+                </VBtn>
+                <!-- PRINT BUTTON -->
+                <VBtn
+                  size="small"
+                  color="warning"
+                  block
+                  prepend-icon="mdi-printer"
+                >
+                  Cetak Invoice
+                  <VMenu activator="parent">
+                    <VCard>
+                      <VCardText class="d-flex gap-2 px-2 py-2">
+                        <VBtn
+                          size="small"
+                          variant="outlined"
+                          color="dark"
+                          prepend-icon="mdi-file"
+                          @click="printSelectedInvoice('A4')"
+                        >
+                          A4
+                        </VBtn>
+                        <VBtn
+                          size="small"
+                          variant="outlined"
+                          color="dark"
+                          prepend-icon="mdi-file"
+                          @click="printSelectedInvoice('THERMAL')"
+                        >
+                          THERMAL
+                        </VBtn>
+                      </VCardText>
+                    </VCard>
+                  </VMenu>
+                </VBtn>
+                <VBtn
+                  size="small"
+                  color="success"
+                  prepend-icon="mdi-whatsapp"
+                  @click="sendReminderMessageSelectedInvoice()"
+                >
+                  Ingatkan Pelanggan
+                </VBtn>
+                <!-- DELETE BUTTON -->
+                <VBtn
+                  size="small"
+                  color="error"
+                  prepend-icon="tabler-trash"
+                  @click="deleteSelectedInvoice()"
+                >
+                  Hapus
+                </VBtn>
+              </VCardText>
+            </VCard>
+          </VMenu>
+        </VBtn>
         <VSpacer />
+        <!-- MONTH FILTER -->
+        <div class="wm-100" style="min-width: 7rem">
+          <VSelect
+            v-model="filter_data.month"
+            label="Bulan"
+            :items="options.month"
+            clearable
+            @update:model-value="(pagination.page = 1), getInvoiceData()"
+          />
+        </div>
+        <!-- YEAR FILTER -->
+        <div class="wm-100" style="min-width: 7rem">
+          <VSelect
+            v-model="filter_data.year"
+            label="Tahun"
+            :items="options.year"
+            clearable
+            @update:model-value="(pagination.page = 1), getInvoiceData()"
+          />
+        </div>
+        <!-- STATUS FILTER -->
+        <div class="wm-100" style="min-width: 10rem">
+          <VSelect
+            v-model="filter_data.status"
+            label="Status"
+            :items="options.status"
+            clearable
+            @update:model-value="(pagination.page = 1), getInvoiceData()"
+          />
+        </div>
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getInvoiceData()"
+            @update:model-value="(pagination.page = 1), getInvoiceData()"
           />
         </div>
       </div>
     </VCardText>
+    <!-- DATA TABLE -->
     <div>
       <DataTable
         height="60vh"
@@ -347,17 +615,31 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
+        <!-- CUSTOM CHECK ALL -->
+        <template #head-CHECKBOX>
+          <div style="width: 20px">
+            <VCheckbox v-model="is_check_all" @click="checkAll()" />
+          </div>
+        </template>
+        <!-- CUSTOM CHECK ITEM -->
+        <template #cell-checkbox="{ data }">
+          <VCheckbox v-model="data.is_checked" />
+        </template>
+        <!-- CUSTOM SERVICE NUMBER -->
         <template #cell-service_number="{ data }">
           <VChip color="primary" variant="outlined" class="font-weight-bold">
             {{ data.service_number }}
           </VChip>
         </template>
+        <!-- CUSTOM DUE DATE -->
         <template #cell-due_date="{ data }">
           {{ dateFormatterID(data?.due_date) }}
         </template>
+        <!-- CUSTOM AMOUNT -->
         <template #cell-amount="{ data }">
           Rp.{{ thousandSeparator(data?.amount || 0) }}
         </template>
+        <!-- CUSTOM STATUS -->
         <template #cell-status="{ data }">
           <VChip
             :color="invoiceStatusFormatter(data.status).color"
@@ -366,15 +648,19 @@ onMounted(() => {
             <strong>{{ invoiceStatusFormatter(data.status).type }}</strong>
           </VChip>
         </template>
+        <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <!-- DETAIL BUTTON -->
-            <InvoiceDetailModal :data="data" />
+            <InvoiceDetailModal
+              :data="data"
+              @invoice-confirmed="getInvoiceData()"
+            />
             <!-- EDIT BUTTON -->
-            <VBtn size="35" color="info">
-              <VIcon icon="tabler-edit" />
-              <VTooltip activator="parent"> Edit </VTooltip>
-            </VBtn>
+            <EditInvoiceModal
+              :data="data"
+              @invoice-updated="getInvoiceData()"
+            />
             <!-- DELETE BUTTON -->
             <VBtn
               size="35"
@@ -388,7 +674,7 @@ onMounted(() => {
             <VBtn size="35" color="primary">
               <VIcon icon="mdi-dots-vertical" />
               <VTooltip activator="parent"> Lainnya </VTooltip>
-              <VMenu activator="parent">
+              <VMenu activator="parent" :close-on-content-click="false">
                 <VCard>
                   <VCardText class="d-flex flex-column gap-2 px-2 py-2">
                     <!-- PRINT BUTTON -->
@@ -416,14 +702,6 @@ onMounted(() => {
                               variant="outlined"
                               color="dark"
                               prepend-icon="mdi-file"
-                            >
-                              58MM
-                            </VBtn>
-                            <VBtn
-                              size="small"
-                              variant="outlined"
-                              color="dark"
-                              prepend-icon="mdi-file"
                               @click="printInvoice(data._id, 'THERMAL')"
                             >
                               THERMAL
@@ -432,17 +710,12 @@ onMounted(() => {
                         </VCard>
                       </VMenu>
                     </VBtn>
-                    <!-- PAY BUTTON -->
-                    <VBtn
-                      v-if="data?.status !== 'PAID'"
-                      size="small"
-                      color="info"
-                      block
-                      prepend-icon="tabler-premium-rights"
-                      @click="payOffInvoice(data._id, data.name)"
-                    >
-                      Lunasi Tagihan
-                    </VBtn>
+                    <!-- PAY OFF BUTTON -->
+                    <PayOffInvoiceModal
+                      v-if="data?.status == 'UNPAID'"
+                      :data="data"
+                      @invoice-pay-off="getInvoiceData()"
+                    />
                     <!-- REMINDER BUTTON -->
                     <VBtn
                       v-if="data?.status === 'UNPAID'"
@@ -452,7 +725,7 @@ onMounted(() => {
                       prepend-icon="mdi-whatsapp"
                       @click="sendReminderMessage(data._id, data.name)"
                     >
-                      Ingatkan Pengguna
+                      Ingatkan Pelanggan
                     </VBtn>
                     <!-- ACTIVATE BUTTON -->
                     <VBtn

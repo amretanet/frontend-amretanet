@@ -15,10 +15,12 @@ import DataTable from "@/page-components/DataTable.vue";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
 import axios from "axios";
 import { Marker, AdvancedMarker } from "vue3-google-map";
 
 // VARIABLES
+const store = stateManagement();
 const router = useRouter();
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
@@ -198,6 +200,7 @@ const deleteCustomer = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`customer/delete/${id}`)
       .then(() => {
@@ -207,6 +210,9 @@ const deleteCustomer = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };
@@ -229,6 +235,7 @@ const updateCustomerStatus = async (
     "Ya, Ubah!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .put(`customer/update-status/${id}`, {
         status: status,
@@ -240,6 +247,9 @@ const updateCustomerStatus = async (
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };

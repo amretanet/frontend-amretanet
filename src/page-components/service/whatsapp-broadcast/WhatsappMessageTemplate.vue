@@ -355,7 +355,7 @@ watch(
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.thanks_message"
-                      label="Tagihan Telah Dibayar"
+                      label="Tagihan Sudah Dibayar"
                       rows="2"
                       auto-grow
                     />
