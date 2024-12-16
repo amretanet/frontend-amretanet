@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AddCustomerForm from "@/page-components/customer/AddCustomerForm.vue";
+import AddCustomerForm from "@/page-components/managements/customer/AddCustomerForm.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([

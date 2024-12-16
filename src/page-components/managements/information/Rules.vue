@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import axiosIns from "@/plugins/axios";
-import ProcessButton from "../ProcessButton.vue";
+import ProcessButton from "@/page-components/ProcessButton.vue";
 
 // VARIABLES
 const rules_text = ref("");

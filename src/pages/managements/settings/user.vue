@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import UserList from "@/page-components/settings/user/UserList.vue";
+import UserList from "@/page-components/managements/settings/user/UserList.vue";
 
 const path_data = ref([
   {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IObjectKeys } from "@/models";
 import axiosIns from "@/plugins/axios";
-import GoogleMaps from "../GoogleMaps.vue";
+import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import { Marker } from "vue3-google-map";
 
 // VARIABLES

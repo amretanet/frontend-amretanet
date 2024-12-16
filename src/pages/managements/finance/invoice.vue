@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
+import InvoiceList from "@/page-components/managements/finance/invoice/InvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
@@ -24,6 +24,6 @@ const path_data = ref([
   </VRow>
 </template>
 <route lang="yaml">
-  meta:
-    title: Invoice
-  </route>
+meta:
+  title: Invoice
+</route>

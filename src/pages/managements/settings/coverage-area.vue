@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import CoverageAreaList from "@/page-components/settings/coverage-area/CoverageAreaList.vue";
+import CoverageAreaList from "@/page-components/managements/settings/coverage-area/CoverageAreaList.vue";
 
 const path_data = ref([
   {

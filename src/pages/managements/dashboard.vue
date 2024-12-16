@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import LocationMapping from "@/page-components/dashboard/LocationMapping.vue";
-import TicketStats from "@/page-components/dashboard/TicketStats.vue";
+import LocationMapping from "@/page-components/managements/dashboard/LocationMapping.vue";
+import TicketStats from "@/page-components/managements/dashboard/TicketStats.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([

@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import axiosIns from "@/plugins/axios";
-import ProcessButton from "../ProcessButton.vue";
+import ProcessButton from "@/page-components/ProcessButton.vue";
 
 // VARIABLES
-const about_text = ref("");
+const announcement = ref("");
 const is_on_process = ref(false);
 
 // FUNCTION
-const getAboutText = () => {
-  axiosIns.get("information?type=INFO_ABOUT").then((res) => {
-    about_text.value = res?.data?.configuration_data?.text || "";
+const getAnnouncementText = () => {
+  axiosIns.get("information?type=INFO_ANNOUNCEMENT").then((res) => {
+    announcement.value = res?.data?.configuration_data?.text || "";
   });
 };
-const updateAboutText = async () => {
+const updateAnnouncementText = async () => {
   const is_confirmed = await confirmAction();
   if (is_confirmed) {
     axiosIns
       .put("information/update", {
-        type: "INFO_ABOUT",
-        text: about_text.value,
+        type: "INFO_ANNOUNCEMENT",
+        text: announcement.value,
       })
       .then(() => {
         showActionResult();
@@ -33,20 +33,20 @@ const updateAboutText = async () => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
-  getAboutText();
+  getAnnouncementText();
 });
 </script>
 <template>
   <VCard>
     <VCardItem>
       <template #prepend>
-        <VIcon icon="tabler-certificate" />
+        <VIcon icon="tabler-bell-ringing" />
       </template>
-      <template #title> Tentang Kami </template>
+      <template #title> Pengumuman </template>
     </VCardItem>
     <VCardText>
       <QuillEditor
-        v-model:content="about_text"
+        v-model:content="announcement"
         contentType="html"
         theme="snow"
         toolbar="full"
@@ -54,12 +54,12 @@ onMounted(() => {
         style="max-height: 60vh"
       />
       <div class="d-flex mt-3 gap-2 justify-end">
-        <VBtn size="small" color="warning" @click="getAboutText()">
+        <VBtn size="small" color="warning" @click="getAnnouncementText()">
           Reset
         </VBtn>
         <ProcessButton
           :is_on_process="is_on_process"
-          @click="updateAboutText()"
+          @click="updateAnnouncementText()"
         />
       </div>
     </VCardText>

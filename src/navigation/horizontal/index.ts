@@ -1,6 +1,8 @@
 import type { HorizontalNavItems } from "@layouts/types";
-import navigation from "../navigation";
+import management_navigation from "../management_navigation";
+import customer_navigation from "../customer_navigation";
 
 export default [
-  ...navigation
+  ...management_navigation,
+  ...customer_navigation,
 ] as HorizontalNavItems;

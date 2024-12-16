@@ -12,8 +12,8 @@ import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
-import AddPackageModal from "@/page-components/service/package/AddPackageModal.vue";
-import EditPackageModal from "@/page-components/service/package/EditPackageModal.vue";
+import AddPackageModal from "@/page-components/managements/service/package/AddPackageModal.vue";
+import EditPackageModal from "@/page-components/managements/service/package/EditPackageModal.vue";
 import { package_category_options } from "@/modules/options";
 
 // VARIABLES

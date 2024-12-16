@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import GoogleMapsConfig from "@/page-components/settings/system-configuration/GoogleMapsConfig.vue";
-import EmailConfig from "@/page-components/settings/system-configuration/EmailConfig.vue";
-import TelebotConfig from "@/page-components/settings/system-configuration/TelebotConfig.vue";
-import WhatsappBotConfig from "@/page-components/settings/system-configuration/WhatsappBotConfig.vue";
+import GoogleMapsConfig from "@/page-components/managements/settings/system-configuration/GoogleMapsConfig.vue";
+import EmailConfig from "@/page-components/managements/settings/system-configuration/EmailConfig.vue";
+import TelebotConfig from "@/page-components/managements/settings/system-configuration/TelebotConfig.vue";
+import WhatsappBotConfig from "@/page-components/managements/settings/system-configuration/WhatsappBotConfig.vue";
 
 const path_data = ref([
   {

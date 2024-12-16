@@ -23,9 +23,11 @@ const login_data = ref({
 
 // FUNCTION
 const loginSuccess = () => {
-  // if (store.isAdmin) {
-  router.push("managements/dashboard");
-  // }
+  if (store.isCustomer) {
+    router.push("customers/dashboard");
+  } else {
+    router.push("managements/dashboard");
+  }
 };
 const onSubmit = () => {
   login_form.value?.validate().then(({ valid: is_valid }) => {
