@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import PackageList from "@/page-components/managements/service/package/PackageList.vue";
+import PackageList from "@/page-components/service/package/PackageList.vue";
 
 const path_data = ref([
   {

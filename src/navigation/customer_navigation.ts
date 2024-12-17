@@ -6,14 +6,26 @@ export default [
     access: [99],
   },
   {
-    title: "Transaksi",
-    icon: { icon: "tabler-credit-card-pay" },
+    title: "Tagihan",
+    icon: { icon: "tabler-file-invoice" },
+    access: [99],
+    to: "customers-invoice",
+  },
+  {
+    title: "Layanan",
+    icon: { icon: "tabler-adjustments-horizontal" },
     access: [99],
     children: [
       {
-        title: "Tagihan",
-        icon: { icon: "tabler-file-invoice" },
-        to: "customers-transaction-billing",
+        title: "Tiket Pengaduan",
+        icon: { icon: "tabler-message-chatbot" },
+        to: "customers-service-complaint",
+        access: [99],
+      },
+      {
+        title: "Pengajuan Perubahan",
+        icon: { icon: "tabler-recycle" },
+        to: "customers-service-submission",
         access: [99],
       },
     ],

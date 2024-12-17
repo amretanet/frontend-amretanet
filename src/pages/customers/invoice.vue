@@ -4,11 +4,8 @@ import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-server-cog",
-    name: "Master Data",
-  },
-  {
-    name: "Invoice",
+    icon: "tabler-file-invoice",
+    name: "Tagihan",
   },
 ]);
 </script>
@@ -25,5 +22,5 @@ const path_data = ref([
 </template>
 <route lang="yaml">
 meta:
-  title: Invoice
+  title: Tagihan
 </route>

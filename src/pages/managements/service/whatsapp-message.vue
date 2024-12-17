@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import WhatsappMessageScheduler from "@/page-components/managements/service/whatsapp-broadcast/WhatsappMessageScheduler.vue";
-import SendWhatsappMessage from "@/page-components/managements/service/whatsapp-broadcast/SendWhatsappMessage.vue";
-import WhatsappMessageTemplate from "@/page-components/managements/service/whatsapp-broadcast/WhatsappMessageTemplate.vue";
+import WhatsappMessageScheduler from "@/page-components/service/whatsapp-broadcast/WhatsappMessageScheduler.vue";
+import SendWhatsappMessage from "@/page-components/service/whatsapp-broadcast/SendWhatsappMessage.vue";
+import WhatsappMessageTemplate from "@/page-components/service/whatsapp-broadcast/WhatsappMessageTemplate.vue";
 
 const path_data = ref([
   {

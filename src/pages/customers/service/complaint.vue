@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
+import TicketList from "@/page-components/service/ticket/TicketList.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-server-cog",
-    name: "Master Data",
+    icon: "tabler-file-invoice",
+    name: "Layanan",
   },
   {
-    name: "Invoice",
+    name: "Tiket Pengaduan",
   },
 ]);
 </script>
@@ -19,11 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <InvoiceList />
+      <TicketList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Invoice
+  title: Tagihan
 </route>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import About from "@/page-components/managements/information/About.vue";
-import Announcement from "@/page-components/managements/information/Announcement.vue";
-import Privacy from "@/page-components/managements/information/Privacy.vue";
-import Rules from "@/page-components/managements/information/Rules.vue";
+import About from "@/page-components/information/About.vue";
+import Announcement from "@/page-components/information/Announcement.vue";
+import Privacy from "@/page-components/information/Privacy.vue";
+import Rules from "@/page-components/information/Rules.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 // VARIABLES

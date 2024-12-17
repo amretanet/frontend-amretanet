@@ -86,10 +86,10 @@ watch(props, () => {
           <template #prepend>
             <VIcon icon="tabler-file-invoice" />
           </template>
-          <template #title> Detail Invoice </template>
+          <template #title> Detail Tagihan </template>
           <template #append>
             <VBtn
-              v-if="invoice_data?.status === 'PENDING'"
+              v-if="invoice_data?.status === 'PENDING' && !store.isCustomer"
               size="small"
               color="success"
               prepend-icon="tabler-checklist"

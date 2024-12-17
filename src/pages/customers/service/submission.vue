@@ -1,14 +1,14 @@
 <script lang="ts" setup>
+import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-dashboard",
-    name: "Transaksi",
+    icon: "tabler-file-invoice",
+    name: "Layanan",
   },
   {
-    icon: "tabler-dashboard",
-    name: "Tagihan",
+    name: "Pengajuan",
   },
 ]);
 </script>
@@ -17,6 +17,9 @@ const path_data = ref([
   <VRow>
     <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
+    </VCol>
+    <VCol cols="12">
+      <InvoiceList />
     </VCol>
   </VRow>
 </template>

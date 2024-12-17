@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import CustomerStats from "@/page-components/customers/dashboard/CustomerStats.vue";
-import SpeedTest from "@/page-components/customers/SpeedTest.vue";
+import CustomerStats from "@/page-components/dashboard/CustomerStats.vue";
+import SpeedTest from "@/page-components/SpeedTest.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([

@@ -17,7 +17,7 @@ export default [
     access: [1],
     children: [
       {
-        title: "Invoice",
+        title: "Tagihan",
         icon: { icon: "tabler-file-invoice" },
         to: "managements-finance-invoice",
         access: [1],

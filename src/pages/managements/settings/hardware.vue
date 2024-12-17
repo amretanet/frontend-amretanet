@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PageHeader from "@/page-components/PageHeader.vue";
-import RouterList from "@/page-components/managements/settings/hardware/router/RouterList.vue";
-import ODCList from "@/page-components/managements/settings/hardware/odc/ODCList.vue";
-import ODPList from "@/page-components/managements/settings/hardware/odp/ODPList.vue";
+import RouterList from "@/page-components/settings/hardware/router/RouterList.vue";
+import ODCList from "@/page-components/settings/hardware/odc/ODCList.vue";
+import ODPList from "@/page-components/settings/hardware/odp/ODPList.vue";
 
 const path_data = ref([
   {

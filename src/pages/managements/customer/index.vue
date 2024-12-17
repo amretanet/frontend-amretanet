@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CustomerList from "@/page-components/managements/customer/CustomerList.vue";
+import CustomerList from "@/page-components/customer/CustomerList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([

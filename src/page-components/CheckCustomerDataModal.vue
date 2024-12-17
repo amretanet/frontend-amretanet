@@ -322,7 +322,7 @@ watch(is_showing_modal, () => {
                     prepend-icon="mdi-printer"
                     @click="printInvoice(customer_data.invoice._id)"
                   >
-                    Cetak Invoice
+                    Cetak Tagihan
                   </VBtn>
                   <VBtn
                     v-if="customer_data?.invoice?.status === 'UNPAID'"

@@ -50,27 +50,38 @@ const pagination = ref({
 });
 const invoice_table_data = ref({
   headers: [
+    ...(!store.isCustomer
+      ? [
+          {
+            title: "CHECKBOX",
+            key: "checkbox",
+            th_class: "text-center",
+            td_class: "text-center",
+          },
+          {
+            title: "NAMA PELANGGAN",
+            key: "name",
+            th_class: "text-left",
+            td_class: "text-left text-no-wrap",
+            width: "25%",
+          },
+          {
+            title: "NOMOR LAYANAN",
+            key: "service_number",
+            th_class: "text-center",
+            td_class: "text-center text-no-wrap",
+          },
+        ]
+      : [
+          {
+            title: "NO",
+            key: "no",
+            th_class: "text-center",
+            td_class: "text-center",
+          },
+        ]),
     {
-      title: "CHECKBOX",
-      key: "checkbox",
-      th_class: "text-center",
-      td_class: "text-center",
-    },
-    {
-      title: "NAMA PELANGGAN",
-      key: "name",
-      th_class: "text-left",
-      td_class: "text-left text-no-wrap",
-      width: "25%",
-    },
-    {
-      title: "NOMOR LAYANAN",
-      key: "service_number",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
-    },
-    {
-      title: "JATUH TEMPO",
+      title: "PERIODE",
       key: "due_date",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
@@ -115,6 +126,7 @@ const getInvoiceData = (is_refresh: boolean = false) => {
   }
   cancel_request_token.value = axios.CancelToken.source();
   const params: IObjectKeys = {
+    ...(store.isCustomer ? { id_customer: store.getUser.id_customer } : {}),
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
@@ -150,8 +162,8 @@ const getInvoiceData = (is_refresh: boolean = false) => {
 };
 const deleteInvoice = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
-    "Hapus Invoice?",
-    `Invoice ${name} akan dihapus dari daftar invoice pelanggan`,
+    "Hapus Tagihan?",
+    `Invoice ${name} akan dihapus dari daftar tagihan pelanggan`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
@@ -329,8 +341,8 @@ const checkItemChecked = () => {
 };
 const deleteSelectedInvoice = async () => {
   const is_confirmed = await confirmAction(
-    "Hapus Invoice Terpilih?",
-    `Invoice yang dipilih akan dihapus dari daftar invoice pelanggan`,
+    "Hapus Tagihan Terpilih?",
+    `Invoice yang dipilih akan dihapus dari daftar tagihan pelanggan`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
@@ -453,9 +465,10 @@ watch(checked_invoice_data, () => {
       <template #prepend>
         <VIcon icon="tabler-file-invoice" />
       </template>
-      <template #title> Daftar Invoice Pelanggan </template>
+      <template #title> Daftar Tagihan Pelanggan </template>
       <template #append>
         <ProcessButton
+          v-if="!store.isCustomer"
           text="Sinkronkan Tagihan"
           color="warning"
           :is_on_process="is_syncronize"
@@ -484,6 +497,7 @@ watch(checked_invoice_data, () => {
         />
         <!-- BULK ACTION BUTTON -->
         <VBtn
+          v-if="!store.isCustomer"
           size="40"
           prepend-icon="mdi-dots-vertical"
           :disabled="checked_invoice_data.length === 0"
@@ -516,7 +530,7 @@ watch(checked_invoice_data, () => {
                   block
                   prepend-icon="mdi-printer"
                 >
-                  Cetak Invoice
+                  Cetak Tagihan
                   <VMenu activator="parent">
                     <VCard>
                       <VCardText class="d-flex gap-2 px-2 py-2">
@@ -658,11 +672,13 @@ watch(checked_invoice_data, () => {
             />
             <!-- EDIT BUTTON -->
             <EditInvoiceModal
+              v-if="!store.isCustomer"
               :data="data"
               @invoice-updated="getInvoiceData()"
             />
             <!-- DELETE BUTTON -->
             <VBtn
+              v-if="!store.isCustomer"
               size="35"
               color="error"
               @click="deleteInvoice(data._id, data.name)"
@@ -670,8 +686,41 @@ watch(checked_invoice_data, () => {
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
+            <!-- PRINT BUTTON -->
+            <VBtn
+              v-if="store.isCustomer"
+              size="35"
+              color="warning"
+              prepend-icon="mdi-printer"
+            >
+              <VTooltip activator="parent"> Cetak Tagihan </VTooltip>
+              <VMenu activator="parent">
+                <VCard>
+                  <VCardText class="d-flex gap-2 px-2 py-2">
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                      @click="printInvoice(data._id, 'A4')"
+                    >
+                      A4
+                    </VBtn>
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                      @click="printInvoice(data._id, 'THERMAL')"
+                    >
+                      THERMAL
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VMenu>
+            </VBtn>
             <!-- MORE BUTTON -->
-            <VBtn size="35" color="primary">
+            <VBtn v-else size="35" color="primary">
               <VIcon icon="mdi-dots-vertical" />
               <VTooltip activator="parent"> Lainnya </VTooltip>
               <VMenu activator="parent" :close-on-content-click="false">
@@ -684,7 +733,7 @@ watch(checked_invoice_data, () => {
                       block
                       prepend-icon="mdi-printer"
                     >
-                      Cetak Invoice
+                      Cetak Tagihan
                       <VMenu activator="parent">
                         <VCard>
                           <VCardText class="d-flex gap-2 px-2 py-2">
