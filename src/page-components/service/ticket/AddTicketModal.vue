@@ -55,9 +55,16 @@ const saveTicket = () => {
   ticket_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
+      let payload: any = ticket_data.value;
+      const selected_title: any = options.value.title.find(
+        (el: any) => el.title === ticket_data.value.title
+      );
+      if (selected_title) {
+        payload.type = selected_title.type;
+      }
       axiosIns
         .post("ticket/add", {
-          data: ticket_data.value,
+          data: payload,
         })
         .then(() => {
           emits("ticketAdded");
@@ -109,6 +116,7 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="ticket_form" @submit.prevent="saveTicket">
             <VRow>
+              <!-- REPORTER -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_reporter"
@@ -141,10 +149,11 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- ENGINEER -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_assignee"
-                  :items="options.user.filter((el:any)=>el.role !==99)"
+                  :items="options.user.filter((el:any)=>el.role ===5)"
                   :rules="[requiredValidator]"
                   clearable
                 >
@@ -173,6 +182,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- ODC -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odc"
@@ -181,6 +191,7 @@ watch(is_showing_modal, () => {
                   clearable
                 />
               </VCol>
+              <!-- ODP -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odp"
@@ -189,8 +200,9 @@ watch(is_showing_modal, () => {
                   clearable
                 />
               </VCol>
+              <!-- TITLE -->
               <VCol cols="12">
-                <VCombobox
+                <VAutocomplete
                   v-model="ticket_data.title"
                   :items="options.title"
                   :rules="[requiredValidator]"
@@ -199,8 +211,9 @@ watch(is_showing_modal, () => {
                   <template #label>
                     Judul Pesan <span class="text-error">*</span>
                   </template>
-                </VCombobox>
+                </VAutocomplete>
               </VCol>
+              <!-- DESCRIPTION -->
               <VCol cols="12">
                 <VTextarea
                   v-model="ticket_data.description"
@@ -212,6 +225,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextarea>
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
                 <div class="d-flex gap-2 justify-end">
                   <VBtn

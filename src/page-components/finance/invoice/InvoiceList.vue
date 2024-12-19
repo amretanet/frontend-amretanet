@@ -430,6 +430,7 @@ const updateStatusSelectedInvoice = async (status: string) => {
     store.loadingHandler(true);
     const params: IObjectKeys = {
       id: btoa(checked_invoice_data.value.join(",")),
+      description: "Pembayaran Tagihan Pelanggan",
       status: status,
     };
     const query = Object.keys(params)

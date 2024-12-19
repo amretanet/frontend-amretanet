@@ -226,6 +226,11 @@ watch(props, () => {
               />
               <!-- PAYMENT DESCRIPTION -->
               <HorizontalTextFormat
+                title="Dikonfirmasi Oleh"
+                :value="invoice_data?.payment?.confirmed_by"
+              />
+              <!-- PAYMENT DESCRIPTION -->
+              <HorizontalTextFormat
                 title="Catatan Pembayaran"
                 :value="invoice_data?.payment?.description"
               />
