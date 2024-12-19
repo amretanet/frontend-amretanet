@@ -49,7 +49,7 @@ const logout = () => {
               {{ store.getUser.name || "-" }}
             </VListItemTitle>
             <VListItemSubtitle>
-              {{ roleFormatter(store.getUser.role).type }}
+              {{ roleFormatter(store.getUser.role).title }}
             </VListItemSubtitle>
           </VListItem>
 

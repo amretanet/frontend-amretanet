@@ -201,7 +201,7 @@ export const customerStatusFormatter = (status: number) => {
   const status_options = customer_status_options;
   const current_status = status_options.find((el: any) => el.value === status);
   let temp = {
-    type: "",
+    title: "",
     color: "dark",
   };
   if (status === 0) {
@@ -218,45 +218,45 @@ export const customerStatusFormatter = (status: number) => {
     temp.color = "secondary";
   }
   if (current_status) {
-    temp.type = current_status.title;
+    temp.title = current_status.title;
   } else {
-    temp.type = "-Tidak Diketahui-";
+    temp.title = "-Tidak Diketahui-";
   }
   return temp;
 };
 export const ticketStatusFormatter = (status: string) => {
   let temp = {
-    type: "",
+    title: "",
     color: "",
   };
   if (status == "OPEN") {
-    temp.type = "Ditugaskan";
+    temp.title = "DITUGASKAN";
     temp.color = "primary";
   } else if (status == "PENDING") {
-    temp.type = "Menunggu";
+    temp.title = "MENUNGGU";
     temp.color = "dark";
   } else if (status == "ON_PROGRESS") {
-    temp.type = "Dikerjakan";
+    temp.title = "DIKERJAKAN";
     temp.color = "warning";
   } else if (status == "CLOSED") {
-    temp.type = "Selesai";
+    temp.title = "SELESAI";
     temp.color = "success";
   }
   return temp;
 };
 export const invoiceStatusFormatter = (status: string) => {
   let temp = {
-    type: "",
+    title: "",
     color: "",
   };
   if (status == "UNPAID") {
-    temp.type = "BELUM DIBAYAR";
+    temp.title = "BELUM DIBAYAR";
     temp.color = "error";
   } else if (status == "PAID") {
-    temp.type = "SUDAH DIBAYAR";
+    temp.title = "SUDAH DIBAYAR";
     temp.color = "success";
   } else if (status == "PENDING") {
-    temp.type = "MENUNGGU KONFIRMASI";
+    temp.title = "MENUNGGU KONFIRMASI";
     temp.color = "warning";
   }
   return temp;

@@ -183,7 +183,7 @@ onMounted(() => {
                       {{
                         item?.raw?.value == "all"
                           ? "Kontak"
-                          : roleFormatter(item?.raw?.title).type
+                          : roleFormatter(item?.raw?.title).title
                       }}
                     </strong>
                   </span>
@@ -211,7 +211,7 @@ onMounted(() => {
                           {{
                             item?.raw?.value == "all"
                               ? "Kontak"
-                              : roleFormatter(item?.raw?.title).type
+                              : roleFormatter(item?.raw?.title).title
                           }}
                         </strong>
                       </span>

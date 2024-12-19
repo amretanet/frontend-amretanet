@@ -420,7 +420,7 @@ const sendReminderMessageSelectedInvoice = async () => {
   }
 };
 const updateStatusSelectedInvoice = async (status: string) => {
-  const formatted_status = invoiceStatusFormatter(status).type;
+  const formatted_status = invoiceStatusFormatter(status).title;
   const is_confirmed = await confirmAction(
     "Ubah Status Invoice Terpilih?",
     `Status invoice yang dipilih akan diubah menjadi ${formatted_status}`,
@@ -660,7 +660,7 @@ watch(checked_invoice_data, () => {
             :color="invoiceStatusFormatter(data.status).color"
             variant="outlined"
           >
-            <strong>{{ invoiceStatusFormatter(data.status).type }}</strong>
+            <strong>{{ invoiceStatusFormatter(data.status).title }}</strong>
           </VChip>
         </template>
         <!-- CUSTOM ACTION -->

@@ -230,7 +230,7 @@ const updateCustomerStatus = async (
   const is_confirmed = await confirmAction(
     "Ubah Status Pelanggan?",
     `Status Pelanggan ${name} akan diubah menjadi ${
-      customerStatusFormatter(status).type
+      customerStatusFormatter(status).title
     }`,
     "Ya, Ubah!"
   );
@@ -400,7 +400,7 @@ onMounted(() => {
             :color="customerStatusFormatter(data.status).color"
             class="clickable"
           >
-            {{ customerStatusFormatter(data.status).type }}
+            {{ customerStatusFormatter(data.status).title }}
             <VTooltip activator="parent"> Ubah Status </VTooltip>
             <VMenu activator="parent" location="bottom" offset="14px">
               <VCard>
@@ -413,7 +413,7 @@ onMounted(() => {
                       updateCustomerStatus(data._id, data.name, status.value)
                     "
                   >
-                    {{ customerStatusFormatter(status.value).type }}
+                    {{ customerStatusFormatter(status.value).title }}
                   </VBtn>
                 </VCardText>
               </VCard>

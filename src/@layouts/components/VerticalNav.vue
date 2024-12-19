@@ -115,7 +115,7 @@ const handleNavScroll = (evt: Event) => {
                   size="x-small"
                   :color="roleFormatter(store.getUser.role).color"
                 >
-                  {{ roleFormatter(store.getUser.role).type }}
+                  {{ roleFormatter(store.getUser.role).title }}
                 </VChip>
               </div>
             </div>

@@ -217,7 +217,7 @@ onMounted(() => {
                     :color="ticketStatusFormatter(data.status).color"
                     variant="flat"
                   >
-                    {{ ticketStatusFormatter(data.status).type }}
+                    {{ ticketStatusFormatter(data.status).title }}
                   </VChip>
                 </div>
                 <VDivider />

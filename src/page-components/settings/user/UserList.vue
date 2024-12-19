@@ -288,7 +288,7 @@ onMounted(() => {
         </template>
         <template #cell-role="{ data }">
           <VChip variant="outlined" :color="roleFormatter(data.role).color">
-            {{ roleFormatter(data.role).type }}
+            {{ roleFormatter(data.role).title }}
           </VChip>
         </template>
         <template #cell-action="{ data }">

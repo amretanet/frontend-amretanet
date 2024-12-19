@@ -141,7 +141,7 @@ watch(is_showing_modal, () => {
                             variant="outlined"
                             :color="roleFormatter(item?.raw?.role).color"
                           >
-                            {{ roleFormatter(item?.raw?.role).type }}
+                            {{ roleFormatter(item?.raw?.role).title }}
                           </VChip>
                         </div>
                       </template>
@@ -173,7 +173,7 @@ watch(is_showing_modal, () => {
                             variant="outlined"
                             :color="roleFormatter(item?.raw?.role).color"
                           >
-                            {{ roleFormatter(item?.raw?.role).type }}
+                            {{ roleFormatter(item?.raw?.role).title }}
                           </VChip>
                         </div>
                       </template>

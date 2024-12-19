@@ -267,7 +267,7 @@ watch(is_showing_modal, () => {
                       {{
                         invoiceStatusFormatter(
                           customer_data?.invoice?.status || "PAID"
-                        ).type
+                        ).title
                       }}
                     </strong>
                   </template>

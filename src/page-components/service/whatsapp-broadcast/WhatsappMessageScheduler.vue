@@ -190,7 +190,7 @@ onMounted(() => {
             variant="outlined"
             :color="customerStatusFormatter(data.status).color"
           >
-            {{ customerStatusFormatter(data.status).type }}
+            {{ customerStatusFormatter(data.status).title }}
           </VChip>
         </template>
         <template #cell-ppn="{ data }">

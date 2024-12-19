@@ -119,7 +119,7 @@ watch(props, () => {
                   :color="invoiceStatusFormatter(invoice_data.status).color"
                   class="font-weight-bold"
                 >
-                  {{ invoiceStatusFormatter(invoice_data.status).type }}
+                  {{ invoiceStatusFormatter(invoice_data.status).title }}
                 </VChip>
               </template>
             </HorizontalTextFormat>
