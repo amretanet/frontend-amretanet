@@ -8,7 +8,7 @@ const path_data = ref([
     name: "Keuangan",
   },
   {
-    name: "Tagihan",
+    name: "Pengeluaran",
   },
 ]);
 </script>
@@ -25,5 +25,5 @@ const path_data = ref([
 </template>
 <route lang="yaml">
 meta:
-  title: Tagihan
+  title: Pengeluaran
 </route>

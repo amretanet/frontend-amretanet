@@ -6,6 +6,8 @@ import vuetify from "@/plugins/vuetify";
 import { loadFonts } from "@/plugins/webfontloader";
 import router from "@/router";
 import { abilitiesPlugin } from "@casl/vue";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import "@core/scss/template/index.scss";
 import "@styles/custom.scss";
 import "@styles/animation.scss";
@@ -23,9 +25,6 @@ loadFonts();
 // Create vue app
 const app = createApp(App);
 
-// Global components
-app.component("QuillEditor", QuillEditor);
-
 // Use plugins
 app.use(vuetify);
 app.use(createPinia());
@@ -34,6 +33,10 @@ app.use(layoutsPlugin);
 app.use(abilitiesPlugin, ability, {
   useGlobalProperties: true,
 });
+
+// Global components
+app.component("QuillEditor", QuillEditor);
+app.component("VueDatePicker", VueDatePicker);
 
 // Mount vue app
 app.mount("#app");

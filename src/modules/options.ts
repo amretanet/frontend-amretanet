@@ -434,3 +434,21 @@ export const year_options = [
   "2049",
   "2050",
 ];
+export const ticket_status_options = [
+  {
+    title: "Dibuka",
+    value: "OPEN",
+  },
+  {
+    title: "Menunggu",
+    value: "PENDING",
+  },
+  {
+    title: "Dikerjakan",
+    value: "ON_PROGRESS",
+  },
+  {
+    title: "Selesai",
+    value: "CLOSED",
+  },
+];

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, roleFormatter, showActionResult } from "@/modules";
+import { ticket_status_options } from "@/modules/options";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
@@ -22,15 +23,18 @@ const options = ref({
   user: [],
   odp: [],
   odc: [],
+  status: ticket_status_options,
   title: [],
 });
 const ticket_form = ref<VForm>();
 const ticket_data = ref({
+  title: props?.data?.title || null,
+  type: props?.data?.type || null,
   id_reporter: props?.data?.id_reporter || null,
   id_assignee: props?.data?.id_assignee || null,
   id_odc: props?.data?.id_odc || null,
   id_odp: props?.data?.id_odp || null,
-  title: props?.data?.title || null,
+  status: props?.data?.status || null,
   description: props?.data?.description || null,
 });
 
@@ -77,14 +81,26 @@ const updateTicket = () => {
     }
   });
 };
+const setTicketType = () => {
+  const selected_title: any = options.value.title.find(
+    (el: any) => el.title === ticket_data.value.title
+  );
+  if (selected_title) {
+    ticket_data.value.type = selected_title.type;
+    if (ticket_data.value.type !== "TKT") {
+      ticket_data.value.id_reporter = null;
+    }
+  }
+};
 
 // LIFECYCLE HOOKS
 watch(props, () => {
+  ticket_data.value.type = props?.data?.type || null;
   ticket_data.value.id_reporter = props?.data?.id_reporter || null;
   ticket_data.value.id_assignee = props?.data?.id_assignee || null;
   ticket_data.value.id_odc = props?.data?.id_odc || null;
   ticket_data.value.id_odp = props?.data?.id_odp || null;
-  ticket_data.value.title = props?.data?.title || null;
+  ticket_data.value.status = props?.data?.status || null;
   ticket_data.value.description = props?.data?.description || null;
 });
 watch(is_showing_modal, () => {
@@ -117,15 +133,30 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="ticket_form" @submit.prevent="updateTicket">
             <VRow>
+              <!-- TITLE -->
               <VCol cols="12">
                 <VAutocomplete
+                  v-model="ticket_data.title"
+                  :items="options.title"
+                  :rules="[requiredValidator]"
+                  clearable
+                  @update:model-value="setTicketType"
+                >
+                  <template #label>
+                    Judul Pesan <span class="text-error">*</span>
+                  </template>
+                </VAutocomplete>
+              </VCol>
+              <!-- REPORTER -->
+              <VCol v-if="ticket_data.type === 'TKT'" cols="12">
+                <VAutocomplete
                   v-model="ticket_data.id_reporter"
-                  :items="options.user"
+                  :items="options.user.filter((el:any)=>el.role===99)"
                   :rules="[requiredValidator]"
                   clearable
                 >
                   <template #label>
-                    Pelapor <span class="text-error">*</span>
+                    Pelanggan <span class="text-error">*</span>
                   </template>
                   <template v-slot:item="{ props, item }">
                     <VListItem v-bind="props" class="px-2">
@@ -149,6 +180,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- ASSIGNEE -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_assignee"
@@ -157,7 +189,7 @@ watch(is_showing_modal, () => {
                   clearable
                 >
                   <template #label>
-                    Penerima Tugas <span class="text-error">*</span>
+                    Teknisi <span class="text-error">*</span>
                   </template>
                   <template v-slot:item="{ props, item }">
                     <VListItem v-bind="props" class="px-2">
@@ -181,6 +213,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- ODC -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odc"
@@ -189,6 +222,7 @@ watch(is_showing_modal, () => {
                   clearable
                 />
               </VCol>
+              <!-- ODP -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odp"
@@ -197,18 +231,15 @@ watch(is_showing_modal, () => {
                   clearable
                 />
               </VCol>
+              <!-- STATUS -->
               <VCol cols="12">
-                <VCombobox
-                  v-model="ticket_data.title"
-                  :items="options.title"
-                  :rules="[requiredValidator]"
-                  clearable
-                >
-                  <template #label>
-                    Judul Pesan <span class="text-error">*</span>
-                  </template>
-                </VCombobox>
+                <VAutocomplete
+                  v-model="ticket_data.status"
+                  label="Status"
+                  :items="options.status"
+                />
               </VCol>
+              <!-- DESCRIPTION -->
               <VCol cols="12">
                 <VTextarea
                   v-model="ticket_data.description"
@@ -220,6 +251,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextarea>
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
                 <div class="d-flex gap-2 justify-end">
                   <VBtn

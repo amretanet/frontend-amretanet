@@ -8,7 +8,7 @@ const router = useRouter();
 const path_data = ref([
   {
     icon: "tabler-user",
-    name: "My profile",
+    name: "Profil Saya",
   },
 ]);
 
@@ -43,5 +43,5 @@ const backToPrev = () => {
 </template>
 <route lang="yaml">
 meta:
-  title: My Profile
+  title: Profil Saya
 </route>

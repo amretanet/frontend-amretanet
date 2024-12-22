@@ -3,7 +3,7 @@ export default [
     title: "Dashboard",
     icon: { icon: "tabler-dashboard" },
     to: "managements-dashboard",
-    access: [1, 2],
+    access: [1, 2, 5],
   },
   {
     title: "Pelanggan",
@@ -22,12 +22,24 @@ export default [
         to: "managements-finance-invoice",
         access: [1],
       },
+      {
+        title: "Pemasukan",
+        icon: { icon: "mdi-invoice-text-arrow-left-outline" },
+        to: "managements-finance-income",
+        access: [1],
+      },
+      {
+        title: "Pengeluaran",
+        icon: { icon: "mdi-invoice-text-arrow-right-outline" },
+        to: "managements-finance-expenditure",
+        access: [1],
+      },
     ],
   },
   {
     title: "Layanan",
     icon: { icon: "tabler-adjustments-horizontal" },
-    access: [1],
+    access: [1, 5],
     children: [
       {
         title: "Pesan Whatsapp",
@@ -45,7 +57,7 @@ export default [
         title: "Tiket",
         icon: { icon: "tabler-ticket" },
         to: "managements-service-ticket",
-        access: [1],
+        access: [1, 5],
       },
     ],
   },

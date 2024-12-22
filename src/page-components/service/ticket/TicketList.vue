@@ -15,16 +15,23 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddTicketModal from "./AddTicketModal.vue";
 import EditTicketModal from "./EditTicketModal.vue";
+import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
+import { stateManagement } from "@/store";
+import { ticket_status_options } from "@/modules/options";
+import DetailTicketModal from "./DetailTicketModal.vue";
 
 // VARIABLES
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
+  status: null,
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const options = ref({
   user: [],
+  status: ticket_status_options,
 });
 const pagination = ref({
   page: 1,
@@ -45,26 +52,31 @@ const ticket_table_data = ref({
       key: "ticket",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
-      width: "25%",
     },
     {
-      title: "PELAPOR",
-      key: "reporter",
-      th_class: "text-left",
-      td_class: "text-left",
+      title: "DIBUAT OLEH",
+      key: "creator",
+      th_class: "text-center",
+      td_class: "text-center",
     },
     {
-      title: "PENERIMA TUGAS",
+      title: "TEKNISI",
       key: "assignee",
-      th_class: "text-left",
-      td_class: "text-left",
+      th_class: "text-center",
+      td_class: "text-center",
     },
     {
-      title: "DESKRIPSI",
-      key: "description",
-      th_class: "text-left",
-      td_class: "text-left",
+      title: "STATUS",
+      key: "status",
+      th_class: "text-center",
+      td_class: "text-center",
     },
+    // {
+    //   title: "DESKRIPSI",
+    //   key: "description",
+    //   th_class: "text-left",
+    //   td_class: "text-left",
+    // },
     {
       title: "AKSI",
       key: "action",
@@ -90,6 +102,7 @@ const getTicketData = (is_refresh: boolean = false) => {
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
+    ...(filter_data.value.status ? { status: filter_data.value.status } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -156,6 +169,35 @@ const updateTicket = (customer_data: any) => {
       showActionResult(undefined, "error", message);
     });
 };
+const updateTicketStatus = async (id: string, status: string) => {
+  const is_confirmed = await confirmAction(
+    "Ubah Status?",
+    `Status tiket akan diubah menjadi <strong>${
+      ticketStatusFormatter(status).title
+    }</strong>`,
+    "Ya, Ubah!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    axiosIns
+      .put(`ticket/update/${id}`, {
+        data: {
+          status: status,
+        },
+      })
+      .then(() => {
+        showActionResult(undefined, undefined, "Status Tiket Telah Diubah!");
+        getTicketData();
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -186,6 +228,15 @@ onMounted(() => {
         />
         <VSpacer />
         <AddTicketModal @ticket-added="showActionResult(), getTicketData()" />
+        <div class="wm-100" style="min-width: 10rem">
+          <VSelect
+            v-model="filter_data.status"
+            :items="options.status"
+            label="Status"
+            clearable
+            @update:model-value="getTicketData()"
+          />
+        </div>
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
@@ -207,69 +258,82 @@ onMounted(() => {
       >
         <template #cell-ticket="{ data }">
           <div class="py-2">
-            <VCard variant="tonal">
+            <VCard variant="tonal" style="max-width: 5rem">
               <VCardText class="d-flex flex-column gap-2">
                 <div class="d-flex align-center justify-space-between gap-10">
-                  <div v-if="data.name" class="font-weight-bold fs-14">
+                  <div
+                    v-if="data.name"
+                    class="font-weight-bold text-primary fs-14"
+                  >
                     #{{ data.name }}
                   </div>
-                  <VChip
-                    :color="ticketStatusFormatter(data.status).color"
-                    variant="flat"
-                  >
-                    {{ ticketStatusFormatter(data.status).title }}
+                  <VChip variant="outlined" color="dark">
+                    {{ dateFormatterID(data.created_at, true, true) }}
                   </VChip>
                 </div>
                 <VDivider />
                 <div class="fs-14">
-                  Oleh: <span class="font-weight-bold">{{ data.creator }}</span>
-                </div>
-                <div class="fs-14">
-                  Pada:
-                  <span class="font-weight-bold">
-                    {{ dateFormatterID(data.created_at, false, true) }}
-                  </span>
+                  <HorizontalTextFormat
+                    v-if="data.type === 'TKT'"
+                    title="Pelanggan"
+                    :title_cols="3"
+                    :value="data.reporter"
+                  />
+                  <HorizontalTextFormat
+                    title="Judul"
+                    :title_cols="3"
+                    :value="data.title"
+                  />
+                  <HorizontalTextFormat
+                    title="Deskripsi"
+                    :title_cols="3"
+                    :value="data.description"
+                  />
                 </div>
               </VCardText>
             </VCard>
           </div>
         </template>
-        <template #cell-reporter="{ data }">
-          <VChip variant="outlined" color="primary" prepend-icon="tabler-user">
-            {{ data.reporter }}
-          </VChip>
+        <template #cell-creator="{ data }">
+          <div style="min-width: 10rem">
+            <VTextField
+              v-model="data.creator"
+              variant="outlined"
+              prepend-inner-icon="mdi-account-edit-outline"
+              readonly
+            />
+          </div>
         </template>
         <template #cell-assignee="{ data }">
-          <VChip
-            v-if="data.assignee"
-            variant="outlined"
-            color="warning"
-            prepend-icon="tabler-user"
-          >
-            {{ data.assignee }}
-          </VChip>
-          <div v-else style="min-width: 12rem">
+          <div style="min-width: 10rem">
             <VAutocomplete
               v-model="data.id_assignee"
-              :items="options.user"
-              label="Penerima Tugas"
+              :items="options.user.filter((el:any)=>el.role===5)"
+              variant="outlined"
+              prepend-inner-icon="mdi-account-hard-hat-outline"
+              :readonly="!store.isAdmin"
               @update:model-value="updateTicket(data)"
             />
           </div>
         </template>
-        <template #cell-description="{ data }">
-          <div class="d-flex flex-column gap-2 fs-15">
-            <div class="font-weight-black text-no-wrap">{{ data.title }}</div>
-            <div>{{ data.description }}</div>
-          </div>
+        <template #cell-status="{ data }">
+          <VChip
+            :color="ticketStatusFormatter(data.status).color"
+            variant="flat"
+          >
+            {{ ticketStatusFormatter(data.status).title }}
+          </VChip>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <DetailTicketModal :data="data" />
             <EditTicketModal
+              v-if="store.isAdmin"
               :data="data"
               @ticket-updated="showActionResult(), getTicketData()"
             />
             <VBtn
+              v-if="store.isAdmin"
               size="35"
               color="error"
               @click="deleteTicket(data._id, data.name)"
@@ -277,6 +341,30 @@ onMounted(() => {
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
+            <div v-if="store.isEngineer">
+              <VBtn
+                v-if="['OPEN', 'PENDING'].includes(data.status)"
+                size="35"
+                color="warning"
+                @click="updateTicketStatus(data._id, 'ON_PROGRESS')"
+              >
+                <VIcon icon="mdi-progress-check"></VIcon>
+                <VTooltip activator="parent" class="text-no-wrap">
+                  Kerjakan Tugas
+                </VTooltip>
+              </VBtn>
+              <VBtn
+                v-if="data.status === 'ON_PROGRESS'"
+                size="35"
+                color="primary"
+                @click="updateTicketStatus(data._id, 'CLOSED')"
+              >
+                <VIcon icon="mdi-wrench-check-outline"></VIcon>
+                <VTooltip activator="parent" class="text-no-wrap">
+                  Tugas Selesai
+                </VTooltip>
+              </VBtn>
+            </div>
           </div>
         </template>
         <!-- CUSTOM PAGINATION -->

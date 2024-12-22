@@ -3,6 +3,9 @@ import Swal from "sweetalert2";
 import { customer_status_options, user_role_options } from "./options";
 import moment from "moment";
 
+export function dateFormatterParams(date: string): string {
+  return moment(date).format("YYYY-MM-DD HH:mm:ss");
+}
 export function dateFormatterID(
   date: string,
   month_shorted: boolean = false,
@@ -178,12 +181,12 @@ export const roleFormatter = (role: number) => {
   const current_data = role_options.find((el: any) => el.value == role);
   if (current_data) {
     return {
-      type: current_data.title,
+      title: current_data.title,
       color: current_data.value === 1 ? "primary" : "warning",
     };
   } else {
     return {
-      type: "Pelanggan",
+      title: "Pelanggan",
       color: "dark",
     };
   }
@@ -230,16 +233,16 @@ export const ticketStatusFormatter = (status: string) => {
     color: "",
   };
   if (status == "OPEN") {
-    temp.title = "DITUGASKAN";
+    temp.title = "Dibuka";
     temp.color = "primary";
   } else if (status == "PENDING") {
-    temp.title = "MENUNGGU";
-    temp.color = "dark";
+    temp.title = "Menunggu";
+    temp.color = "info";
   } else if (status == "ON_PROGRESS") {
-    temp.title = "DIKERJAKAN";
+    temp.title = "Dikerjakan";
     temp.color = "warning";
   } else if (status == "CLOSED") {
-    temp.title = "SELESAI";
+    temp.title = "Selesai";
     temp.color = "success";
   }
   return temp;

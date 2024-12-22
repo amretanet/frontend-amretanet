@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
+import IncomeList from "@/page-components/finance/income/IncomeList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
@@ -8,7 +8,7 @@ const path_data = ref([
     name: "Keuangan",
   },
   {
-    name: "Tagihan",
+    name: "Pemasukan",
   },
 ]);
 </script>
@@ -19,11 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <InvoiceList />
+      <IncomeList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Tagihan
+  title: Pemasukan
 </route>

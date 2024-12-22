@@ -32,7 +32,9 @@ const { width: windowWidth } = useWindowSize();
           "
         >
           <slot name="title">
-            {{ props.title }}
+            <div class="text-wrap">
+              {{ props.title }}
+            </div>
           </slot>
           <div>:</div>
         </div>
@@ -43,7 +45,9 @@ const { width: windowWidth } = useWindowSize();
         :class="!isLessThanOverlayNavBreakpoint(windowWidth) ? 'ps-1' : 'pt-1'"
       >
         <slot name="value">
-          <strong>{{ props.value }}</strong>
+          <div class="text-wrap">
+            <strong>{{ props.value }}</strong>
+          </div>
         </slot>
       </VCol>
     </VRow>

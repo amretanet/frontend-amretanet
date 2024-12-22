@@ -79,3 +79,51 @@
   max-inline-size: 30rem !important;
   overflow-x: hidden !important;
 }
+
+.dp__main * {
+  font-family: "Plus Jakarta Sans", sans-serif, -apple-system,
+    blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+}
+.dp__month_year_wrap {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.dp__calendar_header {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+.dp__menu {
+  border-radius: 10px !important;
+  font-family: "Plus Jakarta Sans", sans-serif, -apple-system,
+    blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+}
+.dp__arrow_top {
+  border-block-start: 1px solid rgb(247, 244, 244);
+}
+.dp__calendar_item {
+  block-size: 30px !important;
+  font-size: 14px !important;
+}
+.dp__time_col {
+  font-family: "Plus Jakarta Sans", sans-serif, -apple-system,
+    blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  font-size: 14px !important;
+}
+.date-range .dp__time_picker_inline_container {
+  inline-size: 33.5rem !important;
+}
+.dp__flex {
+  border: 0.5px solid #a0a3b8;
+  border-radius: 6px;
+  inline-size: 100% !important;
+  margin-block: 0;
+  margin-inline: 9px;
+  padding-block: 3px;
+  padding-inline: 0;
+}
+.border-custom {
+  border: 0.5px solid #a0a3b8;
+}

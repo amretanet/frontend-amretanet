@@ -56,7 +56,7 @@ const logout = () => {
           <VDivider class="my-2" />
           <VListItem>
             <VBtn block prepend-icon="tabler-user" to="/my-profile">
-              My Profile
+              Profil Saya
             </VBtn>
           </VListItem>
           <VListItem>
@@ -66,7 +66,7 @@ const logout = () => {
               color="error"
               @click="logout()"
             >
-              Logout
+              Keluar
             </VBtn>
           </VListItem>
         </VList>

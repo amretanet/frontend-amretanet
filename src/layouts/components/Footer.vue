@@ -5,7 +5,7 @@
       {{ new Date().getFullYear() }}
       Customize With
       <VIcon icon="tabler-heart" color="error" size="1.25rem" class="mx-1" />
-      By Hanhan Septian
+      By Mr.HS
     </span>
     <span class="d-md-flex gap-x-4 text-primary d-none"> Version 1.0.0 </span>
   </div>

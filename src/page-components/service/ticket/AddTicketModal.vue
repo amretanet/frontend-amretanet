@@ -22,11 +22,12 @@ const options = ref({
 });
 const ticket_form = ref<VForm>();
 const ticket_data = ref({
+  title: null,
+  type: null,
   id_reporter: null,
   id_assignee: null,
   id_odc: null,
   id_odp: null,
-  title: null,
   description: null,
 });
 
@@ -55,16 +56,9 @@ const saveTicket = () => {
   ticket_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
-      let payload: any = ticket_data.value;
-      const selected_title: any = options.value.title.find(
-        (el: any) => el.title === ticket_data.value.title
-      );
-      if (selected_title) {
-        payload.type = selected_title.type;
-      }
       axiosIns
         .post("ticket/add", {
-          data: payload,
+          data: ticket_data.value,
         })
         .then(() => {
           emits("ticketAdded");
@@ -83,6 +77,17 @@ const saveTicket = () => {
 };
 const resetForm = () => {
   ticket_form.value?.reset();
+};
+const setTicketType = () => {
+  const selected_title: any = options.value.title.find(
+    (el: any) => el.title === ticket_data.value.title
+  );
+  if (selected_title) {
+    ticket_data.value.type = selected_title.type;
+    if (ticket_data.value.type !== "TKT") {
+      ticket_data.value.id_reporter = null;
+    }
+  }
 };
 
 // LIFECYCLE HOOKS
@@ -116,16 +121,30 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="ticket_form" @submit.prevent="saveTicket">
             <VRow>
-              <!-- REPORTER -->
+              <!-- TITLE -->
               <VCol cols="12">
                 <VAutocomplete
+                  v-model="ticket_data.title"
+                  :items="options.title"
+                  :rules="[requiredValidator]"
+                  clearable
+                  @update:model-value="setTicketType"
+                >
+                  <template #label>
+                    Judul Pesan <span class="text-error">*</span>
+                  </template>
+                </VAutocomplete>
+              </VCol>
+              <!-- REPORTER -->
+              <VCol v-if="ticket_data.type === 'TKT'" cols="12">
+                <VAutocomplete
                   v-model="ticket_data.id_reporter"
-                  :items="options.user"
+                  :items="options.user.filter((el:any)=>el.role===99)"
                   :rules="[requiredValidator]"
                   clearable
                 >
                   <template #label>
-                    Pelapor <span class="text-error">*</span>
+                    Pelanggan <span class="text-error">*</span>
                   </template>
                   <template v-slot:item="{ props, item }">
                     <VListItem v-bind="props" class="px-2">
@@ -158,7 +177,7 @@ watch(is_showing_modal, () => {
                   clearable
                 >
                   <template #label>
-                    Penerima Tugas <span class="text-error">*</span>
+                    Teknisi <span class="text-error">*</span>
                   </template>
                   <template v-slot:item="{ props, item }">
                     <VListItem v-bind="props" class="px-2">
@@ -199,19 +218,6 @@ watch(is_showing_modal, () => {
                   :items="options.odp"
                   clearable
                 />
-              </VCol>
-              <!-- TITLE -->
-              <VCol cols="12">
-                <VAutocomplete
-                  v-model="ticket_data.title"
-                  :items="options.title"
-                  :rules="[requiredValidator]"
-                  clearable
-                >
-                  <template #label>
-                    Judul Pesan <span class="text-error">*</span>
-                  </template>
-                </VAutocomplete>
               </VCol>
               <!-- DESCRIPTION -->
               <VCol cols="12">

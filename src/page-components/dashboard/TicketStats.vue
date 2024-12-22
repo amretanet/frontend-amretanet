@@ -1,70 +1,88 @@
+<script setup lang="ts">
+import { thousandSeparator, ticketStatusFormatter } from "@/modules";
+import SkeletonLoader from "../SkeletonLoader.vue";
+import axiosIns from "@/plugins/axios";
+
+// VARIABLE
+const is_loading = ref(true);
+const ticket_stats_data = ref([
+  {
+    status: "OPEN",
+    icon: "tabler-ticket",
+    color: "primary",
+    count: 0,
+  },
+  {
+    status: "PENDING",
+    icon: "tabler-hourglass",
+    color: "secondary",
+    count: 0,
+  },
+  {
+    status: "ON_PROGRESS",
+    icon: "tabler-refresh-dot",
+    color: "warning",
+    count: 0,
+  },
+  {
+    status: "CLOSED",
+    icon: "tabler-clock-check",
+    color: "success",
+    count: 0,
+  },
+]);
+
+// FUNCTION
+const getTicketStats = () => {
+  is_loading.value = true;
+  axiosIns
+    .get("ticket/stats")
+    .then((res) => {
+      const data = res?.data?.ticket_stats_data;
+      if (data) {
+        ticket_stats_data.value.forEach((el: any) => {
+          if (el.status in data) {
+            el.count = data[el.status];
+          }
+        });
+      }
+    })
+    .finally(() => {
+      is_loading.value = false;
+    });
+};
+
+// LIFECYCLE HOOKS
+onMounted(() => {
+  getTicketStats();
+});
+</script>
 <template>
   <VRow>
-    <VCol cols="12" md="3" sm="12">
-      <VCard variant="tonal" color="primary">
+    <VCol v-for="item in ticket_stats_data" cols="12" md="3" sm="12">
+      <SkeletonLoader v-if="is_loading" height="120px" rounded="20px" />
+      <VCard
+        v-else
+        variant="tonal"
+        :color="ticketStatusFormatter(item.status).color"
+      >
         <VCardText>
           <div class="d-flex align-center gap-2">
-            <VAvatar variant="tonal" color="primary" size="70">
-              <VIcon icon="tabler-ticket" size="35" />
+            <VAvatar
+              variant="tonal"
+              :color="ticketStatusFormatter(item.status).color"
+              size="70"
+            >
+              <VIcon :icon="item.icon" size="35" />
             </VAvatar>
             <div class="d-flex flex-column gap-4">
-              <div class="fs-16">Tiket Open</div>
-              <div>
-                <span class="fs-30 font-weight-bold">29</span>
-                <small class="ms-1">(Tiket)</small>
+              <div class="fs-16">
+                Tiket {{ ticketStatusFormatter(item.status).title }}
               </div>
-            </div>
-          </div>
-        </VCardText>
-      </VCard>
-    </VCol>
-    <VCol cols="12" md="3" sm="12">
-      <VCard variant="tonal" color="dark">
-        <VCardText>
-          <div class="d-flex align-center gap-2">
-            <VAvatar variant="tonal" color="dark" size="70">
-              <VIcon icon="tabler-hourglass" size="35" />
-            </VAvatar>
-            <div class="d-flex flex-column gap-4">
-              <div class="fs-16">Tiket Pending</div>
               <div>
-                <span class="fs-30 font-weight-bold">4</span>
-                <small class="ms-1">(Tiket)</small>
-              </div>
-            </div>
-          </div>
-        </VCardText>
-      </VCard>
-    </VCol>
-    <VCol cols="12" md="3" sm="12">
-      <VCard variant="tonal" color="success">
-        <VCardText>
-          <div class="d-flex align-center gap-2">
-            <VAvatar variant="tonal" color="success" size="70">
-              <VIcon icon="tabler-clock-check" size="35" />
-            </VAvatar>
-            <div class="d-flex flex-column gap-4">
-              <div class="fs-16">Tiket Close</div>
-              <div>
-                <span class="fs-30 font-weight-bold">4</span>
-                <small class="ms-1">(Tiket)</small>
-              </div>
-            </div>
-          </div>
-        </VCardText>
-      </VCard>
-    </VCol>
-    <VCol cols="12" md="3" sm="12">
-      <VCard variant="tonal" color="warning">
-        <VCardText>
-          <div class="d-flex align-center gap-2">
-            <VAvatar variant="tonal" color="warning" size="70">
-              <VIcon icon="tabler-refresh-dot" size="35" />
-            </VAvatar>
-            <div class="d-flex flex-column gap-4">
-              <div class="fs-16">Tiket On Progress</div>
-              <div>
-                <span class="fs-30 font-weight-bold">4</span>
+                <span class="fs-30 font-weight-bold">{{
+                  thousandSeparator(item.count)
+                }}</span>
                 <small class="ms-1">(Tiket)</small>
               </div>
             </div>
