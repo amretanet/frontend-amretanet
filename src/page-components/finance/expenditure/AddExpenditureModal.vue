@@ -9,7 +9,7 @@ import moment from "moment";
 
 // INTERFACE
 interface IEmits {
-  (e: "incomeAdded"): void;
+  (e: "expenditureAdded"): void;
 }
 
 // VARIABLE
@@ -17,7 +17,6 @@ const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
-  user: [],
   category: [],
   method: [
     {
@@ -30,42 +29,36 @@ const options = ref({
     },
   ],
 });
-const income_form = ref<VForm>();
-const income_data = ref({
+const expenditure_form = ref<VForm>();
+const expenditure_data = ref({
   nominal: null,
   category: null,
   method: null,
   date: moment().format("YYYY-MM-DD HH:mm:ss"),
-  id_receiver: null,
   description: null,
 });
 
 // FUNCTION
-const getUserOptions = () => {
-  axiosIns.get("options/user").then((res) => {
-    options.value.user = res.data.user_options || [];
+const getExpenditureCategoryOptions = () => {
+  axiosIns.get("options/expenditure-category").then((res) => {
+    options.value.category = res?.data?.expenditure_category_options || [];
   });
 };
-const getIncomeCategoryOptions = () => {
-  axiosIns.get("options/income-category").then((res) => {
-    options.value.category = res?.data?.income_category_options || [];
-  });
-};
-const saveIncome = () => {
-  income_form.value?.validate().then(({ valid: is_valid }) => {
+const saveExpenditure = () => {
+  expenditure_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
       axiosIns
-        .post("income/add", {
-          data: income_data.value,
+        .post("expenditure/add", {
+          data: expenditure_data.value,
         })
         .then(() => {
           showActionResult(
             undefined,
             undefined,
-            "Pemasukan Telah Ditambahkan!"
+            "Pengeluaran Telah Ditambahkan!"
           );
-          emits("incomeAdded");
+          emits("expenditureAdded");
           resetForm();
         })
         .catch((err) => {
@@ -80,14 +73,13 @@ const saveIncome = () => {
   });
 };
 const resetForm = () => {
-  income_form.value?.reset();
+  expenditure_form.value?.reset();
 };
 
 // LIFECYCLE HOOKS
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
-    getUserOptions();
-    getIncomeCategoryOptions();
+    getExpenditureCategoryOptions();
   }
 });
 </script>
@@ -96,7 +88,7 @@ watch(is_showing_modal, () => {
     <div @click="is_showing_modal = true">
       <slot name="trigger-button">
         <VBtn size="40" prepend-icon="tabler-plus">
-          <VTooltip activator="parent"> Tambah Pemasukan </VTooltip>
+          <VTooltip activator="parent"> Tambah Pengeluaran </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -107,15 +99,15 @@ watch(is_showing_modal, () => {
           <template #prepend>
             <VIcon icon="tabler-plus" />
           </template>
-          <template #title> Tambah Pemasukan </template>
+          <template #title> Tambah Pengeluaran </template>
         </VCardItem>
         <VCardText>
-          <VForm ref="income_form" @submit.prevent="saveIncome">
+          <VForm ref="expenditure_form" @submit.prevent="saveExpenditure">
             <VRow>
               <!-- NOMINAL -->
               <VCol cols="12">
                 <VTextField
-                  v-model="income_data.nominal"
+                  v-model="expenditure_data.nominal"
                   :rules="[requiredValidator, integerValidator]"
                 >
                   <template #label>
@@ -126,7 +118,7 @@ watch(is_showing_modal, () => {
               <!-- CATEGORY -->
               <VCol cols="12">
                 <VCombobox
-                  v-model="income_data.category"
+                  v-model="expenditure_data.category"
                   :items="options.category"
                   :rules="[requiredValidator]"
                 >
@@ -135,22 +127,10 @@ watch(is_showing_modal, () => {
                   </template>
                 </VCombobox>
               </VCol>
-              <!-- RECEIVER -->
-              <VCol cols="12">
-                <VAutocomplete
-                  v-model="income_data.id_receiver"
-                  :rules="[requiredValidator]"
-                  :items="options.user.filter((el:any)=>el.role!==99)"
-                >
-                  <template #label>
-                    Penerima <span class="text-error">*</span>
-                  </template>
-                </VAutocomplete>
-              </VCol>
               <!-- METHOD -->
               <VCol cols="5">
                 <VAutocomplete
-                  v-model="income_data.method"
+                  v-model="expenditure_data.method"
                   :items="options.method"
                   :rules="[requiredValidator]"
                 >
@@ -161,7 +141,7 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- DATE -->
               <VCol cols="7">
-                <DatePicker v-model:date="income_data.date">
+                <DatePicker v-model:date="expenditure_data.date">
                   <template #label>
                     Tanggal <span class="text-error">*</span>
                   </template>
@@ -170,7 +150,7 @@ watch(is_showing_modal, () => {
               <!-- DESCRIPTION -->
               <VCol cols="12">
                 <VTextarea
-                  v-model="income_data.description"
+                  v-model="expenditure_data.description"
                   :rules="[requiredValidator]"
                 >
                   <template #label>

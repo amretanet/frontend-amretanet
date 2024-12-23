@@ -181,11 +181,10 @@ watch(is_showing_modal, () => {
               <VCol cols="12">
                 <VTextarea
                   v-model="income_data.description"
-                  label="Isi Pesan"
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Deskripsi Pesan <span class="text-error">*</span>
+                    Deskripsi <span class="text-error">*</span>
                   </template>
                 </VTextarea>
               </VCol>

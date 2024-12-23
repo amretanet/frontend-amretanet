@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
+import ExpenditureList from "@/page-components/finance/expenditure/ExpenditureList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
@@ -19,7 +19,7 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <InvoiceList />
+      <ExpenditureList />
     </VCol>
   </VRow>
 </template>
