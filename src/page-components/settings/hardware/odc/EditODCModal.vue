@@ -67,6 +67,7 @@ const updateODC = async () => {
       data: odc_data.value,
     })
     .then(() => {
+      showActionResult(undefined, undefined, "ODC Telah Diubah!");
       emits("odcUpdated");
     })
     .catch((err) => {

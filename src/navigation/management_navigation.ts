@@ -66,12 +66,12 @@ export default [
     icon: { icon: "tabler-settings-cog" },
     access: [1, 2],
     children: [
-      {
-        title: "Konfigurasi Sistem",
-        icon: { icon: "tabler-device-desktop-cog" },
-        to: "managements-settings-system-configuration",
-        access: [1],
-      },
+      // {
+      //   title: "Konfigurasi Sistem",
+      //   icon: { icon: "tabler-device-desktop-cog" },
+      //   to: "managements-settings-system-configuration",
+      //   access: [1],
+      // },
       {
         title: "Cakupan Area",
         icon: { icon: "tabler-map-star" },
