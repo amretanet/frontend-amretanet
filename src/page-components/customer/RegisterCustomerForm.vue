@@ -6,11 +6,11 @@ import {
   requiredValidator,
 } from "@/@core/utils/validators";
 import {
-  confirmAction,
   errorMessage,
   getLocation,
   showActionResult,
   thousandSeparator,
+  uploadImageFile,
 } from "@/modules";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
@@ -29,7 +29,6 @@ const is_aggree = ref(false);
 const is_on_process = ref(false);
 const id_card_image_file = ref<File[]>([]);
 const house_image_file = ref<File[]>([]);
-const image_file = ref(null);
 const customer_form = ref<VForm>();
 const customer_data = ref({
   name: null,
@@ -65,40 +64,28 @@ const getPackageOptions = () => {
     options.value.package = res?.data?.package_options || [];
   });
 };
-const uploadImage = async (file: any, type: string) => {
-  let form_data = new FormData();
-  form_data.append("file", file);
-
-  try {
-    const res = await axiosIns.post(`utility/upload-image/${type}`, form_data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return res?.data?.file_url || null;
-  } catch (err) {
-    return null;
-  }
-};
-const saveCustomer = () => {
+const validateCustomerForm = () => {
   customer_form.value?.validate().then((form) => {
     if (form.valid) {
       is_on_process.value = true;
-      saveData();
+      registerCustomer();
       is_on_process.value = false;
     }
   });
 };
-const saveData = async () => {
+const registerCustomer = async () => {
   if (id_card_image_file.value && house_image_file.value) {
     try {
-      const id_card_url = await uploadImage(
+      const id_card_url = await uploadImageFile(
         id_card_image_file.value[0],
-        "id_card"
+        "id_card_attachment"
       );
-      const house_url = await uploadImage(house_image_file.value[0], "house");
-      customer_data.value.id_card.image_url = id_card_url;
-      customer_data.value.location.house_image_url = house_url;
+      const house_url = await uploadImageFile(
+        house_image_file.value[0],
+        "house_attachment"
+      );
+      customer_data.value.id_card.image_url = id_card_url || "";
+      customer_data.value.location.house_image_url = house_url || "";
       axiosIns
         .post("customer/register", {
           data: customer_data.value,
@@ -150,7 +137,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <VForm ref="customer_form" @submit.prevent="saveCustomer">
+  <VForm ref="customer_form" @submit.prevent="validateCustomerForm">
     <VRow class="scroller" style="max-height: 35vh">
       <!-- NAME -->
       <VCol cols="12">
@@ -183,7 +170,7 @@ onMounted(() => {
         >
           <template #prepend-inner> +62 </template>
           <template #label>
-            No Telp/Whatsapp <span class="text-error">*</span>
+            Nomor Telepon <span class="text-error">*</span>
           </template>
         </VTextField>
       </VCol>

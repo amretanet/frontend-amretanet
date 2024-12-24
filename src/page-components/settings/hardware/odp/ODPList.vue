@@ -218,7 +218,7 @@ onMounted(() => {
           @click="getODPData(true)"
         />
         <VSpacer />
-        <AddODPModal @odp-added="showActionResult(), getODPData()" />
+        <AddODPModal @odp-added="getODPData()" />
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.topology"
@@ -274,10 +274,7 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditODPModal
-              :data="data"
-              @odp-updated="showActionResult(), getODPData()"
-            />
+            <EditODPModal :data="data" @odp-updated="getODPData()" />
             <VBtn
               size="35"
               color="error"

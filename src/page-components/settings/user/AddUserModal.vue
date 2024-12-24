@@ -121,7 +121,7 @@ const resetForm = () => {
                 >
                   <template #prepend-inner> +62 </template>
                   <template #label>
-                    No. Telp/Whatsapp <span class="text-error">*</span>
+                    Nomor Telepon <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>

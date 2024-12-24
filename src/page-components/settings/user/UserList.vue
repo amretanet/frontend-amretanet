@@ -61,8 +61,14 @@ const user_table_data = ref({
       width: "20%",
     },
     {
-      title: "NO TELEPON/WHATSAPP",
+      title: "NOMOR TELEPON",
       key: "phone_number",
+      th_class: "text-center",
+      td_class: "text-center text-no-wrap",
+    },
+    {
+      title: "KODE REFERRAL",
+      key: "referral",
       th_class: "text-center",
       td_class: "text-center text-no-wrap",
     },
@@ -274,6 +280,11 @@ onMounted(() => {
             prepend-icon="tabler-brand-whatsapp"
           >
             0{{ data.phone_number }}
+          </VChip>
+        </template>
+        <template #cell-referral="{ data }">
+          <VChip variant="outlined" color="dark">
+            {{ data.referral }}
           </VChip>
         </template>
         <template #cell-status="{ data }">

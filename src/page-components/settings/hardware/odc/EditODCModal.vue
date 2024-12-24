@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { requiredValidator } from "@/@core/utils/validators";
-import { errorMessage, showActionResult } from "@/modules";
+import { errorMessage, showActionResult, uploadImageFile } from "@/modules";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -19,7 +19,7 @@ interface IEmits {
 // VARIABLE
 const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
-const image_file = ref(null);
+const image_file = ref<File[]>([]);
 const image_path = ref(props.data.image_url || "");
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
@@ -44,44 +44,24 @@ const odc_data = ref({
 });
 
 // FUNCTION
-const uploadImage = (file: any) => {
-  return new Promise((resolve, reject) => {
-    let form_data = new FormData();
-    form_data.append("file", file);
-    axiosIns
-      .post("utility/upload-image/odc", form_data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (res.status == 200) {
-          resolve(res.data);
-        } else {
-          reject();
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-};
-const updateODC = () => {
+const validateODCForm = async () => {
   odc_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
-      is_on_process.value = true;
-      if (image_file.value) {
-        uploadImage(image_file.value).then((res: any) => {
-          odc_data.value.image_url = res.file_url;
-          updateData();
-        });
-      } else {
-        updateData();
-      }
+      updateODC();
     }
   });
 };
-const updateData = () => {
+const updateODC = async () => {
+  is_on_process.value = true;
+  if (image_file.value.length > 0) {
+    const image_url = await uploadImageFile(
+      image_file.value[0],
+      "odc_attachment"
+    );
+    if (image_url) {
+      odc_data.value.image_url = image_url;
+    }
+  }
   axiosIns
     .put(`odc/update/${props.data._id}`, {
       data: odc_data.value,
@@ -106,9 +86,9 @@ const handleImgError = (event: any) => {
   event.target.src = uploadfile;
 };
 const previewImage = (e: any) => {
-  image_file.value = e?.target?.files[0];
+  image_file.value = e?.target?.files;
   image_path.value = image_file.value
-    ? URL.createObjectURL(image_file.value)
+    ? URL.createObjectURL(image_file.value[0])
     : " ";
 };
 const inputImageFile = () => {
@@ -155,7 +135,7 @@ watch(props, () => {
           <template #title> Edit ODC </template>
         </VCardItem>
         <VCardText>
-          <VForm ref="odc_form" @submit.prevent="updateODC">
+          <VForm ref="odc_form" @submit.prevent="validateODCForm">
             <VRow>
               <VCol cols="5">
                 <div class="text-center">

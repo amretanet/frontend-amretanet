@@ -43,14 +43,14 @@ const customer_table_data = ref({
       width: "25%",
     },
     {
-      title: "NO LAYANAN",
+      title: "NOMOR LAYANAN",
       key: "service_number",
       th_class: "text-center",
       td_class: "text-center",
       width: "25%",
     },
     {
-      title: "NO TELEPON/WHATSAPP",
+      title: "NOMOR TELEPON",
       key: "phone_number",
       th_class: "text-center",
       td_class: "text-center",

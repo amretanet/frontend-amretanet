@@ -4,11 +4,11 @@ import ProcessButton from "./ProcessButton.vue";
 import EmptyAlert from "./EmptyAlert.vue";
 import {
   dateFormatterID,
-  errorMessage,
   invoiceStatusFormatter,
   numberToWords,
   showActionResult,
   thousandSeparator,
+  uploadImageFile,
 } from "@/modules";
 import { VForm } from "vuetify/components";
 import { requiredValidator } from "@/@core/utils/validators";
@@ -117,28 +117,13 @@ const printInvoice = (id: string) => {
   const url = `${domain}/invoice/pdf?${query}`;
   window.open(url);
 };
-const uploadImage = async (file: any, type: string) => {
-  let form_data = new FormData();
-  form_data.append("file", file);
-
-  try {
-    const res = await axiosIns.post(`utility/upload-image/${type}`, form_data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return res?.data?.file_url || null;
-  } catch (err) {
-    return null;
-  }
-};
 const confirmPayment = async () => {
   try {
     is_confirm_on_creating.value = true;
     is_confirm_error.value = false;
-    const image_url = await uploadImage(
+    const image_url = await uploadImageFile(
       manual_payment_data.value.file[0],
-      "payment"
+      "payment_evidence"
     );
     if (!image_url) {
       is_confirm_error.value = true;

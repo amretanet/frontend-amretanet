@@ -2,6 +2,7 @@ import { useThemeConfig } from "@/@core/composable/useThemeConfig";
 import Swal from "sweetalert2";
 import { customer_status_options, user_role_options } from "./options";
 import moment from "moment";
+import axiosIns from "@/plugins/axios";
 
 export function dateFormatterParams(date: string): string {
   return moment(date).format("YYYY-MM-DD HH:mm:ss");
@@ -345,4 +346,20 @@ export const numberToWords = (number: number) => {
   }
 
   return result.trim();
+};
+
+export const uploadImageFile = async (file: any, type: string) => {
+  let form_data = new FormData();
+  form_data.append("file", file);
+
+  try {
+    const res = await axiosIns.post(`utility/upload-file/${type}`, form_data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res?.data?.file_url || null;
+  } catch (err) {
+    return null;
+  }
 };

@@ -9,6 +9,7 @@ import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
 import { VForm } from "vuetify/components";
 import ProcessButton from "../ProcessButton.vue";
+import { gender_options } from "@/modules/options";
 
 // VARIABLE
 const store = stateManagement();
@@ -16,16 +17,7 @@ const is_on_process = ref(false);
 const user_form = ref<VForm>();
 const user_data = ref(JSON.parse(JSON.stringify(store.getUser)));
 const options = ref({
-  gender: [
-    {
-      title: "Laki-laki",
-      value: "L",
-    },
-    {
-      title: "Perempuan",
-      value: "P",
-    },
-  ],
+  gender: gender_options,
 });
 
 // FUNCTION
@@ -71,7 +63,7 @@ const updateUser = () => {
               </template>
             </VTextField>
           </VCol>
-          <VCol cols="12">
+          <VCol cols="12" md="8" sm="12">
             <VTextField
               v-model="user_data.email"
               :rules="[requiredValidator, emailValidator]"
@@ -81,13 +73,21 @@ const updateUser = () => {
               </template>
             </VTextField>
           </VCol>
+          <VCol cols="12" md="4" sm="12">
+            <VTextField
+              v-model="user_data.referral"
+              label="Kode Referral"
+              readonly
+            />
+          </VCol>
           <VCol cols="12" md="7" sm="12">
             <VTextField
               v-model="user_data.phone_number"
               :rules="[requiredValidator, phoneNumberValidator]"
             >
+              <template #prepend-inner> +62 </template>
               <template #label>
-                No. Telp/Whatsapp <span class="text-error">*</span>
+                Nomor Telepon <span class="text-error">*</span>
               </template>
             </VTextField>
           </VCol>
@@ -103,7 +103,7 @@ const updateUser = () => {
             </VSelect>
           </VCol>
           <VCol cols="12">
-            <VTextarea v-model="user_data.address">
+            <VTextarea v-model="user_data.address" rows="2">
               <template #label>
                 Alamat <span class="text-error">*</span>
               </template>

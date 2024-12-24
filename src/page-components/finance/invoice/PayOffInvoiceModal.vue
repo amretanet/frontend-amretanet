@@ -4,6 +4,7 @@ import {
   dateFormatterID,
   showActionResult,
   thousandSeparator,
+  uploadImageFile,
 } from "@/modules";
 import { payment_method_options } from "@/modules/options";
 import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
@@ -39,21 +40,6 @@ const pay_off_payment_data = ref({
 const invoice_data = ref(props.data);
 
 // FUNCTION
-const uploadImage = async (file: any, type: string) => {
-  let form_data = new FormData();
-  form_data.append("file", file);
-
-  try {
-    const res = await axiosIns.post(`utility/upload-image/${type}`, form_data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return res?.data?.file_url || null;
-  } catch (err) {
-    return null;
-  }
-};
 const payOffPayment = async () => {
   try {
     is_pay_off_process.value = true;
@@ -62,9 +48,9 @@ const payOffPayment = async () => {
       method: pay_off_payment_data.value.method,
     };
     if (pay_off_payment_data.value.file.length > 0) {
-      const image_url = await uploadImage(
+      const image_url = await uploadImageFile(
         pay_off_payment_data.value.file[0],
-        "payment"
+        "payment_evidence"
       );
       if (!image_url) {
         is_pay_off_error.value = true;

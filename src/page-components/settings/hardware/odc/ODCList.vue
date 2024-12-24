@@ -199,7 +199,7 @@ onMounted(() => {
           @click="getODCData(true)"
         />
         <VSpacer />
-        <AddODCModal @odc-added="showActionResult(), getODCData()" />
+        <AddODCModal @odc-added="getODCData()" />
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
@@ -241,10 +241,7 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditODCModal
-              :data="data"
-              @odc-updated="showActionResult(), getODCData()"
-            />
+            <EditODCModal :data="data" @odc-updated="getODCData()" />
             <VBtn
               size="35"
               color="error"

@@ -10,6 +10,7 @@ import {
   errorMessage,
   showActionResult,
   thousandSeparator,
+  uploadImageFile,
 } from "@/modules";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
@@ -29,7 +30,7 @@ import {
 const routes = useRoute();
 const router = useRouter();
 const is_on_process = ref(false);
-const image_file = ref(null);
+const image_file = ref<File[]>([]);
 const image_path = ref("");
 const customer_form = ref<VForm>();
 const customer_data = ref({
@@ -114,58 +115,38 @@ const getCoverageAreaOptions = () => {
     options.value.coverage_area = res?.data?.coverage_area_options || [];
   });
 };
-const uploadImage = (file: any) => {
-  return new Promise((resolve, reject) => {
-    let form_data = new FormData();
-    form_data.append("file", file);
-    axiosIns
-      .post("utility/upload-image/id_card", form_data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (res.status == 200) {
-          resolve(res.data);
-        } else {
-          reject();
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-};
 const handleImgError = (event: any) => {
   event.target.src = uploadfile;
 };
 const previewImage = (e: any) => {
-  image_file.value = e?.target?.files[0];
+  image_file.value = e?.target?.files;
   image_path.value = image_file.value
-    ? URL.createObjectURL(image_file.value)
+    ? URL.createObjectURL(image_file.value[0])
     : " ";
 };
 const inputImageFile = () => {
   const input_form = document.getElementById("profile-input-image");
   input_form?.click();
 };
-const updateCustomer = () => {
+const validateCustomerForm = async () => {
   customer_form.value?.validate().then((form) => {
     if (form.valid) {
-      is_on_process.value = true;
-      if (image_file.value) {
-        uploadImage(image_file.value).then((res: any) => {
-          customer_data.value.id_card.image_url = res.file_url;
-          updateData();
-        });
-      } else {
-        updateData();
-      }
+      updateCustomer();
     }
   });
 };
-const updateData = () => {
+const updateCustomer = async () => {
   if (routes.query.id && atob(routes.query.id.toString())) {
+    is_on_process.value = true;
+    if (image_file.value) {
+      const image_url = await uploadImageFile(
+        image_file.value[0],
+        "id_card_attachment"
+      );
+      if (image_url) {
+        customer_data.value.id_card.image_url = image_url;
+      }
+    }
     axiosIns
       .put(`customer/update/${atob(routes.query.id?.toString())}`, {
         data: customer_data.value,
@@ -228,7 +209,7 @@ onMounted(() => {
       </template>
     </VCardItem>
     <VCardText>
-      <VForm ref="customer_form" @submit.prevent="updateCustomer">
+      <VForm ref="customer_form" @submit.prevent="validateCustomerForm">
         <VRow>
           <VCol cols="12" md="6" sm="12">
             <VRow>
@@ -341,7 +322,7 @@ onMounted(() => {
                 >
                   <template #prepend-inner> +62 </template>
                   <template #label>
-                    No Telp/Whatsapp <span class="text-error">*</span>
+                    Nomor Telepon <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>
