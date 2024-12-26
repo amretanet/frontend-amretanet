@@ -428,7 +428,7 @@ onMounted(() => {
         </template>
         <template #cell-billing="{ data }">
           <div class="text-no-wrap">
-            {{ data.billing ? `Rp. ${thousandSeparator(data.billing)}` : "-" }}
+            {{ data.billing ? `Rp${thousandSeparator(data.billing)}` : "-" }}
           </div>
         </template>
         <template #cell-referal="{ data }">

@@ -5,6 +5,8 @@ import {
   dataCountFormatter,
   dateFormatterID,
   errorMessage,
+  monthFormatter,
+  paymentStatusFormatter,
   setPaginationLength,
   showActionResult,
   thousandSeparator,
@@ -14,27 +16,27 @@ import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import { stateManagement } from "@/store";
-import AddExpenditureModal from "./AddExpenditureModal.vue";
-import EditExpenditureModal from "./EditExpenditureModal.vue";
-import DateRangePicker from "@/page-components/DateRangePicker.vue";
-import moment from "moment";
+import AddSalaryModal from "./AddSalaryModal.vue";
+import EditSalaryModal from "./EditSalaryModal.vue";
 
 // VARIABLES
 const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
-  from_date: moment().startOf("month").format("YYYY-MM-DD 00:00:00"),
-  to_date: moment().format("YYYY-MM-DD 23:59:59"),
+  id_user: null,
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const options = ref({
+  user: [],
+});
 const pagination = ref({
   page: 1,
   items: 10,
   count: 0,
 });
-const expenditure_table_data = ref({
+const salary_table_data = ref({
   headers: [
     {
       title: "NO",
@@ -44,22 +46,28 @@ const expenditure_table_data = ref({
       width: "10px",
     },
     {
-      title: "TANGGAL",
-      key: "date",
-      th_class: "text-center",
-      td_class: "text-center text-no-wrap",
+      title: "NAMA",
+      key: "name",
+      th_class: "text-left",
+      td_class: "text-left",
     },
     {
-      title: "NOMINAL",
-      key: "nominal",
+      title: "PERIODE",
+      key: "period",
       th_class: "text-left",
       td_class: "text-left text-no-wrap",
     },
     {
-      title: "DESKRIPSI",
-      key: "description",
+      title: "GAJI DITERIMA",
+      key: "net_salary",
       th_class: "text-left",
       td_class: "text-left",
+    },
+    {
+      title: "STATUS",
+      key: "status",
+      th_class: "text-center",
+      td_class: "text-center",
     },
     {
       title: "AKSI",
@@ -70,10 +78,9 @@ const expenditure_table_data = ref({
   ],
   body: [],
 });
-const expenditure_count = ref(0);
 
 // FUNCTION
-const getExpenditureData = (is_refresh: boolean = false) => {
+const getSalaryData = (is_refresh: boolean = false) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
@@ -86,8 +93,9 @@ const getExpenditureData = (is_refresh: boolean = false) => {
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
-    from_date: filter_data.value.from_date,
-    to_date: filter_data.value.to_date,
+    ...(filter_data.value.id_user
+      ? { id_user: filter_data.value.id_user }
+      : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -95,14 +103,13 @@ const getExpenditureData = (is_refresh: boolean = false) => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   axiosIns
-    .get(`expenditure?${query}`, {
+    .get(`salary?${query}`, {
       cancelToken: cancel_request_token.value.token,
     })
     .then((res) => {
       cancel_request_token.value = null;
-      expenditure_table_data.value.body = res?.data?.expenditure_data || [];
+      salary_table_data.value.body = res?.data?.salary_data || [];
       pagination.value.count = res?.data?.pagination_info?.count || 0;
-      getExpenditureStats();
     })
     .catch((err) => {
       if (err.code !== "ERR_CANCELED") {
@@ -116,39 +123,24 @@ const getExpenditureData = (is_refresh: boolean = false) => {
       }
     });
 };
-const getExpenditureStats = () => {
-  const params: IObjectKeys = {
-    ...(filter_data.value.key
-      ? { key: encodeURIComponent(filter_data.value.key) }
-      : {}),
-    from_date: filter_data.value.from_date,
-    to_date: filter_data.value.to_date,
-  };
-  const query = Object.keys(params)
-    .map((key) => `${key}=${params[key]}`)
-    .join("&");
-  axiosIns
-    .get(`expenditure/stats?${query}`)
-    .then((res) => {
-      expenditure_count.value = res?.data?.expenditure_count || 0;
-    })
-    .catch(() => {
-      expenditure_count.value = 0;
-    });
+const getUserOptions = () => {
+  axiosIns.get("options/user").then((res) => {
+    options.value.user = res?.data?.user_options || [];
+  });
 };
-const deleteExpenditureData = async (id: string) => {
+const deleteSalaryData = async (id: string) => {
   const is_confirmed = await confirmAction(
-    "Hapus Pengeluaran?",
-    `Pengeluaran yang dipilih akan dihapus`,
+    "Hapus Gaji Karyawan?",
+    `Gaji Karyawan yang dipilih akan dihapus`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
     store.loadingHandler(true);
     axiosIns
-      .delete(`expenditure/delete/${id}`)
+      .delete(`salary/delete/${id}`)
       .then(() => {
-        showActionResult(undefined, undefined, "Pengeluaran Telah Dihapus");
-        getExpenditureData();
+        showActionResult(undefined, undefined, "Gaji Karyawan Telah Dihapus");
+        getSalaryData();
       })
       .catch((err) => {
         const message = errorMessage(err);
@@ -162,21 +154,17 @@ const deleteExpenditureData = async (id: string) => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
-  getExpenditureData();
+  getSalaryData();
+  getUserOptions();
 });
 </script>
 <template>
   <VCard>
     <VCardItem class="py-4">
       <template #prepend>
-        <VIcon icon="mdi-bank-transfer-out" />
+        <VIcon icon="mdi-account-cash-outline" />
       </template>
-      <template #title> Daftar Pengeluaran </template>
-      <template #append>
-        <VChip color="primary" variant="flat" class="font-weight-black">
-          Total Pengeluaran : Rp{{ thousandSeparator(expenditure_count) }}
-        </VChip>
-      </template>
+      <template #title> Daftar Gaji Karyawan </template>
     </VCardItem>
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
@@ -185,25 +173,27 @@ onMounted(() => {
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getExpenditureData()"
+            @update:model-value="getSalaryData()"
           />
         </div>
         <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getExpenditureData(true)"
+          @click="getSalaryData(true)"
         />
         <VSpacer />
-        <!-- ADD EXPENDITURE BUTTON -->
-        <AddExpenditureModal
-          @expenditure-added="(pagination.page = 1), getExpenditureData()"
+        <!-- ADD INCOME BUTTON -->
+        <AddSalaryModal
+          @salary-added="(pagination.page = 1), getSalaryData()"
         />
-        <!-- DATE RANGE FILTER -->
-        <div style="width: 20rem">
-          <DateRangePicker
-            v-model:from="filter_data.from_date"
-            v-model:to="filter_data.to_date"
-            @date-change="(pagination.page = 1), getExpenditureData()"
+        <!-- RECEIVER FILTER -->
+        <div class="wm-100" style="min-width: 12rem">
+          <VAutocomplete
+            v-model="filter_data.id_user"
+            label="Karyawan"
+            :items="options.user.filter((el:any)=>el.role!==99)"
+            clearable
+            @update:model-value="(pagination.page = 1), getSalaryData()"
           />
         </div>
         <!-- KEYWORD FILTER -->
@@ -213,7 +203,7 @@ onMounted(() => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="(pagination.page = 1), getExpenditureData()"
+            @update:model-value="(pagination.page = 1), getSalaryData()"
           />
         </div>
       </div>
@@ -222,51 +212,41 @@ onMounted(() => {
     <div>
       <DataTable
         height="60vh"
-        :headers="expenditure_table_data.headers"
-        :body="expenditure_table_data.body"
+        :headers="salary_table_data.headers"
+        :body="salary_table_data.body"
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM CELL DATE -->
-        <template #cell-date="{ data }">
-          <VChip>
-            {{ dateFormatterID(data.date, true, true) }}
+        <!-- CUSTOM NAME -->
+        <template #cell-name="{ data }">
+          {{ data?.employee?.name || "" }}
+        </template>
+        <!-- CUSTOM PERIOD -->
+        <template #cell-period="{ data }">
+          {{ monthFormatter(parseInt(data.period.month)) || "" }}
+          {{ data.period.year || "" }}
+        </template>
+        <!-- CUSTOM STATUS -->
+        <template #cell-status="{ data }">
+          <VChip
+            variant="outlined"
+            :color="paymentStatusFormatter(data.status).color"
+            class="font-weight-black"
+          >
+            {{ paymentStatusFormatter(data.status).title || "" }}
           </VChip>
         </template>
         <!-- CUSTOM NOMINAL -->
-        <template #cell-nominal="{ data }">
-          Rp{{ thousandSeparator(data?.nominal || 0) }}
-        </template>
-        <!-- CUSTOM CELL DECSRIPTION -->
-        <template #cell-description="{ data }">
-          <div class="py-2">
-            <div>
-              <span class="font-weight-black">
-                {{ data.category }}
-                <span class="text-primary font-weight-black">
-                  ({{ data.method }})
-                </span>
-              </span>
-            </div>
-            <div class="mt-2">
-              {{ data?.description || "-" }}
-            </div>
-          </div>
+        <template #cell-net_salary="{ data }">
+          Rp{{ thousandSeparator(data?.net_salary || 0) }}
         </template>
         <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <!-- EDIT BUTTON -->
-            <EditExpenditureModal
-              :data="data"
-              @expenditure-updated="getExpenditureData()"
-            />
+            <EditSalaryModal :data="data" @salary-updated="getSalaryData()" />
             <!-- DELETE BUTTON -->
-            <VBtn
-              size="35"
-              color="error"
-              @click="deleteExpenditureData(data._id)"
-            >
+            <VBtn size="35" color="error" @click="deleteSalaryData(data._id)">
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
@@ -281,7 +261,7 @@ onMounted(() => {
                   pagination.page,
                   pagination.items,
                   pagination.count,
-                  expenditure_table_data.body.length
+                  salary_table_data.body.length
                 )
               }}
             </h6>
@@ -291,7 +271,7 @@ onMounted(() => {
               :total-visible="3"
               size="small"
               class="ms-auto"
-              @update:model-value="getExpenditureData()"
+              @update:model-value="getSalaryData()"
             />
           </div>
         </template>

@@ -5,7 +5,7 @@ import {
   dataCountFormatter,
   dateFormatterID,
   errorMessage,
-  invoiceStatusFormatter,
+  paymentStatusFormatter,
   setPaginationLength,
   showActionResult,
   thousandSeparator,
@@ -15,7 +15,7 @@ import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import {
-  invoice_status_options,
+  payment_status_options,
   month_options,
   year_options,
 } from "@/modules/options";
@@ -39,7 +39,7 @@ const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const is_syncronize = ref(false);
 const options = ref({
-  status: invoice_status_options,
+  status: payment_status_options,
   month: month_options,
   year: year_options,
 });
@@ -420,7 +420,7 @@ const sendReminderMessageSelectedInvoice = async () => {
   }
 };
 const updateStatusSelectedInvoice = async (status: string) => {
-  const formatted_status = invoiceStatusFormatter(status).title;
+  const formatted_status = paymentStatusFormatter(status).title;
   const is_confirmed = await confirmAction(
     "Ubah Status Invoice Terpilih?",
     `Status invoice yang dipilih akan diubah menjadi ${formatted_status}`,
@@ -652,15 +652,15 @@ watch(checked_invoice_data, () => {
         </template>
         <!-- CUSTOM AMOUNT -->
         <template #cell-amount="{ data }">
-          Rp.{{ thousandSeparator(data?.amount || 0) }}
+          Rp{{ thousandSeparator(data?.amount || 0) }}
         </template>
         <!-- CUSTOM STATUS -->
         <template #cell-status="{ data }">
           <VChip
-            :color="invoiceStatusFormatter(data.status).color"
+            :color="paymentStatusFormatter(data.status).color"
             variant="outlined"
           >
-            <strong>{{ invoiceStatusFormatter(data.status).title }}</strong>
+            <strong>{{ paymentStatusFormatter(data.status).title }}</strong>
           </VChip>
         </template>
         <!-- CUSTOM ACTION -->

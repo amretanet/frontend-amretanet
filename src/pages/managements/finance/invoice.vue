@@ -4,7 +4,7 @@ import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-coins",
+    icon: "tabler-cash-register",
     name: "Keuangan",
   },
   {

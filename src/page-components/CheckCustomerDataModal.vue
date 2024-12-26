@@ -4,7 +4,7 @@ import ProcessButton from "./ProcessButton.vue";
 import EmptyAlert from "./EmptyAlert.vue";
 import {
   dateFormatterID,
-  invoiceStatusFormatter,
+  paymentStatusFormatter,
   numberToWords,
   showActionResult,
   thousandSeparator,
@@ -244,13 +244,13 @@ watch(is_showing_modal, () => {
                     <strong
                       :class="
                         'text-' +
-                        invoiceStatusFormatter(
+                        paymentStatusFormatter(
                           customer_data?.invoice?.status || 'PAID'
                         ).color
                       "
                     >
                       {{
-                        invoiceStatusFormatter(
+                        paymentStatusFormatter(
                           customer_data?.invoice?.status || "PAID"
                         ).title
                       }}

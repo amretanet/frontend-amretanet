@@ -4,7 +4,7 @@ import {
   confirmAction,
   dateFormatterID,
   errorMessage,
-  invoiceStatusFormatter,
+  paymentStatusFormatter,
   showActionResult,
   thousandSeparator,
 } from "@/modules";
@@ -116,10 +116,10 @@ watch(props, () => {
               <template #value>
                 <VChip
                   variant="outlined"
-                  :color="invoiceStatusFormatter(invoice_data.status).color"
+                  :color="paymentStatusFormatter(invoice_data.status).color"
                   class="font-weight-bold"
                 >
-                  {{ invoiceStatusFormatter(invoice_data.status).title }}
+                  {{ paymentStatusFormatter(invoice_data.status).title }}
                 </VChip>
               </template>
             </HorizontalTextFormat>

@@ -191,7 +191,7 @@ onMounted(() => {
   <VCard>
     <VCardItem class="py-4">
       <template #prepend>
-        <VIcon icon="mdi-invoice-text-arrow-left-outline" />
+        <VIcon icon="mdi-bank-transfer-in" />
       </template>
       <template #title> Daftar Pemasukan </template>
       <template #append>
@@ -267,7 +267,7 @@ onMounted(() => {
         </template>
         <!-- CUSTOM NOMINAL -->
         <template #cell-nominal="{ data }">
-          Rp.{{ thousandSeparator(data?.nominal || 0) }}
+          Rp{{ thousandSeparator(data?.nominal || 0) }}
         </template>
         <!-- CUSTOM CELL DECSRIPTION -->
         <template #cell-description="{ data }">

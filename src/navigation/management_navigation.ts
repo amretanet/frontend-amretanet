@@ -13,7 +13,7 @@ export default [
   },
   {
     title: "Keuangan",
-    icon: { icon: "tabler-coins" },
+    icon: { icon: "tabler-cash-register" },
     access: [1],
     children: [
       {
@@ -24,14 +24,26 @@ export default [
       },
       {
         title: "Pemasukan",
-        icon: { icon: "mdi-invoice-text-arrow-left-outline" },
+        icon: { icon: "mdi-bank-transfer-in" },
         to: "managements-finance-income",
         access: [1],
       },
       {
         title: "Pengeluaran",
-        icon: { icon: "mdi-invoice-text-arrow-right-outline" },
+        icon: { icon: "mdi-bank-transfer-out" },
         to: "managements-finance-expenditure",
+        access: [1],
+      },
+      {
+        title: "Gaji Karyawan",
+        icon: { icon: "mdi-account-cash-outline" },
+        to: "managements-finance-salary",
+        access: [1],
+      },
+      {
+        title: "Transfer Saldo",
+        icon: { icon: "mdi-hand-coin-outline" },
+        to: "managements-finance-balance-transfer",
         access: [1],
       },
     ],

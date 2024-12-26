@@ -332,7 +332,7 @@ export const package_category_options = [
     value: "ADD-ONS",
   },
 ];
-export const invoice_status_options = [
+export const payment_status_options = [
   {
     title: "BELUM DIBAYAR",
     value: "UNPAID",

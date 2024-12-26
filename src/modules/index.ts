@@ -4,6 +4,23 @@ import { customer_status_options, user_role_options } from "./options";
 import moment from "moment";
 import axiosIns from "@/plugins/axios";
 
+export const monthFormatter = (month_index: number) => {
+  const months = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+  return months[month_index - 1];
+};
 export function dateFormatterParams(date: string): string {
   return moment(date).format("YYYY-MM-DD HH:mm:ss");
 }
@@ -248,7 +265,7 @@ export const ticketStatusFormatter = (status: string) => {
   }
   return temp;
 };
-export const invoiceStatusFormatter = (status: string) => {
+export const paymentStatusFormatter = (status: string) => {
   let temp = {
     title: "",
     color: "",
