@@ -55,6 +55,13 @@ const getSystemResource = (is_refresh: boolean = false) => {
 onMounted(() => {
   getSystemResource();
 });
+watch(
+  () => store.current_router,
+  () => {
+    getSystemResource();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <VCard>

@@ -98,6 +98,13 @@ const getLogData = (is_refresh: boolean = false) => {
 onMounted(() => {
   getLogData();
 });
+watch(
+  () => store.current_router,
+  () => {
+    getLogData();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <VCard>

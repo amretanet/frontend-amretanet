@@ -137,6 +137,13 @@ const deleteProfileData = async (id: string) => {
 onMounted(() => {
   getProfileData();
 });
+watch(
+  () => store.current_router,
+  () => {
+    getProfileData();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <VCard>

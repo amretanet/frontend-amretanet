@@ -110,6 +110,13 @@ const getInterfaceData = (is_refresh: boolean = false) => {
 onMounted(() => {
   getInterfaceData();
 });
+watch(
+  () => store.current_router,
+  () => {
+    getInterfaceData();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <VCard>

@@ -181,6 +181,13 @@ const deleteSecretData = async (id: string) => {
 onMounted(() => {
   getSecretData();
 });
+watch(
+  () => store.current_router,
+  () => {
+    getSecretData();
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <VCard>
