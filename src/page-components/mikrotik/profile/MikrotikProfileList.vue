@@ -107,16 +107,20 @@ const getProfileData = (is_refresh: boolean = false) => {
 };
 const deleteProfileData = async (id: string) => {
   const is_confirmed = await confirmAction(
-    "Hapus Profil?",
-    `Profil yang dipilih akan dihapus`,
+    "Hapus Profile?",
+    `Profile yang dipilih akan dihapus`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
     store.loadingHandler(true);
     axiosIns
-      .delete(`mikrotik/profile/delete/${id}`)
+      .put(`mikrotik/profile/delete/${id}`, {
+        data: {
+          router: store.getCurrentRouter,
+        },
+      })
       .then(() => {
-        showActionResult(undefined, undefined, "Profil Telah Dihapus");
+        showActionResult(undefined, undefined, "Profile Telah Dihapus");
         getProfileData();
       })
       .catch((err) => {
@@ -141,7 +145,7 @@ onMounted(() => {
         <VIcon icon="tabler-list-details" />
       </template>
       <template #title>
-        Mikrotik Profile <strong>({{ store.getCurrentRouter }})</strong>
+        Profile Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText class="pb-2">

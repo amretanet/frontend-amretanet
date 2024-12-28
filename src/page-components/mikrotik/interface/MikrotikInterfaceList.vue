@@ -118,7 +118,7 @@ onMounted(() => {
         <VIcon icon="mdi-expansion-card-variant" />
       </template>
       <template #title>
-        Mikrotik Interface <strong>({{ store.getCurrentRouter }})</strong>
+        Interface Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText class="pb-2">

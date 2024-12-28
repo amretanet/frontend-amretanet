@@ -5,6 +5,7 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import { stateManagement } from "@/store";
 import EmptyAlert from "../EmptyAlert.vue";
+import SkeletonLoader from "../SkeletonLoader.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -62,244 +63,257 @@ onMounted(() => {
         <VIcon icon="mdi-state-machine" />
       </template>
       <template #title>
-        Mikrotik Status <strong>({{ store.getCurrentRouter }})</strong>
+        Status Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText>
-      <VRow v-if="system_resource_data">
-        <!-- CPU NAME -->
-        <VCol cols="12" md="3">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar icon="tabler-cpu" variant="tonal" color="primary" />
-              </div>
-              <div>
-                <div class="fs-12">CPU</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["cpu"]
-                      ? system_resource_data["cpu"]
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- CPU COUNT -->
-        <VCol cols="12" md="3">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-refresh-dot"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">CPU Count</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["cpu-count"]
-                      ? thousandSeparator(
-                          parseInt(system_resource_data["cpu-count"])
-                        )
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- CPU LOAD -->
-        <VCol cols="12" md="3">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar icon="tabler-loader" variant="tonal" color="primary" />
-              </div>
-              <div>
-                <div class="fs-12">CPU Load</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["cpu-load"]
-                      ? thousandSeparator(system_resource_data["cpu-load"])
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- CPU FREQUENCY -->
-        <VCol cols="12" md="3">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-wave-saw-tool"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">CPU Frequency</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["cpu-frequency"]
-                      ? thousandSeparator(system_resource_data["cpu-frequency"])
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- FREE MEMORY -->
-        <VCol cols="12" md="6">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-device-sd-card"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">Free Memory</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["free-memory"]
-                      ? bytesConverter(
-                          parseInt(system_resource_data["free-memory"])
-                        )
-                      : "0"
-                  }}
-                  /
-                  {{
-                    system_resource_data["total-memory"]
-                      ? bytesConverter(
-                          parseInt(system_resource_data["total-memory"])
-                        )
-                      : "0"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- FREE HDD SPACE -->
-        <VCol cols="12" md="6">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-server-2"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">Free HDD</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["free-hdd-space"]
-                      ? bytesConverter(
-                          parseInt(system_resource_data["free-hdd-space"])
-                        )
-                      : "0"
-                  }}
-                  /
-                  {{
-                    system_resource_data["total-hdd-space"]
-                      ? bytesConverter(
-                          parseInt(system_resource_data["total-hdd-space"])
-                        )
-                      : "0"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- ROUTER BOARD -->
-        <VCol cols="12" md="4">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-keyboard"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">Router Board</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["board-name"]
-                      ? system_resource_data["board-name"]
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- ROUTER UPTIME -->
-        <VCol cols="12" md="4">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-hourglass-empty"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">Router Uptime</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["uptime"]
-                      ? system_resource_data["uptime"]
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
-        </VCol>
-        <!-- ROUTER OS -->
-        <VCol cols="12" md="4">
-          <VCard variant="tonal" class="px-2 py-2">
-            <div class="d-flex align-center gap-2">
-              <div>
-                <VAvatar
-                  icon="tabler-versions"
-                  variant="tonal"
-                  color="primary"
-                />
-              </div>
-              <div>
-                <div class="fs-12">Router OS</div>
-                <div class="fs-16 font-weight-black">
-                  {{
-                    system_resource_data["version"]
-                      ? "Version " + system_resource_data["version"]
-                      : "-"
-                  }}
-                </div>
-              </div>
-            </div>
-          </VCard>
+      <VRow v-if="is_loading">
+        <VCol v-for="item in 8" cols="12" md="3">
+          <SkeletonLoader height="60px" rounded="18px" />
         </VCol>
       </VRow>
       <div v-else>
-        <EmptyAlert />
+        <VRow v-if="system_resource_data">
+          <!-- CPU NAME -->
+          <VCol cols="12" md="3">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar icon="tabler-cpu" variant="tonal" color="primary" />
+                </div>
+                <div>
+                  <div class="fs-12">CPU</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["cpu"]
+                        ? system_resource_data["cpu"]
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- CPU COUNT -->
+          <VCol cols="12" md="3">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-refresh-dot"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">CPU Count</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["cpu-count"]
+                        ? thousandSeparator(
+                            parseInt(system_resource_data["cpu-count"])
+                          )
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- CPU LOAD -->
+          <VCol cols="12" md="3">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-loader"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">CPU Load</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["cpu-load"]
+                        ? thousandSeparator(system_resource_data["cpu-load"])
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- CPU FREQUENCY -->
+          <VCol cols="12" md="3">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-wave-saw-tool"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">CPU Frequency</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["cpu-frequency"]
+                        ? thousandSeparator(
+                            system_resource_data["cpu-frequency"]
+                          )
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- FREE MEMORY -->
+          <VCol cols="12" md="6">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-device-sd-card"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">Free Memory</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["free-memory"]
+                        ? bytesConverter(
+                            parseInt(system_resource_data["free-memory"])
+                          )
+                        : "0"
+                    }}
+                    /
+                    {{
+                      system_resource_data["total-memory"]
+                        ? bytesConverter(
+                            parseInt(system_resource_data["total-memory"])
+                          )
+                        : "0"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- FREE HDD SPACE -->
+          <VCol cols="12" md="6">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-server-2"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">Free HDD</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["free-hdd-space"]
+                        ? bytesConverter(
+                            parseInt(system_resource_data["free-hdd-space"])
+                          )
+                        : "0"
+                    }}
+                    /
+                    {{
+                      system_resource_data["total-hdd-space"]
+                        ? bytesConverter(
+                            parseInt(system_resource_data["total-hdd-space"])
+                          )
+                        : "0"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- ROUTER BOARD -->
+          <VCol cols="12" md="4">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-keyboard"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">Router Board</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["board-name"]
+                        ? system_resource_data["board-name"]
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- ROUTER UPTIME -->
+          <VCol cols="12" md="4">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-hourglass-empty"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">Router Uptime</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["uptime"]
+                        ? system_resource_data["uptime"]
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+          <!-- ROUTER OS -->
+          <VCol cols="12" md="4">
+            <VCard variant="tonal" class="px-2 py-2">
+              <div class="d-flex align-center gap-2">
+                <div>
+                  <VAvatar
+                    icon="tabler-versions"
+                    variant="tonal"
+                    color="primary"
+                  />
+                </div>
+                <div>
+                  <div class="fs-12">Router OS</div>
+                  <div class="fs-16 font-weight-black">
+                    {{
+                      system_resource_data["version"]
+                        ? "Version " + system_resource_data["version"]
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </VCard>
+          </VCol>
+        </VRow>
+        <div v-else>
+          <EmptyAlert />
+        </div>
       </div>
     </VCardText>
   </VCard>

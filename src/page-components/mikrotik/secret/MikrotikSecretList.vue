@@ -189,7 +189,7 @@ onMounted(() => {
         <VIcon icon="tabler-circle-key" />
       </template>
       <template #title>
-        Mikrotik Secret <strong>({{ store.getCurrentRouter }})</strong>
+        Secret Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText class="pb-2">

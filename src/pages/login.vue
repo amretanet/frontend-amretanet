@@ -93,10 +93,10 @@ const onSubmit = () => {
                   v-model="login_data.email"
                   label="Email"
                   type="email"
+                  autofocus
                   :rules="[requiredValidator, emailValidator]"
                 />
               </VCol>
-
               <!-- password -->
               <VCol cols="12">
                 <VTextField
@@ -109,18 +109,6 @@ const onSubmit = () => {
                   "
                   @click:append-inner="is_show_password = !is_show_password"
                 />
-
-                <!-- <div
-                  class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4"
-                >
-                  <RouterLink
-                    class="text-primary ms-2 mb-1"
-                    :to="{ name: 'forgot-password' }"
-                  >
-                    Lupa Password?
-                  </RouterLink>
-                </div> -->
-
                 <VBtn class="mt-4" block type="submit">
                   <template #prepend>
                     <VIcon
@@ -135,7 +123,10 @@ const onSubmit = () => {
               <!-- create account -->
               <VCol cols="12">
                 <span>Belum punya akun?</span>
-                <RouterLink :to="{ name: 'register' }">
+                <RouterLink
+                  :to="{ name: 'register' }"
+                  class="text-primary clickable"
+                >
                   Daftar Sekarang
                 </RouterLink>
               </VCol>

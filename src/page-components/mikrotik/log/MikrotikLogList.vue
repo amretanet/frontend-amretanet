@@ -106,7 +106,7 @@ onMounted(() => {
         <VIcon icon="mdi-history" />
       </template>
       <template #title>
-        Mikrotik Log <strong>({{ store.getCurrentRouter }})</strong>
+        Log Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText class="pb-2">
