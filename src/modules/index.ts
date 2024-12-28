@@ -4,6 +4,20 @@ import { customer_status_options, user_role_options } from "./options";
 import moment from "moment";
 import axiosIns from "@/plugins/axios";
 
+export const bytesConverter = (value: number) => {
+  const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  let size = value;
+  let unitIndex = 0;
+
+  // Terus bagi dengan 1024 sampai ukuran lebih kecil dari 1024
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  // Mengembalikan hasil konversi dengan 2 angka desimal
+  return size.toFixed(2) + " " + units[unitIndex];
+};
 export const monthFormatter = (month_index: number) => {
   const months = [
     "Januari",

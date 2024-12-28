@@ -37,7 +37,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <VBtn prepend-icon="tabler-router" size="small" variant="outlined">
+  <VBtn prepend-icon="tabler-router" size="small" block variant="outlined">
     Router
     <VMenu
       activator="parent"

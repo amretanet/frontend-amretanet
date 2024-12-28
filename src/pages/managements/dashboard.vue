@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import LocationMapping from "@/page-components/dashboard/LocationMapping.vue";
 import TicketStats from "@/page-components/dashboard/TicketStats.vue";
+import MikrotikSystemResource from "@/page-components/mikrotik/MikrotikSystemResource.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
@@ -18,6 +19,9 @@ const path_data = ref([
     </VCol>
     <VCol cols="12">
       <TicketStats />
+    </VCol>
+    <VCol cols="12">
+      <MikrotikSystemResource />
     </VCol>
     <VCol cols="12">
       <LocationMapping />

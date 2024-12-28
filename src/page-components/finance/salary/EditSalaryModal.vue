@@ -157,7 +157,7 @@ watch(is_showing_modal, () => {
             <VRow>
               <!-- MONTH PERIOD -->
               <VCol cols="12" md="7" sm="12">
-                <VSelect
+                <VAutocomplete
                   v-model="salary_data.period.month"
                   :items="options.month"
                   :rules="[requiredValidator]"
@@ -165,11 +165,11 @@ watch(is_showing_modal, () => {
                   <template #label>
                     Periode (Bulan) <span class="text-error">*</span>
                   </template>
-                </VSelect>
+                </VAutocomplete>
               </VCol>
               <!-- YEAR PERIOD -->
               <VCol cols="12" md="5" sm="12">
-                <VSelect
+                <VAutocomplete
                   v-model="salary_data.period.year"
                   :items="options.year"
                   :rules="[requiredValidator]"
@@ -177,7 +177,7 @@ watch(is_showing_modal, () => {
                   <template #label>
                     Periode (Tahun) <span class="text-error">*</span>
                   </template>
-                </VSelect>
+                </VAutocomplete>
               </VCol>
               <!-- EMPLOYEE -->
               <VCol cols="12">
@@ -283,6 +283,7 @@ watch(is_showing_modal, () => {
                   v-model="salary_data.status"
                   :items="options.status"
                   :rules="[requiredValidator]"
+                  readonly
                 >
                   <template #label>
                     Status <span class="text-error">*</span>

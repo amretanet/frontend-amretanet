@@ -17,7 +17,7 @@ export default [
     access: [1],
     children: [
       {
-        title: "Tagihan",
+        title: "Tagihan Pelanggan",
         icon: { icon: "tabler-file-invoice" },
         to: "managements-finance-invoice",
         access: [1],
@@ -40,10 +40,41 @@ export default [
         to: "managements-finance-salary",
         access: [1],
       },
+      // {
+      //   title: "Transfer Saldo",
+      //   icon: { icon: "mdi-hand-coin-outline" },
+      //   to: "managements-finance-balance-transfer",
+      //   access: [1],
+      // },
+    ],
+  },
+  {
+    title: "Mikrotik",
+    icon: { icon: "tabler-router" },
+    access: [1],
+    children: [
       {
-        title: "Transfer Saldo",
-        icon: { icon: "mdi-hand-coin-outline" },
-        to: "managements-finance-balance-transfer",
+        title: "Interface",
+        icon: { icon: "mdi-expansion-card-variant" },
+        to: "managements-mikrotik-interface",
+        access: [1],
+      },
+      {
+        title: "Log",
+        icon: { icon: "mdi-history" },
+        to: "managements-mikrotik-log",
+        access: [1],
+      },
+      {
+        title: "Profile",
+        icon: { icon: "tabler-list-details" },
+        to: "managements-mikrotik-profile",
+        access: [1],
+      },
+      {
+        title: "Secret",
+        icon: { icon: "tabler-circle-key" },
+        to: "managements-mikrotik-secret",
         access: [1],
       },
     ],

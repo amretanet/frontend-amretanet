@@ -18,6 +18,7 @@ import axios from "axios";
 import { stateManagement } from "@/store";
 import AddSalaryModal from "./AddSalaryModal.vue";
 import EditSalaryModal from "./EditSalaryModal.vue";
+import { month_options, year_options } from "@/modules/options";
 
 // VARIABLES
 const store = stateManagement();
@@ -25,11 +26,15 @@ const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
   id_user: null,
+  month: null,
+  year: null,
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const options = ref({
   user: [],
+  month: month_options,
+  year: year_options,
 });
 const pagination = ref({
   page: 1,
@@ -96,6 +101,8 @@ const getSalaryData = (is_refresh: boolean = false) => {
     ...(filter_data.value.id_user
       ? { id_user: filter_data.value.id_user }
       : {}),
+    ...(filter_data.value.month ? { month: filter_data.value.month } : {}),
+    ...(filter_data.value.year ? { year: filter_data.value.year } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -186,8 +193,28 @@ onMounted(() => {
         <AddSalaryModal
           @salary-added="(pagination.page = 1), getSalaryData()"
         />
+        <!-- MONTH FILTER -->
+        <div class="wm-100" style="min-width: 8rem">
+          <VAutocomplete
+            v-model="filter_data.month"
+            label="Bulan"
+            :items="options.month"
+            clearable
+            @update:model-value="(pagination.page = 1), getSalaryData()"
+          />
+        </div>
+        <!-- YEAR FILTER -->
+        <div class="wm-100" style="min-width: 8rem">
+          <VAutocomplete
+            v-model="filter_data.year"
+            label="Tahun"
+            :items="options.year"
+            clearable
+            @update:model-value="(pagination.page = 1), getSalaryData()"
+          />
+        </div>
         <!-- RECEIVER FILTER -->
-        <div class="wm-100" style="min-width: 12rem">
+        <div class="wm-100" style="min-width: 10rem">
           <VAutocomplete
             v-model="filter_data.id_user"
             label="Karyawan"
