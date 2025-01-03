@@ -67,10 +67,10 @@ watch(
   <VCard>
     <VCardItem>
       <template #prepend>
-        <VIcon icon="mdi-state-machine" />
+        <VIcon icon="tabler-router" />
       </template>
       <template #title>
-        Status Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
+        Pengguna Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
     <VCardText>

@@ -5,6 +5,7 @@ import axiosIns from "@/plugins/axios";
 
 // VARIABLE
 const is_loading = ref(true);
+const ticket_count = ref(0);
 const ticket_stats_data = ref([
   {
     status: "OPEN",
@@ -40,6 +41,7 @@ const getTicketStats = () => {
     .then((res) => {
       const data = res?.data?.ticket_stats_data;
       if (data) {
+        ticket_count.value = data?.count || 0;
         ticket_stats_data.value.forEach((el: any) => {
           if (el.status in data) {
             el.count = data[el.status];
@@ -63,16 +65,12 @@ onMounted(() => {
       <SkeletonLoader v-if="is_loading" height="120px" rounded="20px" />
       <VCard
         v-else
-        variant="tonal"
+        variant="flat"
         :color="ticketStatusFormatter(item.status).color"
       >
         <VCardText>
           <div class="d-flex align-center gap-2">
-            <VAvatar
-              variant="tonal"
-              :color="ticketStatusFormatter(item.status).color"
-              size="70"
-            >
+            <VAvatar variant="tonal" size="70">
               <VIcon :icon="item.icon" size="35" />
             </VAvatar>
             <div class="d-flex flex-column gap-4">
@@ -80,9 +78,12 @@ onMounted(() => {
                 Tiket {{ ticketStatusFormatter(item.status).title }}
               </div>
               <div>
-                <span class="fs-30 font-weight-bold">{{
-                  thousandSeparator(item.count)
-                }}</span>
+                <span class="fs-30 font-weight-bold">
+                  {{ thousandSeparator(item.count) }}
+                  <span class="fs-20">
+                    / {{ thousandSeparator(ticket_count) }}
+                  </span>
+                </span>
                 <small class="ms-1">(Tiket)</small>
               </div>
             </div>

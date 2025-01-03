@@ -42,7 +42,10 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
               <RegisterCustomerForm />
               <div class="mt-5">
                 Sudah Punya Akun?
-                <RouterLink :to="{ name: 'login' }">
+                <RouterLink
+                  :to="{ name: 'login' }"
+                  class="text-primary clickable"
+                >
                   Silahkan Masuk
                 </RouterLink>
               </div>

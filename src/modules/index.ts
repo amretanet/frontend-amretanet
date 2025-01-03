@@ -238,19 +238,26 @@ export const customerStatusFormatter = (status: number) => {
   let temp = {
     title: "",
     color: "dark",
+    icon: "tabler-checks",
   };
   if (status === 0) {
     temp.color = "error";
+    temp.icon = "tabler-circle-half-vertical";
   } else if (status === 1) {
     temp.color = "success";
+    temp.icon = "tabler-circle-check";
   } else if (status === 2) {
     temp.color = "info";
+    temp.icon = "tabler-hourglass";
   } else if (status === 3) {
     temp.color = "primary";
+    temp.icon = "tabler-free-rights";
   } else if (status === 4) {
     temp.color = "warning";
+    temp.icon = "tabler-clock-pause";
   } else {
     temp.color = "secondary";
+    temp.icon = "tabler-alarm-snooze";
   }
   if (current_status) {
     temp.title = current_status.title;

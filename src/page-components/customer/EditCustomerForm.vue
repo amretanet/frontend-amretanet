@@ -472,7 +472,7 @@ onMounted(() => {
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Status PPN 11% <span class="text-error">*</span>
+                    Status PPN 12% <span class="text-error">*</span>
                   </template>
                 </VSelect>
               </VCol>

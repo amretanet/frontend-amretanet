@@ -202,10 +202,26 @@ watch(props, () => {
                 </VTable>
               </div>
             </div>
+            <!-- SUB AMMOUNT -->
+            <HorizontalTextFormat
+              title="Sub Total Tagihan"
+              :value="
+                'Rp' +
+                thousandSeparator(
+                  invoice_data.package_amount +
+                    invoice_data.add_on_package_amount
+                )
+              "
+            />
+            <!-- PPN -->
+            <HorizontalTextFormat
+              title="PPN"
+              :value="'Rp' + thousandSeparator(invoice_data.ppn)"
+            />
             <!-- UNIQUE CODE -->
             <HorizontalTextFormat
               title="Kode Unik"
-              :value="invoice_data?.unique_code || 0"
+              :value="thousandSeparator(invoice_data.unique_code)"
             />
             <!-- AMOUNT -->
             <HorizontalTextFormat

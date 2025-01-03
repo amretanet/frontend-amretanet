@@ -105,8 +105,8 @@ const customer_table_data = ref({
       td_class: "text-left",
     },
     {
-      title: "REFERAL",
-      key: "referal",
+      title: "REFERRAL",
+      key: "referral",
       th_class: "text-center",
       td_class: "text-center",
       width: "25%",
@@ -431,9 +431,9 @@ onMounted(() => {
             {{ data.billing ? `Rp${thousandSeparator(data.billing)}` : "-" }}
           </div>
         </template>
-        <template #cell-referal="{ data }">
-          <VChip variant="outlined" :color="data.referal ? 'success' : 'dark'">
-            {{ data.referal ? `${data.referal}` : "Tidak Ada" }}
+        <template #cell-referral="{ data }">
+          <VChip variant="outlined" :color="data.referral ? 'success' : 'dark'">
+            {{ data.referral ? `${data.referral}` : "Tidak Ada" }}
           </VChip>
         </template>
         <template #cell-action="{ data }">

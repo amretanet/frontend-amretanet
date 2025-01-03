@@ -82,60 +82,58 @@ onMounted(() => {
       </VTabs>
     </VCardText>
     <VCardText>
-      <VWindow v-model="current_tab">
-        <VWindowItem value="coverage_area">
-          <GoogleMaps :zoom="15">
-            <template #marker>
-              <Marker
-                v-for="(item, index) in coverage_area_maps_data"
-                :key="index"
-                :options="{
-                  position: item,
-                }"
-              />
-            </template>
-          </GoogleMaps>
-        </VWindowItem>
-        <VWindowItem value="customer">
-          <GoogleMaps :zoom="16">
-            <template #marker>
-              <Marker
-                v-for="(item, index) in customer_maps_data"
-                :key="index"
-                :options="{
-                  position: item,
-                }"
-              />
-            </template>
-          </GoogleMaps>
-        </VWindowItem>
-        <VWindowItem value="odc">
-          <GoogleMaps :zoom="16">
-            <template #marker>
-              <Marker
-                v-for="(item, index) in odc_maps_data"
-                :key="index"
-                :options="{
-                  position: item,
-                }"
-              />
-            </template>
-          </GoogleMaps>
-        </VWindowItem>
-        <VWindowItem value="odp">
-          <GoogleMaps :zoom="16">
-            <template #marker>
-              <Marker
-                v-for="(item, index) in odp_maps_data"
-                :key="index"
-                :options="{
-                  position: item,
-                }"
-              />
-            </template>
-          </GoogleMaps>
-        </VWindowItem>
-      </VWindow>
+      <div v-if="current_tab == 'coverage_area'">
+        <GoogleMaps :zoom="15">
+          <template #marker>
+            <Marker
+              v-for="(item, index) in coverage_area_maps_data"
+              :key="index"
+              :options="{
+                position: item,
+              }"
+            />
+          </template>
+        </GoogleMaps>
+      </div>
+      <div v-if="current_tab == 'customer'">
+        <GoogleMaps :zoom="16">
+          <template #marker>
+            <Marker
+              v-for="(item, index) in customer_maps_data"
+              :key="index"
+              :options="{
+                position: item,
+              }"
+            />
+          </template>
+        </GoogleMaps>
+      </div>
+      <div v-if="current_tab == 'odc'">
+        <GoogleMaps :zoom="16">
+          <template #marker>
+            <Marker
+              v-for="(item, index) in odc_maps_data"
+              :key="index"
+              :options="{
+                position: item,
+              }"
+            />
+          </template>
+        </GoogleMaps>
+      </div>
+      <div v-if="current_tab == 'odp'">
+        <GoogleMaps :zoom="16">
+          <template #marker>
+            <Marker
+              v-for="(item, index) in odp_maps_data"
+              :key="index"
+              :options="{
+                position: item,
+              }"
+            />
+          </template>
+        </GoogleMaps>
+      </div>
     </VCardText>
   </VCard>
 </template>
