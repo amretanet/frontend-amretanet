@@ -4,7 +4,7 @@ import TicketList from "@/page-components/service/ticket/TicketList.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-file-invoice",
+    icon: "tabler-adjustments-horizontal",
     name: "Layanan",
   },
   {
@@ -25,5 +25,5 @@ const path_data = ref([
 </template>
 <route lang="yaml">
 meta:
-  title: Tagihan
+  title: Tiket Pengaduan
 </route>

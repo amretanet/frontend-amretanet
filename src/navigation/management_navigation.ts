@@ -46,12 +46,6 @@ export default [
         to: "managements-finance-salary",
         access: [1],
       },
-      // {
-      //   title: "Transfer Saldo",
-      //   icon: { icon: "mdi-hand-coin-outline" },
-      //   to: "managements-finance-balance-transfer",
-      //   access: [1],
-      // },
     ],
   },
   {
@@ -107,6 +101,12 @@ export default [
         icon: { icon: "tabler-ticket" },
         to: "managements-service-ticket",
         access: [1, 5],
+      },
+      {
+        title: "Pengajuan Perubahan",
+        icon: { icon: "tabler-recycle" },
+        to: "customers-service-change-submission",
+        access: [1],
       },
     ],
   },

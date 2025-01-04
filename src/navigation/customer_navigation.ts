@@ -31,7 +31,7 @@ export default [
       {
         title: "Pengajuan Perubahan",
         icon: { icon: "tabler-recycle" },
-        to: "customers-service-submission",
+        to: "customers-service-change-submission",
         access: [99],
       },
     ],

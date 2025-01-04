@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import InvoiceList from "@/page-components/finance/invoice/InvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
+import ChangeSubmissionList from "@/page-components/service/change-submission/ChangeSubmissionList.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-file-invoice",
+    icon: "tabler-adjustments-horizontal",
     name: "Layanan",
   },
   {
-    name: "Pengajuan",
+    name: "Pengajuan Perubahan",
   },
 ]);
 </script>
@@ -19,11 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <InvoiceList />
+      <ChangeSubmissionList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Tagihan
+  title: Pengajuan Perubahan
 </route>

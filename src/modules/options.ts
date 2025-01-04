@@ -1,3 +1,17 @@
+export const change_submission_status_options = [
+  {
+    title: "Menunggu",
+    value: "PENDING",
+  },
+  {
+    title: "Disetujui",
+    value: "ACCEPTED",
+  },
+  {
+    title: "Ditolak",
+    value: "REJECTED",
+  },
+];
 export const payment_method_options = [
   {
     title: "CASH",

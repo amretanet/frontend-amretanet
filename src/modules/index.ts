@@ -401,3 +401,20 @@ export const uploadImageFile = async (file: any, type: string) => {
     return null;
   }
 };
+export const changeSubmissionStatusFormatter = (status: string) => {
+  let temp = {
+    title: "",
+    color: "",
+  };
+  if (status == "PENDING") {
+    temp.title = "Menunggu";
+    temp.color = "info";
+  } else if (status == "ACCEPTED") {
+    temp.title = "Disetujui";
+    temp.color = "success";
+  } else if (status == "REJECTED") {
+    temp.title = "Ditolak";
+    temp.color = "error";
+  }
+  return temp;
+};
