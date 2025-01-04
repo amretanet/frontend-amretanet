@@ -117,7 +117,7 @@ const getSecretData = (is_refresh: boolean = false) => {
       }
     });
 };
-const activateSecret = async (id: string, disabled: boolean) => {
+const activateSecret = async (id: string, name: string, disabled: boolean) => {
   const is_confirmed = await confirmAction(
     `${disabled ? "Nonaktifkan" : "Aktifkan"} Secret?`,
     `Secret yang dipilih akan ${disabled ? "dinonaktifkan" : "diaktifkan"}`,
@@ -128,6 +128,7 @@ const activateSecret = async (id: string, disabled: boolean) => {
     axiosIns
       .put(`mikrotik/secret/update/${id}`, {
         data: {
+          name: name,
           router: store.getCurrentRouter,
           disabled: disabled,
         },
@@ -149,7 +150,7 @@ const activateSecret = async (id: string, disabled: boolean) => {
       });
   }
 };
-const deleteSecretData = async (id: string) => {
+const deleteSecretData = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
     "Hapus Secret?",
     `Secret yang dipilih akan dihapus`,
@@ -160,6 +161,7 @@ const deleteSecretData = async (id: string) => {
     axiosIns
       .put(`mikrotik/secret/delete/${id}`, {
         data: {
+          name: name,
           router: store.getCurrentRouter,
         },
       })
@@ -265,7 +267,7 @@ watch(
               v-if="data?.disabled === 'true'"
               size="35"
               color="success"
-              @click="activateSecret(data['.id'], false)"
+              @click="activateSecret(data['.id'], data['name'], false)"
             >
               <VIcon icon="tabler-checks" />
               <VTooltip activator="parent"> Aktifkan </VTooltip>
@@ -275,7 +277,7 @@ watch(
               v-else
               size="35"
               color="error"
-              @click="activateSecret(data['.id'], true)"
+              @click="activateSecret(data['.id'], data['name'], true)"
             >
               <VIcon icon="tabler-circle-half-vertical" />
               <VTooltip activator="parent"> Nonaktifkan </VTooltip>
@@ -289,7 +291,7 @@ watch(
             <VBtn
               size="35"
               color="error"
-              @click="deleteSecretData(data['.id'])"
+              @click="deleteSecretData(data['.id'], data['name'])"
             >
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>
