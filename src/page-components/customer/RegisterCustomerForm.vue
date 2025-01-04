@@ -21,8 +21,22 @@ import {
   house_status_options,
   id_card_type_options,
 } from "@/modules/options";
+import DatePicker from "../DatePicker.vue";
+import moment from "moment";
+
+// INTERFACE
+interface IProps {
+  referral?: string;
+  max_height?: string;
+}
+interface IEmits {
+  (e: "cancelAdd"): void;
+  (e: "customerAdded"): void;
+}
 
 // VARIABLE
+const props = defineProps<IProps>();
+const emits = defineEmits<IEmits>();
 const router = useRouter();
 const current_step = ref(0);
 const is_aggree = ref(false);
@@ -49,7 +63,8 @@ const customer_data = ref({
     longitude: null,
   },
   id_package: null,
-  instalation_date: null,
+  instalation_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+  ...(props.referral ? { referral: props.referral } : {}),
 });
 const options = ref({
   gender: gender_options,
@@ -92,7 +107,11 @@ const registerCustomer = async () => {
         })
         .then(() => {
           showActionResult(undefined, undefined, "Pendaftaran Telah Diajukan!");
-          router.push({ name: "login" });
+          if (props.referral) {
+            emits("customerAdded");
+          } else {
+            router.push({ name: "login" });
+          }
         })
         .catch((err) => {
           const message = errorMessage(err);
@@ -129,6 +148,11 @@ const checkFormFilled = (step: number) => {
     current_step.value = step;
   }
 };
+const resetForm = () => {
+  customer_form.value?.reset();
+  customer_data.value.instalation_date = moment().format("YYYY-MM-DD HH:mm:ss");
+  emits("cancelAdd");
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -138,7 +162,10 @@ onMounted(() => {
 
 <template>
   <VForm ref="customer_form" @submit.prevent="validateCustomerForm">
-    <VRow class="scroller" style="max-height: 35vh">
+    <VRow
+      class="scroller"
+      :style="{ 'max-height': props?.max_height || '35vh' }"
+    >
       <!-- NAME -->
       <VCol cols="12">
         <VTextField v-model="customer_data.name" :rules="[requiredValidator]">
@@ -352,8 +379,8 @@ onMounted(() => {
       </VCol>
       <!-- INSTALATION DATE -->
       <VCol v-if="current_step >= 10" cols="12">
-        <AppDateTimePicker
-          v-model="customer_data.instalation_date"
+        <DatePicker
+          v-model:date="customer_data.instalation_date"
           label="Tanggal Pemasangan"
           append-inner-icon="tabler-calendar"
           @update:model-value="checkFormFilled(11)"
@@ -364,7 +391,17 @@ onMounted(() => {
         </div>
       </VCol>
     </VRow>
-    <div class="d-flex flex-column gap-2 mt-5">
+    <VRow v-if="props.referral">
+      <VCol cols="6">
+        <VBtn size="small" color="error" block @click="resetForm()">
+          Batal
+        </VBtn>
+      </VCol>
+      <VCol cols="6">
+        <ProcessButton :is_on_process="is_on_process" block type="submit" />
+      </VCol>
+    </VRow>
+    <div v-else class="d-flex flex-column gap-2 mt-5">
       <div class="d-flex gap-2 align-bottom">
         <VCheckbox v-model="is_aggree" />
         <div class="fs-14 mt-2 text-justify">

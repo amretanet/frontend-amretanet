@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import {
-  confirmedValidator,
-  emailValidator,
-  phoneNumberValidator,
-  requiredValidator,
-} from "@/@core/utils/validators";
+import { requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult } from "@/modules";
-import { gender_options, user_role_options } from "@/modules/options";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -174,6 +168,7 @@ watch(
         <VCardText>
           <VForm ref="coverage_area_form" @submit.prevent="saveCoverageArea">
             <VRow>
+              <!-- NAME -->
               <VCol cols="12">
                 <VTextField
                   v-model="coverage_area_data.name"
@@ -185,6 +180,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- PROVINCES -->
               <VCol cols="12">
                 <VAutocomplete
                   v-model="coverage_area_data.address.province"
@@ -198,6 +194,7 @@ watch(
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- REGENCY -->
               <VCol v-if="coverage_area_data.address.province" cols="12">
                 <VAutocomplete
                   v-model="coverage_area_data.address.regency"
@@ -211,6 +208,7 @@ watch(
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- SUBDISTRICT -->
               <VCol v-if="coverage_area_data.address.regency" cols="12">
                 <VAutocomplete
                   v-model="coverage_area_data.address.subdistrict"
@@ -224,6 +222,7 @@ watch(
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- VILLAGE -->
               <VCol v-if="coverage_area_data.address.subdistrict" cols="12">
                 <VAutocomplete
                   v-model="coverage_area_data.address.village"
@@ -237,6 +236,7 @@ watch(
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- RT -->
               <VCol
                 v-if="coverage_area_data.address.village"
                 cols="12"
@@ -253,6 +253,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- RW -->
               <VCol
                 v-if="coverage_area_data.address.village"
                 cols="12"
@@ -269,6 +270,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- POSTAL CODE -->
               <VCol
                 v-if="coverage_area_data.address.village"
                 cols="12"
@@ -285,6 +287,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- STREET NAME -->
               <VCol v-if="coverage_area_data.address.village" cols="12">
                 <VTextarea
                   v-model="coverage_area_data.address.location_name"
@@ -296,6 +299,7 @@ watch(
                   </template>
                 </VTextarea>
               </VCol>
+              <!-- CAPACITY -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   type="number"
@@ -307,6 +311,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- AVAILABLE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   type="number"
@@ -318,6 +323,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- LATITUDE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   type="number"
@@ -329,6 +335,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- LONGITUDE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   type="number"
@@ -340,6 +347,7 @@ watch(
                   </template>
                 </VTextField>
               </VCol>
+              <!-- MAPS -->
               <VCol cols="12">
                 <GoogleMaps
                   height="15em"
@@ -348,21 +356,29 @@ watch(
                   @update-value="changeLocation"
                 />
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="(is_showing_modal = false), resetForm()"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="(is_showing_modal = false), resetForm()"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

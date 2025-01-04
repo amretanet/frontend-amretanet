@@ -192,6 +192,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- GROSS SALARY -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="salary_data.gross_salary"
@@ -205,6 +206,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- DEDUCTIONS -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="salary_data.deductions"
@@ -216,6 +218,7 @@ watch(is_showing_modal, () => {
                   <template #label> Potongan Lainnya </template>
                 </VTextField>
               </VCol>
+              <!-- PRESENT -->
               <VCol cols="12" md="4" sm="12">
                 <VTextField
                   v-model="salary_data.absence_summary.days_present"
@@ -225,6 +228,7 @@ watch(is_showing_modal, () => {
                   <template #label> Masuk Kerja </template>
                 </VTextField>
               </VCol>
+              <!-- LATE -->
               <VCol cols="12" md="4" sm="12">
                 <VTextField
                   v-model="salary_data.absence_summary.days_late"
@@ -234,6 +238,7 @@ watch(is_showing_modal, () => {
                   <template #label> Terlambat </template>
                 </VTextField>
               </VCol>
+              <!-- SICK -->
               <VCol cols="12" md="4" sm="12">
                 <VTextField
                   v-model="salary_data.absence_summary.days_sick"
@@ -243,6 +248,7 @@ watch(is_showing_modal, () => {
                   <template #label> Absen Sakit </template>
                 </VTextField>
               </VCol>
+              <!-- ON LEAVE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="salary_data.absence_summary.days_on_leave"
@@ -252,6 +258,7 @@ watch(is_showing_modal, () => {
                   <template #label> Absen Izin </template>
                 </VTextField>
               </VCol>
+              <!-- ABSENT -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="salary_data.absence_summary.days_absent"
@@ -261,6 +268,7 @@ watch(is_showing_modal, () => {
                   <template #label> Tidak Masuk Kerja </template>
                 </VTextField>
               </VCol>
+              <!-- BONUSES -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="salary_data.bonuses"
@@ -272,6 +280,7 @@ watch(is_showing_modal, () => {
                   <template #label> Bonus Tambahan </template>
                 </VTextField>
               </VCol>
+              <!-- NET SALARY -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField v-model="salary_data.net_salary" readonly>
                   <template #prepend-inner> Rp </template>
@@ -316,20 +325,27 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="(is_showing_modal = false), resetForm()"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="(is_showing_modal = false), resetForm()"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

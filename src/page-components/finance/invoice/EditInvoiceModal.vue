@@ -186,16 +186,27 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="is_showing_modal = false"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton type="submit" :is_on_process="is_on_process" />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="is_showing_modal = false"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

@@ -285,6 +285,7 @@ watch(
         <VCardText>
           <VForm ref="template_form" @submit.prevent="updateMessageTemplate">
             <VRow>
+              <!-- TYPE -->
               <VCol cols="12">
                 <VSelect
                   v-model="template_data.type"
@@ -293,6 +294,7 @@ watch(
                   clearable
                 />
               </VCol>
+              <!-- BODY -->
               <VCol cols="12">
                 <VTextarea
                   v-model="template_data.message"
@@ -301,10 +303,17 @@ watch(
                   auto-grow
                 />
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
                 <div class="d-flex gap-2 justify-end">
-                  <VBtn color="warning" size="small" type="reset"> Reset </VBtn>
-                  <ProcessButton :is_on_process="is_on_process" type="submit" />
+                  <VBtn color="warning" size="default" type="reset">
+                    Reset
+                  </VBtn>
+                  <ProcessButton
+                    :is_on_process="is_on_process"
+                    size="default"
+                    type="submit"
+                  />
                 </div>
               </VCol>
             </VRow>
@@ -328,6 +337,7 @@ watch(
             <VRow>
               <VCol cols="12" md="6" sm="12">
                 <VRow>
+                  <!-- HEADER -->
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.header"
@@ -336,6 +346,7 @@ watch(
                       auto-grow
                     />
                   </VCol>
+                  <!-- BODY -->
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.body"
@@ -344,6 +355,7 @@ watch(
                       auto-grow
                     />
                   </VCol>
+                  <!-- FOOTER -->
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.footer"
@@ -352,6 +364,7 @@ watch(
                       auto-grow
                     />
                   </VCol>
+                  <!-- INVOICE PAID -->
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.thanks_message"
@@ -364,12 +377,14 @@ watch(
               </VCol>
               <VCol cols="12" md="6" sm="12">
                 <VRow>
+                  <!-- UNIQUE CODE -->
                   <VCol cols="12">
                     <VSwitch
                       v-model="advance_template_data.unique_code_status"
                       label="Aktifkan Kode Unik Tagihan"
                     />
                   </VCol>
+                  <!-- UNIQUE CODE DESCRIPTION -->
                   <VCol
                     v-if="advance_template_data.unique_code_status"
                     cols="12"
@@ -379,24 +394,28 @@ watch(
                       label="Deskripsi Kode Unik"
                     />
                   </VCol>
+                  <!-- SALDO -->
                   <VCol cols="12">
                     <VTextField
                       v-model="advance_template_data.saldo_fee"
                       label="Nominal Bonus Saldo"
                     />
                   </VCol>
+                  <!-- REMINDER IMAGE URL -->
                   <VCol cols="12">
                     <VTextField
                       v-model="advance_template_data.isolir_image"
                       label="URL Gambar Reminder"
                     />
                   </VCol>
+                  <!-- THANKS IMAGE URL -->
                   <VCol cols="12">
                     <VTextField
                       v-model="advance_template_data.thanks_image"
                       label="URL Gambar Terimakasih"
                     />
                   </VCol>
+                  <!-- IMAGE PREVIEW -->
                   <VCol cols="12">
                     <div class="d-flex gap-2 justify-space-between">
                       <img
@@ -419,13 +438,15 @@ watch(
                       />
                     </div>
                   </VCol>
+                  <!-- ACTION BUTTON -->
                   <VCol cols="12">
                     <div class="d-flex gap-2 justify-end">
-                      <VBtn color="warning" size="small" type="reset">
+                      <VBtn color="warning" size="default" type="reset">
                         Reset
                       </VBtn>
                       <ProcessButton
                         :is_on_process="is_advance_on_process"
+                        size="default"
                         type="submit"
                       />
                     </div>

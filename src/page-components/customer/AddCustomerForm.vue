@@ -547,12 +547,12 @@ onMounted(() => {
           </VCol>
           <VCol cols="12">
             <div class="d-flex gap-2 justify-end">
-              <VBtn size="small" color="warning" @click="resetForm">
+              <VBtn size="default" color="warning" @click="resetForm">
                 Reset
               </VBtn>
               <ProcessButton
                 :is_on_process="is_on_process"
-                size="small"
+                size="default"
                 type="submit"
                 :disabled="is_on_process"
               />

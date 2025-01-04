@@ -54,11 +54,12 @@ onMounted(() => {
         style="max-height: 60vh"
       />
       <div class="d-flex mt-3 gap-2 justify-end">
-        <VBtn size="small" color="warning" @click="getRulesText()">
+        <VBtn size="default" color="warning" @click="getRulesText()">
           Reset
         </VBtn>
         <ProcessButton
           :is_on_process="is_on_process"
+          size="default"
           @click="updateRulesText()"
         />
       </div>

@@ -4,7 +4,10 @@ import TicketStats from "@/page-components/dashboard/TicketStats.vue";
 import MikrotikSystemResource from "@/page-components/dashboard/MikrotikSystemResource.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 import CustomerStatusStats from "@/page-components/dashboard/CustomerStatusStats.vue";
+import { stateManagement } from "@/store";
 
+// VARIABLE
+const store = stateManagement();
 const path_data = ref([
   {
     icon: "tabler-dashboard",
@@ -24,10 +27,10 @@ const path_data = ref([
     <VCol cols="12">
       <CustomerStatusStats />
     </VCol>
-    <VCol cols="12">
+    <VCol v-if="store.isAdmin" cols="12">
       <MikrotikSystemResource />
     </VCol>
-    <VCol cols="12">
+    <VCol v-if="store.isAdmin" cols="12">
       <LocationMapping />
     </VCol>
   </VRow>

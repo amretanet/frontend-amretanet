@@ -237,7 +237,7 @@ watch(current_notification, () => {
               </div>
             </div>
           </div>
-          <VRow class="mt-2">
+          <VRow v-if="notification_data.length !== 0" class="mt-2">
             <VCol cols="6">
               <VBtn
                 size="small"

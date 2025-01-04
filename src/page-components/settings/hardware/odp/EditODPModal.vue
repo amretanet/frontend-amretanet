@@ -161,6 +161,7 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="odp_form" @submit.prevent="validateODPForm">
             <VRow>
+              <!-- IMAGE -->
               <VCol cols="5">
                 <div class="text-center">
                   <div class="clickable" @click="inputImageFile">
@@ -196,6 +197,7 @@ watch(is_showing_modal, () => {
                   </div>
                 </div>
               </VCol>
+              <!-- NAME & TUBE COLOR -->
               <VCol cols="7">
                 <VRow>
                   <!-- NAME -->
@@ -225,6 +227,7 @@ watch(is_showing_modal, () => {
                   </VCol>
                 </VRow>
               </VCol>
+              <!-- TOPOLOGY -->
               <VCol cols="12" :md="odp_data.topology ? '4' : '12'" sm="12">
                 <VSelect
                   v-model="odp_data.topology"
@@ -234,6 +237,7 @@ watch(is_showing_modal, () => {
                   <template #label> Topologi </template>
                 </VSelect>
               </VCol>
+              <!-- ODC -->
               <VCol v-if="odp_data.topology" cols="12" md="8" sm="12">
                 <VAutocomplete
                   v-if="odp_data.topology === 'STAR'"
@@ -349,20 +353,27 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="is_showing_modal = false"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="is_showing_modal = false"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

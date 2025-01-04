@@ -9,7 +9,13 @@ export default [
     title: "Pelanggan",
     icon: { icon: "tabler-user-square-rounded" },
     to: "managements-customer",
-    access: [1, 2],
+    access: [1],
+  },
+  {
+    title: "Pelanggan Referral",
+    icon: { icon: "tabler-user-square-rounded" },
+    to: "referral-customer",
+    access: [2, 3, 4, 5, 6],
   },
   {
     title: "Keuangan",
@@ -107,7 +113,7 @@ export default [
   {
     title: "Pengaturan",
     icon: { icon: "tabler-settings-cog" },
-    access: [1, 2],
+    access: [1],
     children: [
       // {
       //   title: "Konfigurasi Sistem",

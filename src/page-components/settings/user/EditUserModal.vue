@@ -97,6 +97,7 @@ watch(props, () => {
         <VCardText>
           <VForm ref="user_form" @submit.prevent="updateUser">
             <VRow>
+              <!-- NAME -->
               <VCol cols="12">
                 <VTextField
                   v-model="user_data.name"
@@ -108,6 +109,7 @@ watch(props, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- EMAIL -->
               <VCol cols="12">
                 <VTextField
                   v-model="user_data.email"
@@ -119,6 +121,7 @@ watch(props, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- PHONE NUMBER -->
               <VCol cols="12">
                 <VTextField
                   v-model="user_data.phone_number"
@@ -131,6 +134,7 @@ watch(props, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- GENDER -->
               <VCol cols="12" md="6" sm="12">
                 <VSelect
                   v-model="user_data.gender"
@@ -143,6 +147,7 @@ watch(props, () => {
                   </template>
                 </VSelect>
               </VCol>
+              <!-- SALDO -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField v-model="user_data.saldo" type="number" clearable>
                   <template #prepend-inner> Rp </template>
@@ -151,6 +156,7 @@ watch(props, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- ROLE -->
               <VCol cols="12">
                 <VSelect
                   v-model="user_data.role"
@@ -163,24 +169,33 @@ watch(props, () => {
                   </template>
                 </VSelect>
               </VCol>
+              <!-- ADDRESS -->
               <VCol cols="12">
                 <VTextarea v-model="user_data.address" label="Alamat" />
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="is_showing_modal = false"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      color="error"
+                      block
+                      @click="is_showing_modal = false"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

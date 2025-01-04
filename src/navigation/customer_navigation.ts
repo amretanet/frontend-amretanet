@@ -6,6 +6,12 @@ export default [
     access: [99],
   },
   {
+    title: "Pelanggan Referral",
+    icon: { icon: "tabler-user-square-rounded" },
+    to: "referral-customer",
+    access: [99],
+  },
+  {
     title: "Tagihan",
     icon: { icon: "tabler-file-invoice" },
     access: [99],

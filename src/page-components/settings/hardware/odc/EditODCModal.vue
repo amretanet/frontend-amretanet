@@ -138,6 +138,7 @@ watch(props, () => {
         <VCardText>
           <VForm ref="odc_form" @submit.prevent="validateODCForm">
             <VRow>
+              <!-- IMAGE -->
               <VCol cols="5">
                 <div class="text-center">
                   <div class="clickable" @click="inputImageFile">
@@ -173,6 +174,7 @@ watch(props, () => {
                   </div>
                 </div>
               </VCol>
+              <!-- NAME & TUBE COLOR -->
               <VCol cols="7">
                 <VRow>
                   <!-- NAME -->
@@ -301,20 +303,27 @@ watch(props, () => {
               </VCol>
               <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="is_showing_modal = false"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="is_showing_modal = false"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>

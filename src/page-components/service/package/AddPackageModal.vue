@@ -116,6 +116,7 @@ watch(is_showing_modal, () => {
         <VCardText>
           <VForm ref="package_form" @submit.prevent="savePackage">
             <VRow>
+              <!-- NAME -->
               <VCol cols="12" md="8" sm="12">
                 <VTextField
                   v-model="package_data.name"
@@ -126,6 +127,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- CATEGORY -->
               <VCol cols="12" md="4" sm="12">
                 <VSelect
                   v-model="package_data.category"
@@ -137,6 +139,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VSelect>
               </VCol>
+              <!-- PROFILE -->
               <VCol
                 v-if="package_data.category === 'PPPOE'"
                 cols="12"
@@ -153,6 +156,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
+              <!-- BANDWIDTH -->
               <VCol
                 v-if="package_data.category === 'PPPOE'"
                 cols="12"
@@ -169,6 +173,7 @@ watch(is_showing_modal, () => {
                   <template #append-inner> Mbps </template>
                 </VTextField>
               </VCol>
+              <!-- REGULAR PRICE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="package_data.price.regular"
@@ -181,6 +186,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- RESELLER PRICE -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="package_data.price.reseller"
@@ -193,6 +199,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- INSTALATION COST -->
               <VCol cols="12" md="5" sm="12">
                 <VTextField
                   v-model="package_data.instalation_cost"
@@ -205,6 +212,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- MAX DEVICE -->
               <VCol cols="12" md="4" sm="12">
                 <VTextField
                   v-model="package_data.maximum_device"
@@ -216,6 +224,7 @@ watch(is_showing_modal, () => {
                   </template>
                 </VTextField>
               </VCol>
+              <!-- DISPLAY STATUS -->
               <VCol cols="12" md="3" sm="12">
                 <VSelect
                   v-model="package_data.is_displayed"
@@ -226,27 +235,36 @@ watch(is_showing_modal, () => {
                   </template>
                 </VSelect>
               </VCol>
+              <!-- DESCRIPTION -->
               <VCol cols="12">
                 <VTextarea
                   v-model="package_data.description"
                   label="Deskripsi"
                 />
               </VCol>
+              <!-- ACTION BUTTON -->
               <VCol cols="12">
-                <div class="d-flex gap-2 justify-end">
-                  <VBtn
-                    size="small"
-                    color="error"
-                    @click="(is_showing_modal = false), resetForm()"
-                  >
-                    Batal
-                  </VBtn>
-                  <ProcessButton
-                    :is_on_process="is_on_process"
-                    type="submit"
-                    :disabled="is_on_process"
-                  />
-                </div>
+                <VRow>
+                  <VCol cols="6">
+                    <VBtn
+                      size="default"
+                      block
+                      color="error"
+                      @click="(is_showing_modal = false), resetForm()"
+                    >
+                      Batal
+                    </VBtn>
+                  </VCol>
+                  <VCol cols="6">
+                    <ProcessButton
+                      :is_on_process="is_on_process"
+                      size="default"
+                      block
+                      type="submit"
+                      :disabled="is_on_process"
+                    />
+                  </VCol>
+                </VRow>
               </VCol>
             </VRow>
           </VForm>
