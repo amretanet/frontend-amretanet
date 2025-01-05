@@ -98,6 +98,11 @@ const saveCoverageArea = () => {
           data: coverage_area_data.value,
         })
         .then(() => {
+          showActionResult(
+            undefined,
+            undefined,
+            "Cakupan Area Telah Ditambahkan!"
+          );
           emits("areaAdded");
           resetForm();
         })

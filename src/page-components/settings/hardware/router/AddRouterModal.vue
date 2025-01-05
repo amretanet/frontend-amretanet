@@ -47,6 +47,7 @@ const saveRouter = () => {
           data: router_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Router Telah Ditambahkan!");
           emits("routerAdded");
           resetForm();
         })

@@ -155,9 +155,10 @@ watch(
         Profile Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
-        <!-- PAGE ITEMS -->
+        <!-- ITEMS -->
         <div>
           <VSelect v-model="pagination.items" :items="[5, 10, 25, 50, 100]" />
         </div>
@@ -178,7 +179,7 @@ watch(
         </div>
       </div>
     </VCardText>
-    <!-- DATA TABLE -->
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -188,10 +189,8 @@ watch(
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <!-- DELETE BUTTON -->
             <VBtn
               size="35"
               color="error"

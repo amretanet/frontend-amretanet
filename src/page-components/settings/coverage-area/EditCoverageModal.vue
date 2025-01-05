@@ -102,6 +102,7 @@ const updateCoverageArea = () => {
           data: coverage_area_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Cakupan Area Telah Diubah!");
           emits("areaUpdated");
         })
         .catch((err) => {

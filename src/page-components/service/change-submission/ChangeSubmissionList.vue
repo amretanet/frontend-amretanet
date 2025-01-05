@@ -96,10 +96,16 @@ const change_submission_table_data = ref({
 });
 
 // FUNCTION
-const getChangeSubmission = (is_refresh: boolean = false) => {
+const getChangeSubmission = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -203,44 +209,51 @@ onMounted(() => {
       </template>
       <template #title> Daftar Pengajuan Perubahan </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getChangeSubmission()"
+            @update:model-value="getChangeSubmission(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getChangeSubmission(true)"
+          @click="getChangeSubmission(false, true)"
         />
         <VSpacer />
+        <!-- ADD CHANGE SUBMISSION BUTTON -->
         <AddChangeSubmissionModal
           v-if="store.isCustomer"
-          @change-submission-added="getChangeSubmission()"
+          @change-submission-added="getChangeSubmission(true)"
         />
+        <!-- STATUS FILTER -->
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.status"
             :items="options.status"
             label="Status"
             clearable
-            @update:model-value="getChangeSubmission()"
+            @update:model-value="getChangeSubmission(true)"
           />
         </div>
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getChangeSubmission()"
+            @update:model-value="getChangeSubmission(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"

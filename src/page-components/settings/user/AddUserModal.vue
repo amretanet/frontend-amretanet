@@ -50,6 +50,7 @@ const saveUser = () => {
           data: user_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Pengguna Telah Ditambahkan!");
           emits("userAdded");
           resetForm();
         })

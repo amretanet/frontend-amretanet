@@ -50,6 +50,7 @@ const updateUser = () => {
           data: user_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Pengguna Telah Diubah!");
           emits("userUpdated");
         })
         .catch((err) => {

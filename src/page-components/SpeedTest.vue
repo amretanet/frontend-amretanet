@@ -1,9 +1,17 @@
+<script setup lang="ts">
+// VARIABLE
+const current_tab = ref("open_speedtest");
+</script>
 <template>
-  <VRow>
-    <VCol cols="12" md="8">
-      <VCard height="450">
+  <div>
+    <VTabs v-model="current_tab">
+      <VTab value="open_speedtest"> Open Speedtest </VTab>
+      <VTab value="fast_speedtest"> Fast Speedtest </VTab>
+    </VTabs>
+    <div class="mt-2">
+      <VCard v-if="current_tab === 'open_speedtest'" height="530">
         <div style="text-align: right">
-          <div style="min-height: 450px">
+          <div style="min-height: 500px">
             <div
               style="
                 width: 100%;
@@ -20,7 +28,7 @@
                   left: 0;
                   width: 100%;
                   height: 100%;
-                  min-height: 450px;
+                  min-height: 500px;
                   border: none;
                   overflow: hidden !important;
                 "
@@ -30,17 +38,17 @@
           </div>
         </div>
       </VCard>
-    </VCol>
-    <VCol cols="12" md="4">
-      <VCard height="450">
-        <iframe
-          src="https://fast.com"
-          width="100%"
-          height="450px"
-          style="border: none"
-        >
-        </iframe>
+      <VCard v-else height="530" color="#fff">
+        <VCardText>
+          <iframe
+            src="https://fast.com"
+            width="100%"
+            height="500px"
+            style="border: none"
+          >
+          </iframe>
+        </VCardText>
       </VCard>
-    </VCol>
-  </VRow>
+    </div>
+  </div>
 </template>

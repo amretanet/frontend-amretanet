@@ -85,10 +85,16 @@ const salary_table_data = ref({
 });
 
 // FUNCTION
-const getSalaryData = (is_refresh: boolean = false) => {
+const getSalaryData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -173,26 +179,25 @@ onMounted(() => {
       </template>
       <template #title> Daftar Gaji Karyawan </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
-        <!-- PAGE ITEMS -->
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getSalaryData()"
+            @update:model-value="getSalaryData(true)"
           />
         </div>
         <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getSalaryData(true)"
+          @click="getSalaryData(false, true)"
         />
         <VSpacer />
         <!-- ADD INCOME BUTTON -->
-        <AddSalaryModal
-          @salary-added="(pagination.page = 1), getSalaryData()"
-        />
+        <AddSalaryModal @salary-added="getSalaryData(true)" />
         <!-- MONTH FILTER -->
         <div class="wm-100" style="min-width: 8rem">
           <VAutocomplete
@@ -200,7 +205,7 @@ onMounted(() => {
             label="Bulan"
             :items="options.month"
             clearable
-            @update:model-value="(pagination.page = 1), getSalaryData()"
+            @update:model-value="getSalaryData(true)"
           />
         </div>
         <!-- YEAR FILTER -->
@@ -210,7 +215,7 @@ onMounted(() => {
             label="Tahun"
             :items="options.year"
             clearable
-            @update:model-value="(pagination.page = 1), getSalaryData()"
+            @update:model-value="getSalaryData(true)"
           />
         </div>
         <!-- RECEIVER FILTER -->
@@ -220,7 +225,7 @@ onMounted(() => {
             label="Karyawan"
             :items="options.user.filter((el:any)=>el.role!==99)"
             clearable
-            @update:model-value="(pagination.page = 1), getSalaryData()"
+            @update:model-value="getSalaryData(true)"
           />
         </div>
         <!-- KEYWORD FILTER -->
@@ -230,12 +235,12 @@ onMounted(() => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="(pagination.page = 1), getSalaryData()"
+            @update:model-value="getSalaryData(true)"
           />
         </div>
       </div>
     </VCardText>
-    <!-- DATA TABLE -->
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -244,16 +249,13 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM NAME -->
         <template #cell-name="{ data }">
           {{ data?.employee?.name || "" }}
         </template>
-        <!-- CUSTOM PERIOD -->
         <template #cell-period="{ data }">
           {{ monthFormatter(parseInt(data.period.month)) || "" }}
           {{ data.period.year || "" }}
         </template>
-        <!-- CUSTOM STATUS -->
         <template #cell-status="{ data }">
           <VChip
             variant="outlined"
@@ -263,16 +265,12 @@ onMounted(() => {
             {{ paymentStatusFormatter(data.status).title || "" }}
           </VChip>
         </template>
-        <!-- CUSTOM NOMINAL -->
         <template #cell-net_salary="{ data }">
           Rp{{ thousandSeparator(data?.net_salary || 0) }}
         </template>
-        <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <!-- EDIT BUTTON -->
             <EditSalaryModal :data="data" @salary-updated="getSalaryData()" />
-            <!-- DELETE BUTTON -->
             <VBtn size="35" color="error" @click="deleteSalaryData(data._id)">
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>

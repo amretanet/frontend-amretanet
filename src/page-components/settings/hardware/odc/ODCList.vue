@@ -93,10 +93,16 @@ const odc_table_data = ref({
 const odc_maps_data = ref<any[]>([]);
 
 // FUNCTION
-const getODCData = (is_refresh: boolean = false) => {
+const getODCData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -174,6 +180,7 @@ onMounted(() => {
         </VSwitch>
       </template>
     </VCardItem>
+    <!-- MAPS COMPONENT -->
     <VCardText v-if="is_show_maps">
       <GoogleMaps :zoom="18">
         <template #marker>
@@ -185,32 +192,38 @@ onMounted(() => {
         </template>
       </GoogleMaps>
     </VCardText>
+    <!-- FILTER COMPONENT -->
     <VCardText v-if="!is_show_maps" class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getODCData()"
+            @update:model-value="getODCData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getODCData(true)"
+          @click="getODCData(false, true)"
         />
         <VSpacer />
-        <AddODCModal @odc-added="getODCData()" />
+        <!-- ADD ODC BUTTON -->
+        <AddODCModal @odc-added="getODCData(true)" />
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getODCData()"
+            @update:model-value="getODCData(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div v-if="!is_show_maps">
       <DataTable
         height="30rem"

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { IObjectKeys } from "@/models";
-import { bytesConverter } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -116,9 +115,10 @@ watch(
         Log Mikrotik <strong>({{ store.getCurrentRouter }})</strong>
       </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
-        <!-- PAGE ITEMS -->
+        <!-- ITEMS -->
         <div>
           <VSelect v-model="pagination.items" :items="[5, 10, 25, 50, 100]" />
         </div>
@@ -139,7 +139,7 @@ watch(
         </div>
       </div>
     </VCardText>
-    <!-- DATA TABLE -->
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -149,13 +149,11 @@ watch(
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM ID -->
         <template #cell-.id="{ data }">
           <VChip variant="outlined" color="primary">
             {{ data[".id"] || "-" }}
           </VChip>
         </template>
-        <!-- CUSTOM TIME -->
         <template #cell-time="{ data }">
           <VChip variant="outlined">
             {{ data?.time || "-" }}

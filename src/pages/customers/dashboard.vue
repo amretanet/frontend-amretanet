@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CustomerStats from "@/page-components/dashboard/CustomerStats.vue";
+import CustomerInformation from "@/page-components/dashboard/CustomerInformation.vue";
 import SpeedTest from "@/page-components/SpeedTest.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
@@ -17,7 +17,7 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <CustomerStats />
+      <CustomerInformation />
     </VCol>
     <VCol cols="12">
       <SpeedTest />

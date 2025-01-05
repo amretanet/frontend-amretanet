@@ -46,8 +46,8 @@ const updateInvoice = () => {
           data: params,
         })
         .then(() => {
-          emits("invoiceUpdated");
           showActionResult(undefined, undefined, "Invoice Telah Diubah!");
+          emits("invoiceUpdated");
         })
         .catch((err) => {
           const message = errorMessage(err);

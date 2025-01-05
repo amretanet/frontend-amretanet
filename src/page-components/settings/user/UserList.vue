@@ -96,10 +96,16 @@ const user_table_data = ref({
 });
 
 // FUNCTION
-const getUserData = (is_refresh: boolean = false) => {
+const getUserData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -227,39 +233,45 @@ onMounted(() => {
     </VCardItem>
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getUserData()"
+            @update:model-value="getUserData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getUserData(true)"
+          @click="getUserData(false, true)"
         />
         <VSpacer />
-        <AddUserModal @user-added="showActionResult(), getUserData()" />
+        <!-- ADD USER BUTTON -->
+        <AddUserModal @user-added="getUserData()" />
+        <!-- ROLE FILTER -->
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.role"
             :items="options.role"
             label="Level"
             clearable
-            @update:model-value="getUserData()"
+            @update:model-value="getUserData(true)"
           />
         </div>
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getUserData()"
+            @update:model-value="getUserData(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -304,10 +316,7 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditUserModal
-              :data="data"
-              @user-updated="showActionResult(), getUserData()"
-            />
+            <EditUserModal :data="data" @user-updated="getUserData()" />
             <VBtn
               size="35"
               prepend-icon="tabler-key"

@@ -64,6 +64,7 @@ const savePackage = () => {
           data: package_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Paket Telah Ditambahkan!");
           emits("packageAdded");
           resetForm();
         })

@@ -24,6 +24,7 @@ import InvoiceDetailModal from "./InvoiceDetailModal.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import EditInvoiceModal from "./EditInvoiceModal.vue";
 import PayOffInvoiceModal from "./PayOffInvoiceModal.vue";
+import RequestPaymentModal from "./RequestPaymentModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -116,10 +117,16 @@ const checked_invoice_data = computed(() => {
 });
 
 // FUNCTION
-const getInvoiceData = (is_refresh: boolean = false) => {
+const getInvoiceData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -481,20 +488,21 @@ watch(checked_invoice_data, () => {
         </ProcessButton>
       </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
-        <!-- PAGE ITEMS -->
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getInvoiceData()"
+            @update:model-value="getInvoiceData(true)"
           />
         </div>
         <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getInvoiceData(true)"
+          @click="getInvoiceData(false, true)"
         />
         <!-- BULK ACTION BUTTON -->
         <VBtn
@@ -586,7 +594,7 @@ watch(checked_invoice_data, () => {
             label="Bulan"
             :items="options.month"
             clearable
-            @update:model-value="(pagination.page = 1), getInvoiceData()"
+            @update:model-value="getInvoiceData(true)"
           />
         </div>
         <!-- YEAR FILTER -->
@@ -596,7 +604,7 @@ watch(checked_invoice_data, () => {
             label="Tahun"
             :items="options.year"
             clearable
-            @update:model-value="(pagination.page = 1), getInvoiceData()"
+            @update:model-value="getInvoiceData(true)"
           />
         </div>
         <!-- STATUS FILTER -->
@@ -606,7 +614,7 @@ watch(checked_invoice_data, () => {
             label="Status"
             :items="options.status"
             clearable
-            @update:model-value="(pagination.page = 1), getInvoiceData()"
+            @update:model-value="getInvoiceData(true)"
           />
         </div>
         <!-- KEYWORD FILTER -->
@@ -616,7 +624,7 @@ watch(checked_invoice_data, () => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="(pagination.page = 1), getInvoiceData()"
+            @update:model-value="getInvoiceData(true)"
           />
         </div>
       </div>
@@ -666,6 +674,11 @@ watch(checked_invoice_data, () => {
         <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <!-- REQUEST PAYMENT -->
+            <RequestPaymentModal
+              v-if="store.isCustomer && data.status !== 'PAID'"
+              :data="data"
+            />
             <!-- DETAIL BUTTON -->
             <InvoiceDetailModal
               :data="data"

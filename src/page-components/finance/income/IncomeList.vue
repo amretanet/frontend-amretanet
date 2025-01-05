@@ -83,10 +83,16 @@ const income_table_data = ref({
 const income_count = ref(0);
 
 // FUNCTION
-const getIncomeData = (is_refresh: boolean = false) => {
+const getIncomeData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -200,32 +206,31 @@ onMounted(() => {
         </VChip>
       </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
-        <!-- PAGE ITEMS -->
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getIncomeData()"
+            @update:model-value="getIncomeData(true)"
           />
         </div>
         <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getIncomeData(true)"
+          @click="getIncomeData(false, true)"
         />
         <VSpacer />
         <!-- ADD INCOME BUTTON -->
-        <AddIncomeModal
-          @income-added="(pagination.page = 1), getIncomeData()"
-        />
+        <AddIncomeModal @income-added="getIncomeData(true)" />
         <!-- DATE RANGE FILTER -->
         <div style="width: 20rem">
           <DateRangePicker
             v-model:from="filter_data.from_date"
             v-model:to="filter_data.to_date"
-            @date-change="(pagination.page = 1), getIncomeData()"
+            @date-change="getIncomeData(true)"
           />
         </div>
         <!-- RECEIVER FILTER -->
@@ -235,7 +240,7 @@ onMounted(() => {
             label="Penerima"
             :items="options.user.filter((el:any)=>el.role!==99)"
             clearable
-            @update:model-value="(pagination.page = 1), getIncomeData()"
+            @update:model-value="getIncomeData(true)"
           />
         </div>
         <!-- KEYWORD FILTER -->
@@ -245,12 +250,12 @@ onMounted(() => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="(pagination.page = 1), getIncomeData()"
+            @update:model-value="getIncomeData(true)"
           />
         </div>
       </div>
     </VCardText>
-    <!-- DATA TABLE -->
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -259,17 +264,14 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM CELL DATE -->
         <template #cell-date="{ data }">
           <VChip>
             {{ dateFormatterID(data.date, true, true) }}
           </VChip>
         </template>
-        <!-- CUSTOM NOMINAL -->
         <template #cell-nominal="{ data }">
           Rp{{ thousandSeparator(data?.nominal || 0) }}
         </template>
-        <!-- CUSTOM CELL DECSRIPTION -->
         <template #cell-description="{ data }">
           <div class="py-2">
             <div>
@@ -285,12 +287,9 @@ onMounted(() => {
             </div>
           </div>
         </template>
-        <!-- CUSTOM ACTION -->
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <!-- EDIT BUTTON -->
             <EditIncomeModal :data="data" @income-updated="getIncomeData()" />
-            <!-- DELETE BUTTON -->
             <VBtn size="35" color="error" @click="deleteIncomeData(data._id)">
               <VIcon icon="tabler-trash" />
               <VTooltip activator="parent"> Hapus </VTooltip>

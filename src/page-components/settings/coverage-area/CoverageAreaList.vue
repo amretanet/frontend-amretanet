@@ -15,7 +15,6 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddCoverageModal from "./AddCoverageModal.vue";
 import EditCoverageModal from "./EditCoverageModal.vue";
-import { stateManagement } from "@/store";
 import { Marker } from "vue3-google-map";
 
 // VARIABLES
@@ -77,10 +76,16 @@ const coverage_area_table_data = ref({
 const coverage_area_maps_data = ref<any[]>([]);
 
 // FUNCTION
-const getCoverageAreaData = (is_refresh: boolean = false) => {
+const getCoverageAreaData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -160,6 +165,7 @@ onMounted(() => {
         </VSwitch>
       </template>
     </VCardItem>
+    <!-- MAPS COMPONENT -->
     <VCardText v-if="is_show_maps">
       <GoogleMaps :zoom="18">
         <template #marker>
@@ -173,34 +179,38 @@ onMounted(() => {
         </template>
       </GoogleMaps>
     </VCardText>
+    <!-- FILTER COMPONENT -->
     <VCardText v-if="!is_show_maps" class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getCoverageAreaData()"
+            @update:model-value="getCoverageAreaData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getCoverageAreaData(true)"
+          @click="getCoverageAreaData(false, true)"
         />
         <VSpacer />
-        <AddCoverageModal
-          @area-added="showActionResult(), getCoverageAreaData()"
-        />
+        <!-- ADD COVERAGE BUTTON -->
+        <AddCoverageModal @area-added="getCoverageAreaData(true)" />
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getCoverageAreaData()"
+            @update:model-value="getCoverageAreaData(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div v-if="!is_show_maps">
       <DataTable
         height="60vh"
@@ -209,7 +219,6 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM CELL -->
         <template #cell-name="{ data }">
           <VChip color="primary">
             <strong>{{ data.name || "-Tidak Diketahui-" }}</strong>
@@ -228,7 +237,7 @@ onMounted(() => {
           <div class="d-flex gap-1 py-1 justify-center">
             <EditCoverageModal
               :data="data"
-              @area-updated="showActionResult(), getCoverageAreaData()"
+              @area-updated="getCoverageAreaData()"
             />
             <VBtn
               size="35"

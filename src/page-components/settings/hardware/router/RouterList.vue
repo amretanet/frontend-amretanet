@@ -78,10 +78,16 @@ const router_table_data = ref({
 });
 
 // FUNCTION
-const getRouterData = (is_refresh: boolean = false) => {
+const getRouterData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -151,32 +157,38 @@ onMounted(() => {
       </template>
       <template #title> Daftar Router </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getRouterData()"
+            @update:model-value="getRouterData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getRouterData(true)"
+          @click="getRouterData(false, true)"
         />
         <VSpacer />
-        <AddRouterModal @router-added="showActionResult(), getRouterData()" />
+        <!-- ADD ROUTER BUTTON -->
+        <AddRouterModal @router-added="getRouterData(true)" />
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getRouterData()"
+            @update:model-value="getRouterData(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="30rem"
@@ -202,10 +214,7 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
-            <EditRouterModal
-              :data="data"
-              @router-updated="showActionResult(), getRouterData()"
-            />
+            <EditRouterModal :data="data" @router-updated="getRouterData()" />
             <VBtn
               size="35"
               color="error"

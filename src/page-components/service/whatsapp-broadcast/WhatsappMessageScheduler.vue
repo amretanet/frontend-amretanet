@@ -73,8 +73,8 @@ const customer_table_data = ref({
 
 // FUNCTION
 const getReminderData = (
-  is_refresh: boolean = false,
-  is_reset_page = false
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
 ) => {
   is_loading.value = true;
   if (is_refresh) {
@@ -132,29 +132,33 @@ onMounted(() => {
       </template>
       <template #title> Daftar Pesan Terjadwal </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getReminderData(false, true)"
+            @update:model-value="getReminderData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getReminderData(true)"
+          @click="getReminderData(false, true)"
         />
         <VSpacer />
-        <form class="wm-100" style="width: 15rem">
+        <!-- KEYWORD FILTER -->
+        <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getReminderData(false, true)"
+            @update:model-value="getReminderData(true)"
           />
-        </form>
+        </div>
       </div>
     </VCardText>
     <div>

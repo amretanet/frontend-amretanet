@@ -107,10 +107,16 @@ const package_table_data = ref({
 });
 
 // FUNCTION
-const getPackageData = (is_refresh: boolean = false) => {
+const getPackageData = (
+  is_reset_page: boolean = false,
+  is_refresh: boolean = false
+) => {
   is_loading.value = true;
   if (is_refresh) {
     is_on_refresh.value = true;
+  }
+  if (is_reset_page) {
+    pagination.value.page = 1;
   }
   if (cancel_request_token.value) {
     cancel_request_token.value.cancel();
@@ -183,43 +189,48 @@ onMounted(() => {
       </template>
       <template #title> Daftar Paket </template>
     </VCardItem>
+    <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
+        <!-- ITEMS -->
         <div>
           <VSelect
             v-model="pagination.items"
             :items="[5, 10, 25, 50, 100]"
-            @update:model-value="getPackageData()"
+            @update:model-value="getPackageData(true)"
           />
         </div>
+        <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getPackageData(true)"
+          @click="getPackageData(false, true)"
         />
         <VSpacer />
-        <AddPackageModal
-          @package-added="showActionResult(), getPackageData()"
-        />
+        <!-- ADD PACKAGE BUTTON -->
+        <AddPackageModal @package-added="getPackageData(true)" />
+        <!-- CATEGORY FILTER -->
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.category"
             label="Kategori"
             :items="options.category"
             clearable
-            @update:model-value="getPackageData()"
+            @update:model-value="getPackageData(true)"
           />
         </div>
+        <!-- KEYWORD FILTER -->
         <div class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getPackageData()"
+            @update:model-value="getPackageData(true)"
           />
         </div>
       </div>
     </VCardText>
+    <!-- TABLE COMPONENT -->
     <div>
       <DataTable
         height="60vh"
@@ -228,7 +239,6 @@ onMounted(() => {
         :items="pagination.items"
         :is_loading="is_loading"
       >
-        <!-- CUSTOM CELL -->
         <template #cell-name="{ data }">
           <div class="py-2">
             <div>{{ data?.name || "-" }}</div>
@@ -278,7 +288,7 @@ onMounted(() => {
           <div class="d-flex gap-1 py-1 justify-center">
             <EditPackageModal
               :data="data"
-              @package-updated="showActionResult(), getPackageData()"
+              @package-updated="getPackageData()"
             />
             <VBtn
               size="35"

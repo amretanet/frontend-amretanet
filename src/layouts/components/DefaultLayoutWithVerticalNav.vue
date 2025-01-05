@@ -11,7 +11,6 @@ import UserProfile from "@/page-components/navbar/UserProfile.vue";
 
 // @layouts plugin
 import { VerticalNavLayout } from "@layouts";
-import RouterSelect from "@/page-components/navbar/RouterSelect.vue";
 
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
 const { width: windowWidth } = useWindowSize();
@@ -33,7 +32,6 @@ const { width: windowWidth } = useWindowSize();
         >
           <VIcon icon="tabler-menu-2" size="24" />
         </VBtn>
-        <!-- <RouterSelect /> -->
         <VSpacer />
         <ThemeSwitcher />
         <Notification class="me-2" />

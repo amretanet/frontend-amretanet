@@ -51,6 +51,7 @@ const updateRouter = () => {
           data: router_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Router Telah Diubah!");
           emits("routerUpdated");
         })
         .catch((err) => {

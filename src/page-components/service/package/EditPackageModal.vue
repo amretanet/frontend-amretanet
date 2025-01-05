@@ -68,6 +68,7 @@ const updatePackage = () => {
           data: package_data.value,
         })
         .then(() => {
+          showActionResult(undefined, undefined, "Paket Telah Diubah!");
           emits("packageUpdated");
         })
         .catch((err) => {
