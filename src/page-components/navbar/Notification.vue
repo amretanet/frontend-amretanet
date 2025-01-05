@@ -10,7 +10,9 @@ import { stateManagement } from "@/store";
 const store = stateManagement();
 const is_loading = ref(true);
 const cancel_request_token = ref<any>(null);
-const current_notification = ref("PAYMENT_CONFIRM");
+const current_notification = ref(
+  store.isCustomer ? "OTHER" : "PAYMENT_CONFIRM"
+);
 const notification_data = ref<any[]>([]);
 const notification_count = ref(0);
 
@@ -27,6 +29,7 @@ const getNotificationData = () => {
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
     .join("&");
+
   axiosIns
     .get(`notification?${query}`, {
       cancelToken: cancel_request_token.value.token,
@@ -163,7 +166,7 @@ watch(current_notification, () => {
             </VChip>
           </template>
         </VCardItem>
-        <VCardText>
+        <VCardText v-if="!store.isCustomer">
           <VTabs v-model="current_notification" grow>
             <VTab value="PAYMENT_CONFIRM">Pembayaran</VTab>
             <VTab value="TICKET">Layanan</VTab>

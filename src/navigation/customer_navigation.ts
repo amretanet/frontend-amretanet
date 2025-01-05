@@ -12,7 +12,7 @@ export default [
     access: [99],
   },
   {
-    title: "Tagihan",
+    title: "Tagihan Saya",
     icon: { icon: "tabler-file-invoice" },
     access: [99],
     to: "customers-invoice",

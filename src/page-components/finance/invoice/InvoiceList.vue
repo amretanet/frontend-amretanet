@@ -473,7 +473,11 @@ watch(checked_invoice_data, () => {
       <template #prepend>
         <VIcon icon="tabler-file-invoice" />
       </template>
-      <template #title> Daftar Tagihan Pelanggan </template>
+      <template #title>
+        {{
+          store.isCustomer ? "Daftar Tagihan Saya" : "Daftar Tagihan Pelanggan"
+        }}
+      </template>
       <template #append>
         <ProcessButton
           v-if="!store.isCustomer"
@@ -678,6 +682,7 @@ watch(checked_invoice_data, () => {
             <RequestPaymentModal
               v-if="store.isCustomer && data.status !== 'PAID'"
               :data="data"
+              @payment-requested="getInvoiceData()"
             />
             <!-- DETAIL BUTTON -->
             <InvoiceDetailModal

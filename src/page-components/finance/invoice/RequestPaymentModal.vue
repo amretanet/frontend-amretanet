@@ -11,7 +11,7 @@ interface IProps {
   data: any;
 }
 interface IEmits {
-  (e: "invoiceConfirmed"): void;
+  (e: "paymentRequested"): void;
 }
 
 // VARIABLE
@@ -107,6 +107,7 @@ const confirmPayment = async () => {
           "Konfirmasi Pembayaran Telah Dikirimkan!"
         );
         is_showing_modal.value = false;
+        emits("paymentRequested");
       })
       .catch(() => {
         is_confirm_error.value = true;

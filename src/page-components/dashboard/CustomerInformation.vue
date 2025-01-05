@@ -41,7 +41,7 @@ onMounted(() => {
 </script>
 <template>
   <VRow>
-    <VCol cols="12" md="5" sm="12">
+    <VCol cols="12" md="6" sm="12">
       <VCard
         variant="flat"
         color="primary"
@@ -74,7 +74,7 @@ onMounted(() => {
         </VCardText>
       </VCard>
     </VCol>
-    <VCol cols="12" md="7" sm="12">
+    <VCol cols="12" md="6" sm="12">
       <VCard variant="flat" color="success" class="h-100">
         <VCardText>
           <div class="d-flex align-center gap-2">

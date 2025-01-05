@@ -105,14 +105,22 @@ watch(props, () => {
             <HorizontalTextFormat
               title="Nama Pelanggan"
               :value="invoice_data.name"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- SERVICE NUMBER -->
             <HorizontalTextFormat
               title="Nomor Layanan"
               :value="invoice_data.service_number"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- STATUS -->
-            <HorizontalTextFormat title="Status">
+            <HorizontalTextFormat
+              title="Status"
+              :title_cols="5"
+              :value_cols="7"
+            >
               <template #value>
                 <VChip
                   variant="outlined"
@@ -127,10 +135,16 @@ watch(props, () => {
             <HorizontalTextFormat
               title="Periode"
               :value="dateFormatterID(invoice_data.due_date)"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- PACKAGE -->
             <div>
-              <HorizontalTextFormat title="Paket Internet" />
+              <HorizontalTextFormat
+                title="Paket Internet"
+                :title_cols="5"
+                :value_cols="7"
+              />
               <div class="mt-2">
                 <VTable density="compact" class="rounded">
                   <thead>
@@ -169,7 +183,11 @@ watch(props, () => {
               "
               class="mt-2"
             >
-              <HorizontalTextFormat title="Paket Tambahan" />
+              <HorizontalTextFormat
+                title="Paket Tambahan"
+                :title_cols="5"
+                :value_cols="7"
+              />
               <div class="mt-2">
                 <VTable density="compact" class="rounded">
                   <thead>
@@ -212,21 +230,29 @@ watch(props, () => {
                     invoice_data.add_on_package_amount
                 )
               "
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- PPN -->
             <HorizontalTextFormat
               title="PPN"
               :value="'Rp' + thousandSeparator(invoice_data.ppn)"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- UNIQUE CODE -->
             <HorizontalTextFormat
               title="Kode Unik"
               :value="thousandSeparator(invoice_data.unique_code)"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- AMOUNT -->
             <HorizontalTextFormat
               title="Total Tagihan"
               :value="'Rp' + thousandSeparator(invoice_data.amount)"
+              :title_cols="5"
+              :value_cols="7"
             />
             <!-- PAYMENT -->
             <div v-if="invoice_data?.payment">
@@ -234,25 +260,37 @@ watch(props, () => {
               <HorizontalTextFormat
                 title="Tanggal Pembayaran"
                 :value="dateFormatterID(invoice_data?.payment?.paid_at)"
+                :title_cols="5"
+                :value_cols="7"
               />
               <!-- PAYMENT METHOD -->
               <HorizontalTextFormat
                 title="Metode Pembayaran"
                 :value="invoice_data?.payment?.method"
+                :title_cols="5"
+                :value_cols="7"
               />
               <!-- PAYMENT DESCRIPTION -->
               <HorizontalTextFormat
                 title="Dikonfirmasi Oleh"
                 :value="invoice_data?.payment?.confirmed_by"
+                :title_cols="5"
+                :value_cols="7"
               />
               <!-- PAYMENT DESCRIPTION -->
               <HorizontalTextFormat
                 title="Catatan Pembayaran"
                 :value="invoice_data?.payment?.description"
+                :title_cols="5"
+                :value_cols="7"
               />
               <!-- PAYMENT IMAGE -->
               <div v-if="invoice_data?.payment?.image_url">
-                <HorizontalTextFormat title="Bukti Pembayaran" />
+                <HorizontalTextFormat
+                  title="Bukti Pembayaran"
+                  :title_cols="5"
+                  :value_cols="7"
+                />
                 <div class="mt-2">
                   <img
                     :src="invoice_data.payment.image_url"

@@ -71,12 +71,6 @@ const ticket_table_data = ref({
       th_class: "text-center",
       td_class: "text-center",
     },
-    // {
-    //   title: "DESKRIPSI",
-    //   key: "description",
-    //   th_class: "text-left",
-    //   td_class: "text-left",
-    // },
     {
       title: "AKSI",
       key: "action",
@@ -99,6 +93,7 @@ const getTicketData = (is_refresh: boolean = false) => {
   }
   cancel_request_token.value = axios.CancelToken.source();
   const params: IObjectKeys = {
+    ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
@@ -276,17 +271,17 @@ onMounted(() => {
                   <HorizontalTextFormat
                     v-if="data.type === 'TKT'"
                     title="Pelanggan"
-                    :title_cols="3"
+                    :title_cols="4"
                     :value="data.reporter"
                   />
                   <HorizontalTextFormat
                     title="Judul"
-                    :title_cols="3"
+                    :title_cols="4"
                     :value="data.title"
                   />
                   <HorizontalTextFormat
                     title="Deskripsi"
-                    :title_cols="3"
+                    :title_cols="4"
                     :value="data.description"
                   />
                 </div>

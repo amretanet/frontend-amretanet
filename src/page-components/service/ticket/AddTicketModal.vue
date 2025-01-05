@@ -3,6 +3,7 @@ import { requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, roleFormatter, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
@@ -11,6 +12,7 @@ interface IEmits {
 }
 
 // VARIABLE
+const store = stateManagement();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
@@ -24,7 +26,7 @@ const ticket_form = ref<VForm>();
 const ticket_data = ref({
   title: null,
   type: null,
-  id_reporter: null,
+  id_reporter: store.isCustomer ? store.getUser._id : null,
   id_assignee: null,
   id_odc: null,
   id_odp: null,
@@ -125,7 +127,11 @@ watch(is_showing_modal, () => {
               <VCol cols="12">
                 <VAutocomplete
                   v-model="ticket_data.title"
-                  :items="options.title"
+                  :items="
+                    store.isCustomer
+                      ? options.title.filter((el:any) => el.type === 'TKT')
+                      : options.title
+                  "
                   :rules="[requiredValidator]"
                   clearable
                   @update:model-value="setTicketType"
@@ -136,7 +142,10 @@ watch(is_showing_modal, () => {
                 </VAutocomplete>
               </VCol>
               <!-- REPORTER -->
-              <VCol v-if="ticket_data.type === 'TKT'" cols="12">
+              <VCol
+                v-if="ticket_data.type === 'TKT' && !store.isCustomer"
+                cols="12"
+              >
                 <VAutocomplete
                   v-model="ticket_data.id_reporter"
                   :items="options.user.filter((el:any)=>el.role===99)"
@@ -169,7 +178,7 @@ watch(is_showing_modal, () => {
                 </VAutocomplete>
               </VCol>
               <!-- ENGINEER -->
-              <VCol cols="12">
+              <VCol v-if="!store.isCustomer" cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_assignee"
                   :items="options.user.filter((el:any)=>el.role ===5)"
@@ -202,7 +211,7 @@ watch(is_showing_modal, () => {
                 </VAutocomplete>
               </VCol>
               <!-- ODC -->
-              <VCol cols="12">
+              <VCol v-if="!store.isCustomer" cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odc"
                   label="ODC"
@@ -211,7 +220,7 @@ watch(is_showing_modal, () => {
                 />
               </VCol>
               <!-- ODP -->
-              <VCol cols="12">
+              <VCol v-if="!store.isCustomer" cols="12">
                 <VAutocomplete
                   v-model="ticket_data.id_odp"
                   label="ODP"
