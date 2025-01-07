@@ -19,6 +19,7 @@ import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
 import { stateManagement } from "@/store";
 import { ticket_status_options } from "@/modules/options";
 import DetailTicketModal from "./DetailTicketModal.vue";
+import CloseTicketModal from "./CloseTicketModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -93,6 +94,7 @@ const getTicketData = (is_refresh: boolean = false) => {
   }
   cancel_request_token.value = axios.CancelToken.source();
   const params: IObjectKeys = {
+    ...(store.isEngineer ? { id_assignee: store.getUser._id } : {}),
     ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
@@ -325,7 +327,7 @@ onMounted(() => {
             <EditTicketModal
               v-if="store.isAdmin"
               :data="data"
-              @ticket-updated="showActionResult(), getTicketData()"
+              @ticket-updated="getTicketData()"
             />
             <VBtn
               v-if="store.isAdmin"
@@ -343,22 +345,16 @@ onMounted(() => {
                 color="warning"
                 @click="updateTicketStatus(data._id, 'ON_PROGRESS')"
               >
-                <VIcon icon="mdi-progress-check"></VIcon>
+                <VIcon icon="tabler-tool"></VIcon>
                 <VTooltip activator="parent" class="text-no-wrap">
-                  Kerjakan Tugas
+                  Kerjakan Tiket
                 </VTooltip>
               </VBtn>
-              <VBtn
+              <CloseTicketModal
                 v-if="data.status === 'ON_PROGRESS'"
-                size="35"
-                color="primary"
-                @click="updateTicketStatus(data._id, 'CLOSED')"
-              >
-                <VIcon icon="mdi-wrench-check-outline"></VIcon>
-                <VTooltip activator="parent" class="text-no-wrap">
-                  Tugas Selesai
-                </VTooltip>
-              </VBtn>
+                :data="data"
+                @ticket-closed="getTicketData()"
+              />
             </div>
           </div>
         </template>
