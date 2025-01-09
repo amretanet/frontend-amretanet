@@ -150,7 +150,7 @@ const getIncomeStats = () => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   axiosIns
-    .get(`income/stats?${query}`)
+    .get(`income/count?${query}`)
     .then((res) => {
       income_count.value = res?.data?.income_count || 0;
     })

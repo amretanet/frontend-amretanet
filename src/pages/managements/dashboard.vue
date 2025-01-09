@@ -5,6 +5,7 @@ import MikrotikSystemResource from "@/page-components/dashboard/MikrotikSystemRe
 import PageHeader from "@/page-components/PageHeader.vue";
 import CustomerStatusStats from "@/page-components/dashboard/CustomerStatusStats.vue";
 import { stateManagement } from "@/store";
+import IncomeStats from "@/page-components/dashboard/IncomeStats.vue";
 
 // VARIABLE
 const store = stateManagement();
@@ -20,6 +21,9 @@ const path_data = ref([
   <VRow>
     <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
+    </VCol>
+    <VCol cols="12">
+      <IncomeStats />
     </VCol>
     <VCol cols="12">
       <TicketStats />

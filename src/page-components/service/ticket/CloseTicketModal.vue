@@ -6,7 +6,7 @@ import {
   showActionResult,
   uploadImageFile,
 } from "@/modules";
-import { ticket_status_options } from "@/modules/options";
+import { ticket_status_options, tube_color_options } from "@/modules/options";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -26,11 +26,13 @@ const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
+  tube: tube_color_options,
   user: [],
   odp: [],
   odc: [],
   status: ticket_status_options,
   title: [],
+  hardware: [],
 });
 const ticket_form = ref<VForm>();
 const ticket_data = ref({
@@ -59,6 +61,11 @@ const ticket_data = ref({
 });
 
 // FUNCTION
+const getHardwareOptions = () => {
+  axiosIns.get("options/hardware").then((res) => {
+    options.value.hardware = res.data.hardware_options || [];
+  });
+};
 const getTicketTitleOptions = () => {
   axiosIns.get("options/ticket-title").then((res) => {
     options.value.title = res.data.ticket_title_options || [];
@@ -132,49 +139,49 @@ const closeTicket = async () => {
   if (ticket_data.value.odp_image.length > 0) {
     const odp_image_url = await uploadImageFile(
       ticket_data.value.odp_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.odp_image_url = odp_image_url;
   }
   if (ticket_data.value.ont_image.length > 0) {
     const ont_image_url = await uploadImageFile(
       ticket_data.value.ont_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.ont_image_url = ont_image_url;
   }
   if (ticket_data.value.ont_position_image.length > 0) {
     const ont_position_image_url = await uploadImageFile(
       ticket_data.value.ont_position_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.ont_position_image_url = ont_position_image_url;
   }
   if (ticket_data.value.serial_number_image.length > 0) {
     const serial_number_image_url = await uploadImageFile(
       ticket_data.value.serial_number_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.serial_number_image_url = serial_number_image_url;
   }
   if (ticket_data.value.house_image.length > 0) {
     const house_image_url = await uploadImageFile(
       ticket_data.value.house_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.house_image_url = house_image_url;
   }
   if (ticket_data.value.customer_image.length > 0) {
     const customer_image_url = await uploadImageFile(
       ticket_data.value.customer_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.customer_image_url = customer_image_url;
   }
   if (ticket_data.value.other_image.length > 0) {
     const other_image_url = await uploadImageFile(
       ticket_data.value.other_image[0],
-      "ticket_evidence"
+      "ticket_attachment"
     );
     params.evidence.other_image_url = other_image_url;
   }
@@ -209,6 +216,7 @@ watch(is_showing_modal, () => {
     getUserOptions();
     getODCOptions();
     getODPOptions();
+    getHardwareOptions();
   }
 });
 </script>
@@ -257,9 +265,9 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- TUBE/CORE -->
               <VCol cols="12" md="7">
-                <VTextField v-model="ticket_data.tube">
+                <VAutocomplete v-model="ticket_data.tube" :items="options.tube">
                   <template #label> Warna /Core (FOM) </template>
-                </VTextField>
+                </VAutocomplete>
               </VCol>
               <!-- CABLE -->
               <VCol cols="12" md="5">
@@ -273,7 +281,7 @@ watch(is_showing_modal, () => {
                 <VCombobox
                   v-model="ticket_data.hardware"
                   label="Perangkat"
-                  :items="options.odc"
+                  :items="options.hardware"
                   clearable
                 />
               </VCol>

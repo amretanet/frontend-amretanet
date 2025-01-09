@@ -418,3 +418,20 @@ export const changeSubmissionStatusFormatter = (status: string) => {
   }
   return temp;
 };
+
+export const arrayCounter = (arr: []) => {
+  return arr.reduce((total, current) => total + current, 0);
+};
+export const minMaxSeriesFormatter = (series: any[], title: string) => {
+  const selected_series = series.find((el: any) => el.name === title);
+  if (selected_series) {
+    return {
+      min: Math.min(...selected_series.data),
+      max: Math.max(...selected_series.data),
+    };
+  }
+  return {
+    min: 0,
+    max: 500000,
+  };
+};
