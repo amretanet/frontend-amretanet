@@ -38,15 +38,20 @@ const options = ref({
 const salary_form = ref<VForm>();
 const salary_data = ref({
   id_user: null,
-  name: null,
   period: {
     month: null,
     year: null,
   },
-  gross_salary: 0,
-  deductions: 0,
-  bonuses: 0,
-  net_salary: 0,
+  basic_salary: 0,
+  overtime_allowance: 0,
+  transport_allowance: 0,
+  bpjs_allowance: 0,
+  other_allowance: 0,
+  cash_deduction: 0,
+  bpjs_deduction: 0,
+  absent_deduction: 0,
+  other_deduction: 0,
+  salary: 0,
   status: "PAID",
   method: "TRANSFER",
   absence_summary: {
@@ -56,7 +61,7 @@ const salary_data = ref({
     days_on_leave: 0,
     days_absent: 0,
   },
-  description: null,
+  description: "Gaji Karyawan",
 });
 
 // FUNCTION
@@ -96,15 +101,20 @@ const saveSalary = () => {
 const resetForm = () => {
   salary_data.value = {
     id_user: null,
-    name: null,
     period: {
       month: null,
       year: null,
     },
-    gross_salary: 0,
-    deductions: 0,
-    bonuses: 0,
-    net_salary: 0,
+    basic_salary: 0,
+    overtime_allowance: 0,
+    transport_allowance: 0,
+    bpjs_allowance: 0,
+    other_allowance: 0,
+    cash_deduction: 0,
+    bpjs_deduction: 0,
+    absent_deduction: 0,
+    other_deduction: 0,
+    salary: 0,
     status: "PAID",
     method: "TRANSFER",
     absence_summary: {
@@ -114,17 +124,27 @@ const resetForm = () => {
       days_on_leave: 0,
       days_absent: 0,
     },
-    description: null,
+    description: "Gaji Karyawan",
   };
 };
 const netSalaryCounter = () => {
-  if (salary_data.value.gross_salary) {
-    const grossSalary = Number(salary_data.value.gross_salary);
-    const deductions = Number(salary_data.value.deductions);
-    const bonuses = Number(salary_data.value.bonuses);
+  if (salary_data.value.basic_salary) {
+    const toNumber = (value: any) => Number(value) || 0;
+    const allowance =
+      toNumber(salary_data.value.bpjs_allowance) +
+      toNumber(salary_data.value.overtime_allowance) +
+      toNumber(salary_data.value.transport_allowance) +
+      toNumber(salary_data.value.other_allowance);
 
-    const temp_net_salary = grossSalary - deductions;
-    salary_data.value.net_salary = temp_net_salary + bonuses;
+    const deduction =
+      toNumber(salary_data.value.cash_deduction) +
+      toNumber(salary_data.value.bpjs_deduction) +
+      toNumber(salary_data.value.absent_deduction) +
+      toNumber(salary_data.value.other_deduction);
+    const salary_count =
+      toNumber(salary_data.value.basic_salary) + allowance - deduction;
+
+    salary_data.value.salary = salary_count;
   }
 };
 
@@ -192,32 +212,6 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
-              <!-- GROSS SALARY -->
-              <VCol cols="12" md="6" sm="12">
-                <VTextField
-                  v-model="salary_data.gross_salary"
-                  :rules="[integerValidator]"
-                  type="number"
-                  @update:model-value="netSalaryCounter()"
-                >
-                  <template #prepend-inner> Rp </template>
-                  <template #label>
-                    Total Gaji <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <!-- DEDUCTIONS -->
-              <VCol cols="12" md="6" sm="12">
-                <VTextField
-                  v-model="salary_data.deductions"
-                  :rules="[integerValidator]"
-                  type="number"
-                  @update:model-value="netSalaryCounter()"
-                >
-                  <template #prepend-inner> Rp </template>
-                  <template #label> Potongan Lainnya </template>
-                </VTextField>
-              </VCol>
               <!-- PRESENT -->
               <VCol cols="12" md="4" sm="12">
                 <VTextField
@@ -268,21 +262,119 @@ watch(is_showing_modal, () => {
                   <template #label> Tidak Masuk Kerja </template>
                 </VTextField>
               </VCol>
-              <!-- BONUSES -->
+              <!-- BASIC SALARY -->
               <VCol cols="12" md="6" sm="12">
                 <VTextField
-                  v-model="salary_data.bonuses"
+                  v-model="salary_data.basic_salary"
                   :rules="[integerValidator]"
                   type="number"
                   @update:model-value="netSalaryCounter()"
                 >
                   <template #prepend-inner> Rp </template>
-                  <template #label> Bonus Tambahan </template>
+                  <template #label>
+                    Gaji Pokok <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- OVERTIME ALLOWANCE -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.overtime_allowance"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Tunjangan Lembur </template>
+                </VTextField>
+              </VCol>
+              <!-- TRANSPORT ALLOWANCE -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.transport_allowance"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Tunjangan Transportasi </template>
+                </VTextField>
+              </VCol>
+              <!-- BPJS ALLOWANCE -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.bpjs_allowance"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Tunjangan BPJS </template>
+                </VTextField>
+              </VCol>
+              <!-- OTHER ALLOWANCE -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.other_allowance"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Tunjangan Lainnya </template>
+                </VTextField>
+              </VCol>
+              <!-- CASH DEDUCTION -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.cash_deduction"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Potongan Kasbon </template>
+                </VTextField>
+              </VCol>
+              <!-- BPJS DEDUCTION -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.bpjs_deduction"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Potongan BPJS </template>
+                </VTextField>
+              </VCol>
+              <!-- ABSENT DEDUCTION -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.absent_deduction"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Potongan Absensi </template>
+                </VTextField>
+              </VCol>
+              <!-- OTHER DEDUCTION -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="salary_data.other_deduction"
+                  :rules="[integerValidator]"
+                  type="number"
+                  @update:model-value="netSalaryCounter()"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label> Potongan Lainnya </template>
                 </VTextField>
               </VCol>
               <!-- NET SALARY -->
               <VCol cols="12" md="6" sm="12">
-                <VTextField v-model="salary_data.net_salary" readonly>
+                <VTextField v-model="salary_data.salary" readonly>
                   <template #prepend-inner> Rp </template>
                   <template #label> Gaji Diterima </template>
                 </VTextField>

@@ -260,7 +260,7 @@ export const customerStatusFormatter = (status: number) => {
     temp.icon = "tabler-alarm-snooze";
   }
   if (current_status) {
-    temp.title = current_status.title;
+    temp.title = current_status.title.toUpperCase();
   } else {
     temp.title = "-Tidak Diketahui-";
   }

@@ -34,6 +34,7 @@ const image_file = ref<File[]>([]);
 const image_path = ref("");
 const customer_form = ref<VForm>();
 const customer_data = ref({
+  service_number: null,
   name: null,
   id_card: {
     type: null,
@@ -55,6 +56,8 @@ const customer_data = ref({
   ppn: null,
   due_date: null,
   add_on_package: [],
+  pppoe_username: null,
+  pppoe_password: null,
   id_router: null,
   id_package: null,
   id_add_on_package: [],
@@ -138,7 +141,7 @@ const validateCustomerForm = async () => {
 const updateCustomer = async () => {
   if (routes.query.id && atob(routes.query.id.toString())) {
     is_on_process.value = true;
-    if (image_file.value) {
+    if (image_file.value.length > 0) {
       const image_url = await uploadImageFile(
         image_file.value[0],
         "id_card_attachment"
@@ -197,7 +200,9 @@ onMounted(() => {
       <template #prepend>
         <VIcon icon="tabler-user-edit" />
       </template>
-      <template #title> Formulir Perubahan Data Pelanggan </template>
+      <template #title>
+        Formulir Perubahan Data Pelanggan (#{{ customer_data.service_number }})
+      </template>
       <template #append>
         <VBtn
           variant="text"
@@ -532,6 +537,28 @@ onMounted(() => {
                 >
                   <template #label>
                     Port ODP <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- PPPOE USERNAME -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="customer_data.pppoe_username"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Username PPPOE <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- PPPOE PASSWORD -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="customer_data.pppoe_password"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Password PPPOE <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>

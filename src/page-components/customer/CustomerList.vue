@@ -18,6 +18,7 @@ import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
 import axios from "axios";
 import { Marker, AdvancedMarker } from "vue3-google-map";
+import CustomerDetailModal from "./CustomerDetailModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -438,6 +439,7 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <CustomerDetailModal :data="data" />
             <VBtn size="35" color="info" @click="editCustomer(data._id)">
               <VIcon icon="tabler-edit" />
               <VTooltip activator="parent"> Edit </VTooltip>

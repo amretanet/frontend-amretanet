@@ -64,7 +64,7 @@ const salary_table_data = ref({
     },
     {
       title: "GAJI DITERIMA",
-      key: "net_salary",
+      key: "salary",
       th_class: "text-left",
       td_class: "text-left",
     },
@@ -265,8 +265,8 @@ onMounted(() => {
             {{ paymentStatusFormatter(data.status).title || "" }}
           </VChip>
         </template>
-        <template #cell-net_salary="{ data }">
-          Rp{{ thousandSeparator(data?.net_salary || 0) }}
+        <template #cell-salary="{ data }">
+          Rp{{ thousandSeparator(data?.salary || 0) }}
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
