@@ -22,7 +22,7 @@ const path_data = ref([
     <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
     </VCol>
-    <VCol cols="12">
+    <VCol v-if="store.isAdmin" cols="12">
       <IncomeStats />
     </VCol>
     <VCol cols="12">

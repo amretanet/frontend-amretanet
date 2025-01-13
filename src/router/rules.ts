@@ -1,25 +1,33 @@
-function isProjectExpire(project: any) {
-  if (project) {
-    const target_date = new Date(project.periode.end_date).getTime();
-    const current_date = new Date().getTime();
-    const time_difference = target_date - current_date;
-    const days = Math.floor(time_difference / (1000 * 60 * 60 * 24));
-    const minutes = Math.floor(
-      (time_difference % (1000 * 60 * 60)) / (1000 * 60)
-    );
-    if (days <= 0 && minutes <= 0) {
-      return true;
-    }
-    return false;
-  }
-  return false;
-}
-export function isRoutesPermitted(user: any, routes: string) {
-  if (user && routes) {
-    if (user.role === 99 && routes.includes("managements")) {
-      return false;
-    }
+import customer_navigation from "@/navigation/customer_navigation";
+import management_navigation from "@/navigation/management_navigation";
+
+const flattenNavigation = (navigation: any) =>
+  navigation.flatMap((item: any) =>
+    item.children
+      ? [{ ...item, children: undefined }, ...item.children]
+      : [item]
+  );
+
+const flat_management_navigation = flattenNavigation(management_navigation);
+const flat_customer_navigation = flattenNavigation(customer_navigation);
+const exclude_routes = ["/login", "/error-404", "/register", "/"];
+
+export function isRoutesPermitted(user: any, to: any) {
+  if (exclude_routes.includes(to.path)) {
     return true;
   }
-  return true;
+  if (!user?.role) {
+    return false;
+  }
+  let navigation: any[] = [];
+  if (user.role === 99) {
+    navigation = flat_customer_navigation;
+  } else {
+    navigation = flat_management_navigation;
+  }
+  const target_navigation = navigation.find((el: any) => el.to == to.name);
+  if (target_navigation?.access.includes(user.role)) {
+    return true;
+  }
+  return false;
 }

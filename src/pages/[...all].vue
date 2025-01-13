@@ -3,8 +3,23 @@ import pageNotFound from "@/assets/images/illustrations/page-not-found.png";
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
 import miscMaskDark from "@images/pages/misc-mask-dark.png";
 import miscMaskLight from "@images/pages/misc-mask-light.png";
+import { stateManagement } from "@/store";
 
+// VARIABLE
+const store = stateManagement();
+const router = useRouter();
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
+
+// FUNCTION
+const backToDashboard = () => {
+  if (!store.getUser) {
+    router.push("/login");
+  } else if (store.getUser?.role === 99) {
+    router.push("/customers/dashboard");
+  } else {
+    router.push("/managements/dashboard");
+  }
+};
 </script>
 
 <template>
@@ -13,7 +28,7 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
       error-title="Halaman Tidak Ditemukan ❌"
       error-description="Kami tidak dapat menemukan halaman yang anda maksud "
     />
-    <VBtn to="/managements/dashboard" class="mb-12"> Kembali Ke Home </VBtn>
+    <VBtn class="mb-12" @click="backToDashboard()"> Kembali Ke Home </VBtn>
     <div class="misc-avatar w-100 text-center">
       <VImg
         :src="pageNotFound"
@@ -33,6 +48,7 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark);
 
 <route lang="yaml">
 meta:
+  title: Error 404
   layout: blank
   action: read
   subject: Auth

@@ -12,7 +12,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const store = stateManagement();
   if (to.path !== "/error-404") {
-    const is_permitted = isRoutesPermitted(store.getUser, to.path);
+    const is_permitted = isRoutesPermitted(store.getUser, to);
     if (is_permitted) {
       if (to.name != from.name) {
         setTimeout(() => {
@@ -49,7 +49,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 router.afterEach((to) => {
-  document.title = `${to.meta.title} | AMRETA Network`;
+  document.title = `${to.meta.title} | AMRETA NET`;
 });
 
 export default router;
