@@ -10,7 +10,14 @@ const flattenNavigation = (navigation: any) =>
 
 const flat_management_navigation = flattenNavigation(management_navigation);
 const flat_customer_navigation = flattenNavigation(customer_navigation);
-const exclude_routes = ["/login", "/error-404", "/register", "/"];
+const exclude_routes = [
+  "/",
+  "/login",
+  "/error-404",
+  "/register",
+  "/managements/customer/add-customer",
+  "/managements/customer/edit-customer",
+];
 
 export function isRoutesPermitted(user: any, to: any) {
   if (exclude_routes.includes(to.path)) {

@@ -302,27 +302,27 @@ export const due_date_options = [
 ];
 export const customer_status_options = [
   {
-    title: "Nonaktif",
+    title: "NONAKTIF",
     value: 0,
   },
   {
-    title: "Aktif",
+    title: "AKTIF",
     value: 1,
   },
   {
-    title: "Menunggu",
+    title: "MENUNGGU",
     value: 2,
   },
   {
-    title: "Gratis",
+    title: "GRATIS",
     value: 3,
   },
   {
-    title: "Isolir",
+    title: "ISOLIR",
     value: 4,
   },
   {
-    title: "Cuti",
+    title: "CUTI",
     value: 5,
   },
 ];
