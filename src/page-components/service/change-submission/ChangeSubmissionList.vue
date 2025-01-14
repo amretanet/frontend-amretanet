@@ -112,6 +112,7 @@ const getChangeSubmission = (
   }
   cancel_request_token.value = axios.CancelToken.source();
   const params: IObjectKeys = {
+    ...(store.isCustomer ? { id_customer: store.getUser.id_customer } : {}),
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
