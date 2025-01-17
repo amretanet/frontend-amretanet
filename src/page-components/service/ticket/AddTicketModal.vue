@@ -139,11 +139,34 @@ watch(is_showing_modal, () => {
                   <template #label>
                     Judul Pesan <span class="text-error">*</span>
                   </template>
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #title>
+                        <span class="fs-14">
+                          {{ item?.raw?.title }}
+                        </span>
+                      </template>
+                      <template #subtitle>
+                        <div class="d-flex gap-1">
+                          <VChip
+                            size="x-small"
+                            variant="outlined"
+                            class="font-weight-bold"
+                          >
+                            #{{ item.raw.type }}
+                          </VChip>
+                        </div>
+                      </template>
+                    </VListItem>
+                  </template>
                 </VAutocomplete>
               </VCol>
               <!-- REPORTER -->
               <VCol
-                v-if="ticket_data.type === 'TKT' && !store.isCustomer"
+                v-if="
+                  (ticket_data.type === 'TKT' || ticket_data.type === 'PSB') &&
+                  !store.isCustomer
+                "
                 cols="12"
               >
                 <VAutocomplete

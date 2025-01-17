@@ -28,10 +28,12 @@ import RequestPaymentModal from "./RequestPaymentModal.vue";
 
 // VARIABLES
 const store = stateManagement();
+const routes = useRoute();
+const router = useRouter();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
-  status: null,
+  status: routes?.query?.status || null,
   month: null,
   year: null,
 });
@@ -458,6 +460,13 @@ const updateStatusSelectedInvoice = async (status: string) => {
       });
   }
 };
+const removeQueryPath = (key: string) => {
+  const current_query = { ...router.currentRoute.value.query };
+  if (key in current_query) {
+    delete current_query[key];
+    router.replace({ query: current_query });
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -466,6 +475,15 @@ onMounted(() => {
 watch(checked_invoice_data, () => {
   checkItemChecked();
 });
+watch(
+  () => routes.query,
+  () => {
+    if (routes.query.status) {
+      filter_data.value.status = routes.query.status;
+      getInvoiceData();
+    }
+  }
+);
 </script>
 <template>
   <VCard>
@@ -618,7 +636,9 @@ watch(checked_invoice_data, () => {
             label="Status"
             :items="options.status"
             clearable
-            @update:model-value="getInvoiceData(true)"
+            @update:model-value="
+              removeQueryPath('status'), getInvoiceData(true)
+            "
           />
         </div>
         <!-- KEYWORD FILTER -->

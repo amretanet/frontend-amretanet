@@ -71,6 +71,18 @@ const is_showing_modal = ref(false);
             <HorizontalTextFormat
               :title_cols="5"
               :value_cols="7"
+              title="Username PPPOE"
+              :value="props?.data?.customer?.pppoe_username || '-'"
+            />
+            <HorizontalTextFormat
+              :title_cols="5"
+              :value_cols="7"
+              title="Password PPPOE"
+              :value="props?.data?.customer?.pppoe_password || '-'"
+            />
+            <HorizontalTextFormat
+              :title_cols="5"
+              :value_cols="7"
               title="Email"
               :value="props?.data?.customer?.email || '-'"
             />

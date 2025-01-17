@@ -8,6 +8,7 @@ import { stateManagement } from "@/store";
 
 // VARIABLES
 const store = stateManagement();
+const router = useRouter();
 const is_loading = ref(true);
 const cancel_request_token = ref<any>(null);
 const current_notification = ref(
@@ -85,6 +86,18 @@ const readNotification = (id: string) => {
       if (selected_notification && !selected_notification.is_read) {
         selected_notification.is_read = 1;
         notification_count.value -= 1;
+      }
+      if (selected_notification) {
+        if (selected_notification.type === "PAYEMENT_CONFIRM") {
+          router.push({
+            name: "managements-finance-invoice",
+            query: { status: "PENDING" },
+          });
+        } else if (selected_notification.type === "TICKET") {
+          router.push({
+            name: "managements-service-ticket",
+          });
+        }
       }
     })
     .finally(() => {
@@ -220,7 +233,7 @@ watch(current_notification, () => {
                           {{ item.title }}
                         </div>
                         <VSpacer />
-                        <div>
+                        <div class="text-no-wrap">
                           <small v-if="item.is_read">
                             {{ timeFormatter(item.created_at) }}
                           </small>

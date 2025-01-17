@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { confirmAction, showActionResult } from "@/modules";
+import { IObjectKeys } from "@/models";
+import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
 
@@ -23,11 +24,29 @@ const rebootRouter = async () => {
     "Ya, Reboot!"
   );
   if (is_confirmed) {
-    showActionResult(
-      undefined,
-      undefined,
-      `Router ${current_router.value} Telah di Reboot!`
-    );
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      router: store.getCurrentRouter,
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`mikrotik/reboot?${query}`)
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          `Router ${current_router.value} Telah di Reboot!`
+        );
+      })
+      .catch((err) => {
+        const message = errorMessage(err);
+        showActionResult(undefined, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
   }
 };
 

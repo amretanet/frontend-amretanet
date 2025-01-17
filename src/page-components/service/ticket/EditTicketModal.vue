@@ -5,6 +5,7 @@ import { ticket_status_options } from "@/modules/options";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
+import { stateManagement } from "@/store";
 
 // INTERFACE
 interface IProps {
@@ -15,6 +16,7 @@ interface IEmits {
 }
 
 // VARIABLE
+const store = stateManagement();
 const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
@@ -145,10 +147,36 @@ watch(is_showing_modal, () => {
                   <template #label>
                     Judul Pesan <span class="text-error">*</span>
                   </template>
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #title>
+                        <span class="fs-14">
+                          {{ item?.raw?.title }}
+                        </span>
+                      </template>
+                      <template #subtitle>
+                        <div class="d-flex gap-1">
+                          <VChip
+                            size="x-small"
+                            variant="outlined"
+                            class="font-weight-bold"
+                          >
+                            #{{ item.raw.type }}
+                          </VChip>
+                        </div>
+                      </template>
+                    </VListItem>
+                  </template>
                 </VAutocomplete>
               </VCol>
               <!-- REPORTER -->
-              <VCol v-if="ticket_data.type === 'TKT'" cols="12">
+              <VCol
+                v-if="
+                  (ticket_data.type === 'TKT' || ticket_data.type === 'PSB') &&
+                  !store.isCustomer
+                "
+                cols="12"
+              >
                 <VAutocomplete
                   v-model="ticket_data.id_reporter"
                   :items="options.user.filter((el:any)=>el.role===99)"
