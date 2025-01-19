@@ -293,15 +293,27 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- DUMPING BEFORE -->
               <VCol cols="12" md="6">
-                <VTextField v-model="ticket_data.re_odp" type="number">
-                  <template #label> Redaman Awal (IN/ODP) </template>
+                <VTextField
+                  v-model="ticket_data.re_odp"
+                  type="number"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Redaman Awal (IN/ODP) <span class="text-error">*</span>
+                  </template>
                   <template #append-inner> dB </template>
                 </VTextField>
               </VCol>
               <!-- DUMPING AFTER -->
               <VCol cols="12" md="6">
-                <VTextField v-model="ticket_data.re_ont" type="number">
-                  <template #label> Redaman Akhir (OUT/ONT) </template>
+                <VTextField
+                  v-model="ticket_data.re_ont"
+                  type="number"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Redaman Akhir (OUT/ONT) <span class="text-error">*</span>
+                  </template>
                   <template #append-inner> dB </template>
                 </VTextField>
               </VCol>
@@ -337,8 +349,14 @@ watch(is_showing_modal, () => {
               </VCol>
               <!-- HOUSE IMAGE -->
               <VCol cols="12" md="6">
-                <VFileInput v-model="ticket_data.house_image" accept="image/*">
-                  <template #label> Foto Rumah (Depan) </template>
+                <VFileInput
+                  v-model="ticket_data.house_image"
+                  accept="image/*"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Foto Rumah (Depan) <span class="text-error">*</span>
+                  </template>
                 </VFileInput>
               </VCol>
               <!-- CUSTOMER IMAGE -->
@@ -346,8 +364,11 @@ watch(is_showing_modal, () => {
                 <VFileInput
                   v-model="ticket_data.customer_image"
                   accept="image/*"
+                  :rules="[requiredValidator]"
                 >
-                  <template #label> Foto Pelanggan </template>
+                  <template #label>
+                    Foto Pelanggan <span class="text-error">*</span>
+                  </template>
                 </VFileInput>
               </VCol>
               <!-- OTHER IMAGE -->

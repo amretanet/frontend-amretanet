@@ -89,7 +89,9 @@ const headerValues = computed(() => {
       <div class="customizer-heading d-flex align-center justify-space-between">
         <div>
           <h6 class="text-h6">Konfigurasi Tema</h6>
-          <span class="text-body-1">Ubah konfigurasi tema secara real time</span>
+          <span class="text-body-1"
+            >Ubah konfigurasi tema secara real time</span
+          >
         </div>
         <VBtn
           icon
@@ -197,7 +199,7 @@ const headerValues = computed(() => {
           </VRadioGroup>
         </CustomizerSection>
         <CustomizerSection title="MENU">
-          <h6 class="text-base font-weight-regular">Tipe Menu</h6>
+          <!-- <h6 class="text-base font-weight-regular">Tipe Menu</h6>
           <VRadioGroup v-model="appContentLayoutNav" inline>
             <VRadio
               v-for="[key, val] in Object.entries(AppContentLayoutNav)"
@@ -206,7 +208,6 @@ const headerValues = computed(() => {
               :value="val"
             />
           </VRadioGroup>
-          <!-- 👉 Collapsed Menu -->
           <div
             v-if="appContentLayoutNav === AppContentLayoutNav.Vertical"
             class="d-flex align-center justify-space-between"
@@ -221,7 +222,7 @@ const headerValues = computed(() => {
                 class="ms-2"
               />
             </div>
-          </div>
+          </div> -->
           <!-- 👉 Semi Dark Menu -->
           <div
             class="align-center justify-space-between"

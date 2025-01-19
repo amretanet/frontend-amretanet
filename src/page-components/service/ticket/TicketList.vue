@@ -153,6 +153,7 @@ const getUserOptions = () => {
   });
 };
 const updateTicket = (customer_data: any) => {
+  store.loadingHandler(true);
   axiosIns
     .put(`ticket/update/${customer_data._id}`, {
       data: customer_data,
@@ -164,6 +165,9 @@ const updateTicket = (customer_data: any) => {
     .catch((err) => {
       const message = errorMessage(err);
       showActionResult(undefined, "error", message);
+    })
+    .finally(() => {
+      store.loadingHandler(false);
     });
 };
 const updateTicketStatus = async (id: string, status: string) => {

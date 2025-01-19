@@ -3,9 +3,11 @@ import { IObjectKeys } from "@/models";
 import axiosIns from "@/plugins/axios";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import { Marker } from "vue3-google-map";
+import { stateManagement } from "@/store";
 
 // VARIABLES
-const current_tab = ref("coverage_area");
+const store = stateManagement();
+const current_tab = ref("customer");
 const coverage_area_maps_data = ref([]);
 const customer_maps_data = ref([]);
 const odc_maps_data = ref([]);
@@ -26,6 +28,9 @@ const getCoverageMapsData = () => {
 const getCustomerMapsData = () => {
   const params: IObjectKeys = {
     is_maps_only: true,
+    ...(isUserWithReferral()
+      ? { referral: store.getUser.referral || null }
+      : {}),
   };
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
@@ -56,6 +61,12 @@ const getODPMapsData = () => {
     odp_maps_data.value = res?.data?.odp_maps_data || [];
   });
 };
+const isUserWithReferral = () => {
+  if (store.isCustomer || store.isSales || store.isEngineer || store.isMitra) {
+    return true;
+  }
+  return false;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -71,12 +82,14 @@ onMounted(() => {
       <template #prepend>
         <VIcon icon="tabler-map-2" />
       </template>
-      <template #title> Daftar Lokasi </template>
+      <template #title>
+        Daftar Lokasi {{ isUserWithReferral() ? "Pelanggan Referral" : "" }}
+      </template>
     </VCardItem>
-    <VCardText>
+    <VCardText v-if="!isUserWithReferral()">
       <VTabs v-model="current_tab">
-        <VTab value="coverage_area">Cakupan Area</VTab>
         <VTab value="customer">Pelanggan</VTab>
+        <VTab value="coverage_area">Cakupan Area</VTab>
         <VTab value="odc">ODC</VTab>
         <VTab value="odp">ODP</VTab>
       </VTabs>

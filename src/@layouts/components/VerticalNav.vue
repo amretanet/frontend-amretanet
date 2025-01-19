@@ -120,7 +120,7 @@ const handleNavScroll = (evt: Event) => {
               </div>
             </div>
           </div>
-          <div v-if="store.isAdmin">
+          <div v-if="!store.isCustomer && !store.isMitra">
             <VDivider />
             <RouterSelect class="mt-1" />
           </div>

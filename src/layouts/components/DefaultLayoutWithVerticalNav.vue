@@ -11,7 +11,9 @@ import UserProfile from "@/page-components/navbar/UserProfile.vue";
 
 // @layouts plugin
 import { VerticalNavLayout } from "@layouts";
+import { stateManagement } from "@/store";
 
+const store = stateManagement();
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig();
 const { width: windowWidth } = useWindowSize();
 </script>
@@ -34,7 +36,7 @@ const { width: windowWidth } = useWindowSize();
         </VBtn>
         <VSpacer />
         <ThemeSwitcher />
-        <Notification class="me-2" />
+        <Notification v-if="!store.isMitra" class="me-2" />
         <UserProfile />
       </div>
     </template>

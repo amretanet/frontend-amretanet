@@ -82,14 +82,13 @@ const getPackageOptions = () => {
 const validateCustomerForm = () => {
   customer_form.value?.validate().then((form) => {
     if (form.valid) {
-      is_on_process.value = true;
       registerCustomer();
-      is_on_process.value = false;
     }
   });
 };
 const registerCustomer = async () => {
   if (id_card_image_file.value && house_image_file.value) {
+    is_on_process.value = true;
     try {
       const id_card_url = await uploadImageFile(
         id_card_image_file.value[0],

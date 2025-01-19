@@ -12,7 +12,7 @@ const router = useRouter();
 const is_loading = ref(true);
 const cancel_request_token = ref<any>(null);
 const current_notification = ref(
-  store.isCustomer ? "OTHER" : "PAYMENT_CONFIRM"
+  store.isCustomer ? "OTHER" : store.isEngineer ? "TICKET" : "PAYMENT_CONFIRM"
 );
 const notification_data = ref<any[]>([]);
 const notification_count = ref(0);
@@ -88,7 +88,7 @@ const readNotification = (id: string) => {
         notification_count.value -= 1;
       }
       if (selected_notification) {
-        if (selected_notification.type === "PAYEMENT_CONFIRM") {
+        if (selected_notification.type === "PAYMENT_CONFIRM") {
           router.push({
             name: "managements-finance-invoice",
             query: { status: "PENDING" },
@@ -217,6 +217,13 @@ watch(current_notification, () => {
                         icon="mdi-tools"
                         variant="tonal"
                         color="primary"
+                        size="50"
+                      />
+                      <VAvatar
+                        v-else-if="current_notification === 'OTHER'"
+                        icon="tabler-info-circle"
+                        variant="tonal"
+                        color="info"
                         size="50"
                       />
                       <VAvatar

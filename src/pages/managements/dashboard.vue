@@ -25,7 +25,7 @@ const path_data = ref([
     <VCol v-if="store.isAdmin" cols="12">
       <IncomeStats />
     </VCol>
-    <VCol cols="12">
+    <VCol v-if="!store.isMitra" cols="12">
       <TicketStats />
     </VCol>
     <VCol cols="12">
@@ -34,7 +34,7 @@ const path_data = ref([
     <VCol v-if="store.isAdmin" cols="12">
       <MikrotikSystemResource />
     </VCol>
-    <VCol v-if="store.isAdmin" cols="12">
+    <VCol cols="12">
       <LocationMapping />
     </VCol>
   </VRow>

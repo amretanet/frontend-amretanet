@@ -105,6 +105,10 @@ export const user_role_options = [
     title: "Teknisi",
     value: 5,
   },
+  {
+    title: "Mitra",
+    value: 6,
+  },
 ];
 export const user_role_customer_options = [
   {

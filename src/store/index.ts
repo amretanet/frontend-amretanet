@@ -46,6 +46,7 @@ export const stateManagement = defineStore({
     isCustomerService: (state) => (state.user.role == 3 ? true : false),
     isNetworkOperator: (state) => (state.user.role == 4 ? true : false),
     isEngineer: (state) => (state.user.role == 5 ? true : false),
+    isMitra: (state) => (state.user.role == 6 ? true : false),
     isCustomer: (state) => (state.user.role == 99 ? true : false),
   },
 });

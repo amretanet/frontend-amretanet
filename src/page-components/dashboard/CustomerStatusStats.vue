@@ -2,8 +2,11 @@
 import { customerStatusFormatter, thousandSeparator } from "@/modules";
 import axiosIns from "@/plugins/axios";
 import SkeletonLoader from "../SkeletonLoader.vue";
+import { IObjectKeys } from "@/models";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement();
 const is_loading = ref(true);
 const customer_count = ref(0);
 const customer_stats_data = ref([
@@ -54,8 +57,16 @@ const customer_stats_data = ref([
 // FUNCTION
 const getCustomerStatusStats = () => {
   is_loading.value = true;
+  const params: IObjectKeys = {
+    ...(store.isCustomer || store.isSales || store.isEngineer || store.isMitra
+      ? { referral: store.getUser.referral || null }
+      : {}),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
   axiosIns
-    .get("customer/stats")
+    .get(`customer/stats?${query}`)
     .then((res) => {
       const data = res?.data?.customer_stats_data;
       if (data) {
