@@ -19,6 +19,7 @@ import { stateManagement } from "@/store";
 import axios from "axios";
 import { Marker, AdvancedMarker } from "vue3-google-map";
 import CustomerDetailModal from "./CustomerDetailModal.vue";
+import ProcessButton from "../ProcessButton.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -254,6 +255,28 @@ const updateCustomerStatus = async (
       });
   }
 };
+const rejectCustomer = (id: string, reason: string) => {
+  store.loadingHandler(true);
+  axiosIns
+    .put(`customer/reject/${id}`, {
+      reason: reason,
+    })
+    .then(() => {
+      showActionResult(
+        undefined,
+        undefined,
+        "Pengajuan Pelanggan Telah Ditolak!"
+      );
+      getCustomerData();
+    })
+    .catch((err) => {
+      const message = errorMessage(err);
+      showActionResult(undefined, "error", message);
+    })
+    .finally(() => {
+      store.loadingHandler(false);
+    });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -303,12 +326,6 @@ onMounted(() => {
           :is_on_refresh="is_on_refresh"
           @click="getCustomerData(true)"
         />
-        <!-- <VBtn size="40" prepend-icon="tabler-upload" color="primary">
-          <VTooltip activator="parent"> Impor Data </VTooltip>
-        </VBtn>
-        <VBtn size="40" prepend-icon="tabler-download" color="success">
-          <VTooltip activator="parent"> Ekspor Data </VTooltip>
-        </VBtn> -->
         <VSpacer />
         <VBtn
           size="40"
@@ -397,6 +414,14 @@ onMounted(() => {
         </template>
         <template #cell-status="{ data }">
           <VChip
+            v-if="data.status === 2"
+            variant="outlined"
+            :color="customerStatusFormatter(data.status).color"
+          >
+            {{ customerStatusFormatter(data.status).title }}
+          </VChip>
+          <VChip
+            v-else
             variant="outlined"
             :color="customerStatusFormatter(data.status).color"
             class="clickable"
@@ -407,7 +432,7 @@ onMounted(() => {
               <VCard>
                 <VCardText class="d-flex gap-1 px-3 py-3">
                   <VBtn
-                    v-for="status in options.status.filter((el:any)=>el.value!==data.status)"
+                    v-for="status in options.status.filter((el:any)=>el.value!==data.status && el.value!=2)"
                     size="small"
                     :color="customerStatusFormatter(status.value).color"
                     @click="
@@ -439,6 +464,32 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <VBtn v-if="data.status === 2" size="35" color="error">
+              <VIcon icon="tabler-x" />
+              <VTooltip activator="parent"> Tolak </VTooltip>
+              <VMenu activator="parent" :close-on-content-click="false">
+                <VCard width="350">
+                  <VCardText class="px-3 py-3">
+                    <VTextarea v-model="data.rejected_reason">
+                      <template #label>
+                        Alasan Penolakan <span class="text-error">*</span>
+                      </template>
+                    </VTextarea>
+                    <div class="d-flex justify-end mt-3">
+                      <VBtn
+                        size="small"
+                        color="error"
+                        block
+                        :disabled="!data.rejected_reason"
+                        @click="rejectCustomer(data._id, data.rejected_reason)"
+                      >
+                        Tolak Pengajuan
+                      </VBtn>
+                    </div>
+                  </VCardText>
+                </VCard>
+              </VMenu>
+            </VBtn>
             <CustomerDetailModal :data="data" />
             <VBtn size="35" color="info" @click="editCustomer(data._id)">
               <VIcon icon="tabler-edit" />
