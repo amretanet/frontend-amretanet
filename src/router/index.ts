@@ -12,37 +12,37 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const store = stateManagement();
   if (to.path !== "/error-404") {
-    const is_permitted = isRoutesPermitted(store.getUser, to);
-    if (is_permitted) {
-      if (to.name != from.name) {
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-        }, 100);
-        if (
-          to.name !== "login" &&
-          to.name !== "index" &&
-          to.name !== "register"
-        ) {
-          store.loadingHandler(true);
-          axiosIns
-            .get("auth/verify")
-            .then(() => {
+    if (to.name != from.name) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+      if (
+        to.name !== "login" &&
+        to.name !== "index" &&
+        to.name !== "register"
+      ) {
+        store.loadingHandler(true);
+        axiosIns
+          .get("auth/verify")
+          .then(() => {
+            const is_permitted = isRoutesPermitted(store.getUser, to);
+            if (is_permitted) {
               next();
-            })
-            .catch(() => {
+            } else {
               next({ name: "login" });
-            })
-            .finally(() => {
-              store.loadingHandler(false);
-            });
-        } else {
-          next();
-        }
+            }
+          })
+          .catch(() => {
+            next({ name: "login" });
+          })
+          .finally(() => {
+            store.loadingHandler(false);
+          });
       } else {
         next();
       }
     } else {
-      next({ path: "error-404" });
+      next();
     }
   } else {
     next();

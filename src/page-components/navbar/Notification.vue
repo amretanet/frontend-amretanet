@@ -251,7 +251,7 @@ watch(current_notification, () => {
                           </VBadge>
                         </div>
                       </div>
-                      <div class="mt-2">
+                      <div class="mt-2 text-wrap">
                         {{ item.description }}
                       </div>
                     </div>

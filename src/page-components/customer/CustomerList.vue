@@ -32,6 +32,7 @@ const filter_data = ref({
   id_odp: null,
   id_router: null,
   status: null,
+  referral: null,
 });
 const pagination = ref({
   page: 1,
@@ -128,9 +129,15 @@ const options = ref({
   status: customer_status_options,
   odp: [],
   router: [],
+  user: [],
 });
 
 // FUNCTION
+const getUserOptions = () => {
+  axiosIns.get("options/user").then((res) => {
+    options.value.user = res?.data?.user_options || [];
+  });
+};
 const getRouterOptions = () => {
   axiosIns.get("options/router").then((res) => {
     options.value.router = res?.data?.router_options || [];
@@ -161,6 +168,9 @@ const getCustomerData = (
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
     ...(filter_data.value.id_odp ? { id_odp: filter_data.value.id_odp } : {}),
+    ...(filter_data.value.referral
+      ? { referral: filter_data.value.referral }
+      : {}),
     ...(filter_data.value.id_router
       ? { id_router: filter_data.value.id_router }
       : {}),
@@ -280,6 +290,7 @@ const rejectCustomer = (id: string, reason: string) => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
+  getUserOptions();
   getCustomerData();
   getRouterOptions();
   getODPOptions();
@@ -335,39 +346,89 @@ onMounted(() => {
         >
           <VTooltip activator="parent"> Tambah Pelanggan </VTooltip>
         </VBtn>
-        <div class="wm-100" style="min-width: 10rem">
-          <VSelect
-            v-model="filter_data.id_router"
-            label="Router"
-            :items="options.router"
-            item-title="title"
-            item-value="value"
-            clearable
-            @update:model-value="getCustomerData(false, true)"
-          />
-        </div>
-        <div class="wm-100" style="min-width: 10rem">
-          <VSelect
-            v-model="filter_data.id_odp"
-            label="ODP"
-            :items="options.odp"
-            item-title="title"
-            item-value="value"
-            clearable
-            @update:model-value="getCustomerData(false, true)"
-          />
-        </div>
-        <div class="wm-100" style="min-width: 10rem">
-          <VSelect
-            v-model="filter_data.status"
-            label="Status"
-            :items="options.status"
-            item-title="title"
-            item-value="value"
-            clearable
-            @update:model-value="getCustomerData(false, true)"
-          />
-        </div>
+        <VBtn
+          size="40"
+          color="info"
+          prepend-icon="tabler-filter"
+          class="wm-100"
+        >
+          <VTooltip activator="parent"> Filter </VTooltip>
+          <VMenu
+            activator="parent"
+            :close-on-content-click="false"
+            location="bottom"
+          >
+            <VCard width="300">
+              <VCardText class="px-3 py-3 d-flex flex-column gap-2">
+                <div class="wm-100" style="min-width: 10rem">
+                  <VSelect
+                    v-model="filter_data.id_router"
+                    label="Router"
+                    :items="options.router"
+                    item-title="title"
+                    item-value="value"
+                    clearable
+                    @update:model-value="getCustomerData(false, true)"
+                  />
+                </div>
+                <div class="wm-100" style="min-width: 10rem">
+                  <VSelect
+                    v-model="filter_data.id_odp"
+                    label="ODP"
+                    :items="options.odp"
+                    item-title="title"
+                    item-value="value"
+                    clearable
+                    @update:model-value="getCustomerData(false, true)"
+                  />
+                </div>
+                <div class="wm-100" style="min-width: 10rem">
+                  <VSelect
+                    v-model="filter_data.referral"
+                    label="Referral"
+                    :items="options.user"
+                    item-title="title"
+                    item-value="referral"
+                    clearable
+                    @update:model-value="getCustomerData(false, true)"
+                  >
+                    <template v-slot:item="{ props, item }">
+                      <VListItem v-bind="props" class="px-2">
+                        <template #title>
+                          <span class="fs-14">
+                            {{ item?.raw?.title }}
+                          </span>
+                        </template>
+                        <template #subtitle>
+                          <VChip
+                            size="x-small"
+                            variant="outlined"
+                            color="success"
+                            class="font-weight-bold"
+                          >
+                            {{ item?.raw?.referral }}
+                          </VChip>
+                        </template>
+                      </VListItem>
+                    </template>
+                  </VSelect>
+                </div>
+                <div class="wm-100" style="min-width: 10rem">
+                  <VSelect
+                    v-model="filter_data.status"
+                    label="Status"
+                    :items="options.status"
+                    item-title="title"
+                    item-value="value"
+                    clearable
+                    @update:model-value="getCustomerData(false, true)"
+                  />
+                </div>
+              </VCardText>
+            </VCard>
+          </VMenu>
+        </VBtn>
+
         <form class="wm-100" style="width: 15rem">
           <VTextField
             v-model="filter_data.key"
@@ -414,14 +475,6 @@ onMounted(() => {
         </template>
         <template #cell-status="{ data }">
           <VChip
-            v-if="data.status === 2"
-            variant="outlined"
-            :color="customerStatusFormatter(data.status).color"
-          >
-            {{ customerStatusFormatter(data.status).title }}
-          </VChip>
-          <VChip
-            v-else
             variant="outlined"
             :color="customerStatusFormatter(data.status).color"
             class="clickable"

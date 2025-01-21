@@ -46,7 +46,7 @@ const customer_stats_data = ref([
     count: 0,
   },
   {
-    status: "paid",
+    status: "paid_leave",
     status_num: 5,
     icon: "tabler-checks",
     color: "success",

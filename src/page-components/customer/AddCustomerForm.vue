@@ -20,6 +20,7 @@ import axiosIns from "@/plugins/axios";
 import {
   billing_type_options,
   binner_options,
+  customer_status_options,
   due_date_options,
   gender_options,
   house_status_options,
@@ -33,7 +34,9 @@ const image_file = ref<File[]>([]);
 const image_path = ref("");
 const customer_form = ref<VForm>();
 const customer_data = ref({
+  service_number: 0,
   name: null,
+  status: 1,
   id_card: {
     type: null,
     number: null,
@@ -53,6 +56,8 @@ const customer_data = ref({
   billing_type: null,
   ppn: null,
   due_date: null,
+  pppoe_username: null,
+  pppoe_password: null,
   id_router: null,
   id_package: null,
   id_add_on_package: [],
@@ -71,9 +76,17 @@ const options = ref({
   due_date: due_date_options,
   coverage_area: [],
   router: [],
+  status: customer_status_options,
 });
 
 // FUNCTION
+const getNextServiceNumber = () => {
+  axiosIns.get("customer/next-service-number").then((res) => {
+    customer_data.value.service_number = res?.data?.service_number || 0;
+    customer_data.value.pppoe_username = res?.data?.pppoe_username || null;
+    customer_data.value.pppoe_password = res?.data?.pppoe_password || null;
+  });
+};
 const getPackageOptions = () => {
   axiosIns.get("options/package").then((res) => {
     options.value.package = res?.data?.package_options || [];
@@ -158,6 +171,7 @@ const changeLocation = (data: any) => {
 
 // LIFECYCLE HOOKS
 onMounted(() => {
+  getNextServiceNumber();
   getRouterOptions();
   getPackageOptions();
   getODPOptions();
@@ -187,6 +201,26 @@ onMounted(() => {
         <VRow>
           <VCol cols="12" md="6" sm="12">
             <VRow>
+              <VCol cols="12" md="4" sm="12">
+                <VTextField
+                  v-model="customer_data.service_number"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Nomor Layanan <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <VCol cols="12" md="8" sm="12">
+                <VTextField
+                  v-model="customer_data.name"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Nama Pelanggan <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
               <!-- IMAGE ID -->
               <VCol cols="12" md="5" sm="12">
                 <div class="text-center">
@@ -229,19 +263,9 @@ onMounted(() => {
                   </div>
                 </div>
               </VCol>
-              <!-- NAME -->
+              <!-- ID CARD -->
               <VCol cols="12" md="7" sm="12">
                 <VRow>
-                  <VCol cols="12">
-                    <VTextField
-                      v-model="customer_data.name"
-                      :rules="[requiredValidator]"
-                    >
-                      <template #label>
-                        Nama Pelanggan <span class="text-error">*</span>
-                      </template>
-                    </VTextField>
-                  </VCol>
                   <VCol cols="12">
                     <VSelect
                       v-model="customer_data.id_card.type"
@@ -263,22 +287,22 @@ onMounted(() => {
                       </template>
                     </VTextField>
                   </VCol>
+                  <!-- GENDER -->
+                  <VCol cols="12">
+                    <VSelect
+                      v-model="customer_data.gender"
+                      :items="options.gender"
+                      :rules="[requiredValidator]"
+                    >
+                      <template #label>
+                        Jenis Kelamin <span class="text-error">*</span>
+                      </template>
+                    </VSelect>
+                  </VCol>
                 </VRow>
               </VCol>
-              <!-- GENDER -->
-              <VCol cols="12" md="5" sm="12">
-                <VSelect
-                  v-model="customer_data.gender"
-                  :items="options.gender"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Jenis Kelamin <span class="text-error">*</span>
-                  </template>
-                </VSelect>
-              </VCol>
               <!-- EMAIL -->
-              <VCol cols="12" md="7" sm="12">
+              <VCol cols="12" md="6" sm="12">
                 <VTextField
                   v-model="customer_data.email"
                   :rules="[requiredValidator, emailValidator]"
@@ -299,6 +323,18 @@ onMounted(() => {
                     Nomor Telepon <span class="text-error">*</span>
                   </template>
                 </VTextField>
+              </VCol>
+              <!-- STATUS -->
+              <VCol cols="12" md="6" sm="12">
+                <VSelect
+                  v-model="customer_data.status"
+                  :items="options.status"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Status Pelanggan <span class="text-error">*</span>
+                  </template>
+                </VSelect>
               </VCol>
               <!-- HOUSE STATUS -->
               <VCol cols="12" md="6" sm="12">
@@ -447,7 +483,7 @@ onMounted(() => {
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Status PPN 12% <span class="text-error">*</span>
+                    Status PPN <span class="text-error">*</span>
                   </template>
                 </VSelect>
               </VCol>
@@ -507,6 +543,28 @@ onMounted(() => {
                 >
                   <template #label>
                     Port ODP <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- PPPOE USERNAME -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="customer_data.pppoe_username"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Username PPPOE <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- PPPOE PASSWORD -->
+              <VCol cols="12" md="6" sm="12">
+                <VTextField
+                  v-model="customer_data.pppoe_password"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Password PPPOE <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>

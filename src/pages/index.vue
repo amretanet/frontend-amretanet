@@ -284,15 +284,18 @@ onMounted(() => {
           </div>
           <VCard variant="tonal" rounded="small">
             <VCardText class="px-2 py-1 d-flex gap-2 align-center">
-              <a href="">
+              <a
+                href="https://api.whatsapp.com/send?phone=628999094340"
+                target="_blank"
+              >
                 <VIcon icon="mdi-whatsapp" color="primary" class="clickable" />
                 <VTooltip activator="parent"> Whatsapp </VTooltip>
               </a>
-              <a href="">
+              <a href="https://facebook.com" target="_blank">
                 <VIcon icon="mdi-facebook" color="primary" class="clickable" />
                 <VTooltip activator="parent"> Facebook </VTooltip>
               </a>
-              <a href="">
+              <a href="https://instagram.com" target="_blank">
                 <VIcon icon="mdi-instagram" color="primary" class="clickable" />
                 <VTooltip activator="parent"> Instagram </VTooltip>
               </a>
@@ -826,7 +829,7 @@ onMounted(() => {
                     <span>08999094340</span>
                   </div>
                 </a>
-                <a
+                <!-- <a
                   href="https://www.facebook.com/#"
                   target="_blank"
                   class="fsm-12"
@@ -847,7 +850,7 @@ onMounted(() => {
                     <VIcon icon="mdi-instagram" />
                     <span>instagram user</span>
                   </div>
-                </a>
+                </a> -->
               </div>
             </VCol>
           </VRow>
