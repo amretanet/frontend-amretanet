@@ -252,16 +252,16 @@ watch(
         <template #cell-status="{ data }">
           <VChip
             variant="outlined"
-            :color="data?.disabled === 'true' ? 'error' : 'success'"
+            :color="data?.disabled ? 'error' : 'success'"
           >
-            {{ data?.disabled == "true" ? "Nonaktif" : "Aktif" }}
+            {{ data?.disabled ? "Nonaktif" : "Aktif" }}
           </VChip>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <!-- ACTIVATE BUTTON -->
             <VBtn
-              v-if="data?.disabled === 'true'"
+              v-if="data?.disabled"
               size="35"
               color="success"
               @click="activateSecret(data['.id'], data['name'], false)"
