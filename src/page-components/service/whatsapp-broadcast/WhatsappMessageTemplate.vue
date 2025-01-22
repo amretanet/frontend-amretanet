@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { errorMessage, showActionResult } from "@/modules";
+import { errorMessage, showActionResult, uploadImageFile } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
+import uploadfile from "@/assets/images/illustrations/uploadfile.png";
 
 // VARIABLES
 const is_advance_on_process = ref(false);
@@ -151,6 +152,8 @@ const advance_template_data = ref({
   unique_code_message: "",
   saldo_fee: "",
 });
+const isolir_image_file = ref<File[]>([]);
+const thanks_image_file = ref<File[]>([]);
 
 // FUNCTION
 const getMessageTemplate = () => {
@@ -209,7 +212,7 @@ const updateMessageTemplate = () => {
       is_on_process.value = false;
     });
 };
-const updateAdvanceTemplate = () => {
+const updateAdvanceTemplate = async () => {
   is_advance_on_process.value = true;
   let params: any = advance_template_data.value;
   if (advance_template_data.value.unique_code_status) {
@@ -217,12 +220,31 @@ const updateAdvanceTemplate = () => {
   } else {
     params.unique_code_status = 0;
   }
+  if (isolir_image_file.value.length > 0) {
+    const isolir_image_url = await uploadImageFile(
+      isolir_image_file.value[0],
+      "utils"
+    );
+    if (isolir_image_url) {
+      advance_template_data.value.isolir_image = isolir_image_url;
+    }
+  }
+  if (thanks_image_file.value.length > 0) {
+    const thanks_image_url = await uploadImageFile(
+      thanks_image_file.value[0],
+      "utils"
+    );
+    if (thanks_image_url) {
+      advance_template_data.value.thanks_image = thanks_image_url;
+    }
+  }
   axiosIns
     .put("whatsapp-message/template/advance-update", {
       data: advance_template_data.value,
     })
     .then(() => {
       showActionResult(undefined, undefined, "Pengaturan Telah Diubah!");
+      getMessageTemplate();
     })
     .catch((err) => {
       const message = errorMessage(err);
@@ -231,6 +253,25 @@ const updateAdvanceTemplate = () => {
     .finally(() => {
       is_advance_on_process.value = false;
     });
+};
+const inputImageFile = (id: string) => {
+  const input_form = document.getElementById(id);
+  input_form?.click();
+};
+const handleImgError = (event: any) => {
+  event.target.src = uploadfile;
+};
+const previewIsolirImage = (e: any) => {
+  isolir_image_file.value = e?.target?.files;
+  advance_template_data.value.isolir_image = isolir_image_file.value
+    ? URL.createObjectURL(isolir_image_file.value[0])
+    : " ";
+};
+const previewThanksImage = (e: any) => {
+  thanks_image_file.value = e?.target?.files;
+  advance_template_data.value.thanks_image = thanks_image_file.value
+    ? URL.createObjectURL(thanks_image_file.value[0])
+    : " ";
 };
 
 // LIFECYCLE HOOKS
@@ -418,24 +459,90 @@ watch(
                   <!-- IMAGE PREVIEW -->
                   <VCol cols="12">
                     <div class="d-flex gap-2 justify-space-between">
-                      <img
-                        :src="advance_template_data.isolir_image"
-                        style="
-                          max-width: 45%;
-                          max-height: 10rem;
-                          object-fit: contain;
-                        "
-                        alt="reminder"
-                      />
-                      <img
-                        :src="advance_template_data.thanks_image"
-                        style="
-                          max-width: 45%;
-                          max-height: 10rem;
-                          object-fit: contain;
-                        "
-                        alt="thanks"
-                      />
+                      <div class="text-center">
+                        <div
+                          class="clickable"
+                          @click="inputImageFile('isolir-image')"
+                        >
+                          <img
+                            v-if="advance_template_data.isolir_image"
+                            :src="advance_template_data.isolir_image"
+                            alt="profile"
+                            class="rounded-lg"
+                            style="
+                              width: 100%;
+                              max-height: 180px;
+                              object-fit: contain;
+                            "
+                            @error="handleImgError"
+                          />
+                          <div
+                            v-else
+                            class="border border-primary border-md bg-light-info border-dashed rounded-lg"
+                            style="height: 170px"
+                          >
+                            <img
+                              :src="uploadfile"
+                              alt="uploadfile"
+                              class="mt-10"
+                              style="height: 60px"
+                            />
+                            <div>Upload Gambar Isolir</div>
+                          </div>
+                        </div>
+                        <!-- PROFILE INPUT -->
+                        <div class="mt-2 d-flex">
+                          <input
+                            type="file"
+                            id="isolir-image"
+                            accept="image/*"
+                            @change="previewIsolirImage"
+                            style="display: none"
+                          />
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <div
+                          class="clickable"
+                          @click="inputImageFile('thanks-image')"
+                        >
+                          <img
+                            v-if="advance_template_data.thanks_image"
+                            :src="advance_template_data.thanks_image"
+                            alt="profile"
+                            class="rounded-lg"
+                            style="
+                              width: 100%;
+                              max-height: 180px;
+                              object-fit: contain;
+                            "
+                            @error="handleImgError"
+                          />
+                          <div
+                            v-else
+                            class="border border-primary border-md bg-light-info border-dashed rounded-lg"
+                            style="height: 170px"
+                          >
+                            <img
+                              :src="uploadfile"
+                              alt="uploadfile"
+                              class="mt-10"
+                              style="height: 60px"
+                            />
+                            <div>Upload Gambar Terimakasih</div>
+                          </div>
+                        </div>
+                        <!-- PROFILE INPUT -->
+                        <div class="mt-2 d-flex">
+                          <input
+                            type="file"
+                            id="thanks-image"
+                            accept="image/*"
+                            @change="previewThanksImage"
+                            style="display: none"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </VCol>
                   <!-- ACTION BUTTON -->
