@@ -55,6 +55,11 @@ const logout = () => {
 
           <VDivider class="my-2" />
           <VListItem>
+            <VBtn color="info" block prepend-icon="tabler-arrow-right" to="/">
+              Landing Page
+            </VBtn>
+          </VListItem>
+          <VListItem>
             <VBtn block prepend-icon="tabler-user" to="/my-profile">
               Profil Saya
             </VBtn>
