@@ -16,8 +16,10 @@ import AddODPModal from "./AddODPModal.vue";
 import EditODPModal from "./EditODPModal.vue";
 import { Marker } from "vue3-google-map";
 import { topology_options } from "@/modules/options";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -164,6 +166,7 @@ const deleteODP = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`odp/delete/${id}`)
       .then(() => {
@@ -173,6 +176,9 @@ const deleteODP = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };

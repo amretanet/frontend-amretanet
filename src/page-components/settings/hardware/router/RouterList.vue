@@ -13,8 +13,10 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddRouterModal from "./AddRouterModal.vue";
 import EditRouterModal from "./EditRouterModal.vue";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -131,6 +133,7 @@ const deleteRouter = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`router/delete/${id}`)
       .then(() => {
@@ -140,6 +143,9 @@ const deleteRouter = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };

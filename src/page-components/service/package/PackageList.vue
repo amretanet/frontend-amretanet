@@ -15,8 +15,10 @@ import axios from "axios";
 import AddPackageModal from "@/page-components/service/package/AddPackageModal.vue";
 import EditPackageModal from "@/page-components/service/package/EditPackageModal.vue";
 import { package_category_options } from "@/modules/options";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement()
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -163,6 +165,7 @@ const deletePackage = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true)
     axiosIns
       .delete(`package/delete/${id}`)
       .then(() => {
@@ -172,7 +175,9 @@ const deletePackage = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
-      });
+      }).finally(()=>{
+        store.loadingHandler(false)
+      })
   }
 };
 

@@ -150,6 +150,7 @@ const deleteUser = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`user/delete/${id}`)
       .then(() => {
@@ -159,6 +160,9 @@ const deleteUser = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };

@@ -152,6 +152,7 @@ const deleteChangeSubmission = async (id: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`change-submission/delete/${id}`)
       .then(() => {
@@ -161,6 +162,9 @@ const deleteChangeSubmission = async (id: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };

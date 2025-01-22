@@ -15,8 +15,10 @@ import axios from "axios";
 import AddODCModal from "./AddODCModal.vue";
 import EditODCModal from "./EditODCModal.vue";
 import { Marker } from "vue3-google-map";
+import { stateManagement } from "@/store";
 
 // VARIABLES
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -147,6 +149,7 @@ const deleteODC = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
+    store.loadingHandler(true);
     axiosIns
       .delete(`odc/delete/${id}`)
       .then(() => {
@@ -156,6 +159,9 @@ const deleteODC = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
+      })
+      .finally(() => {
+        store.loadingHandler(false);
       });
   }
 };
