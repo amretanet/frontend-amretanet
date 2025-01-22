@@ -67,9 +67,9 @@ const getIncomeStats = () => {
         res?.data?.income_stats?.month_trend || 0;
       pie_chart_data.value.series[0] = income_stats.value.today;
       pie_chart_data.value.series[1] = income_stats.value.current_week;
-      pie_chart_data.value.series[2] = income_stats.value.unpaid;
+      pie_chart_data.value.series[2] = income_stats.value.current_month;
       pie_chart_data.value.series[3] = income_stats.value.current_year;
-      pie_chart_data.value.series[4] = income_stats.value.current_month;
+      pie_chart_data.value.series[4] = income_stats.value.unpaid;
     })
     .finally(() => {
       is_loading.value = false;
