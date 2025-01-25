@@ -23,6 +23,7 @@ import {
 } from "@/modules/options";
 import DatePicker from "../DatePicker.vue";
 import moment from "moment";
+import { IObjectKeys } from "@/models";
 
 // INTERFACE
 interface IProps {
@@ -75,7 +76,13 @@ const options = ref({
 
 // FUNCTION
 const getPackageOptions = () => {
-  axiosIns.get("options/package").then((res) => {
+  const params: IObjectKeys = {
+    is_displayed: 1,
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns.get(`options/package?${query}`).then((res) => {
     options.value.package = res?.data?.package_options || [];
   });
 };
@@ -128,6 +135,7 @@ const registerCustomer = async () => {
 const getCurrentLocation = async () => {
   try {
     const position: any = await getLocation();
+    console.log(position);
     customer_data.value.location.latitude = position?.coords?.latitude || 0;
     customer_data.value.location.longitude = position?.coords?.longitude || 0;
   } catch {
@@ -161,10 +169,7 @@ onMounted(() => {
 
 <template>
   <VForm ref="customer_form" @submit.prevent="validateCustomerForm">
-    <VRow
-      class="scroller"
-      :style="{ 'max-height': props?.max_height || '35vh' }"
-    >
+    <VRow>
       <!-- NAME -->
       <VCol cols="12">
         <VTextField v-model="customer_data.name" :rules="[requiredValidator]">
@@ -402,7 +407,7 @@ onMounted(() => {
     </VRow>
     <div v-else class="d-flex flex-column gap-2 mt-5">
       <div class="d-flex gap-2 align-bottom">
-        <VCheckbox v-model="is_aggree" />
+        <VCheckbox v-model="is_aggree" color="primary" />
         <div class="fs-14 mt-2 text-justify">
           Saya menyetujui Syarat & Ketentuan dan Kebijakan Privasi yang berlaku
         </div>
