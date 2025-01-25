@@ -8,6 +8,7 @@ import {
   setPaginationLength,
   showActionResult,
   ticketStatusFormatter,
+  whatsappUrlFormatter,
 } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
@@ -327,6 +328,15 @@ onMounted(() => {
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
+            <a
+              v-if="data?.customer?.phone_number && store.isEngineer"
+              :href="whatsappUrlFormatter(data.customer.phone_number)"
+              target="_blank"
+            >
+              <VBtn prepend-icon="mdi-whatsapp" color="success" size="35">
+                <VTooltip activator="parent"> Hubungi Pelanggan </VTooltip>
+              </VBtn>
+            </a>
             <DetailTicketModal :data="data" />
             <EditTicketModal
               v-if="store.isAdmin"

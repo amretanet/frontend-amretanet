@@ -397,12 +397,17 @@ onMounted(() => {
     </VRow>
     <VRow v-if="props.referral">
       <VCol cols="6">
-        <VBtn size="small" color="error" block @click="resetForm()">
+        <VBtn size="default" color="error" block @click="resetForm()">
           Batal
         </VBtn>
       </VCol>
       <VCol cols="6">
-        <ProcessButton :is_on_process="is_on_process" block type="submit" />
+        <ProcessButton
+          size="default"
+          :is_on_process="is_on_process"
+          block
+          type="submit"
+        />
       </VCol>
     </VRow>
     <div v-else class="d-flex flex-column gap-2 mt-5">

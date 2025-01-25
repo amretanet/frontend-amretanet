@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { dateFormatterID, ticketStatusFormatter } from "@/modules";
+import {
+  dateFormatterID,
+  ticketStatusFormatter,
+  whatsappUrlFormatter,
+} from "@/modules";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
 import { Marker } from "vue3-google-map";
@@ -95,7 +99,25 @@ const is_showing_modal = ref(false);
                   ? `0${props.data.customer.phone_number}`
                   : '-'
               "
-            />
+            >
+              <template #value>
+                <a
+                  :href="
+                    whatsappUrlFormatter(
+                      props?.data?.customer?.phone_number || ''
+                    )
+                  "
+                  target="_blank"
+                  class="clickable font-weight-bold"
+                >
+                  {{
+                    props?.data?.customer?.phone_number
+                      ? `0${props.data.customer.phone_number}`
+                      : "-"
+                  }}
+                </a>
+              </template>
+            </HorizontalTextFormat>
             <HorizontalTextFormat
               :title_cols="5"
               :value_cols="7"

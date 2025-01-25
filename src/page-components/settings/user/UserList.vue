@@ -7,6 +7,7 @@ import {
   roleFormatter,
   setPaginationLength,
   showActionResult,
+  whatsappUrlFormatter,
 } from "@/modules";
 import DataTable from "@/page-components/DataTable.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
@@ -290,13 +291,16 @@ onMounted(() => {
           </VChip>
         </template>
         <template #cell-phone_number="{ data }">
-          <VChip
-            variant="outlined"
-            color="success"
-            prepend-icon="tabler-brand-whatsapp"
-          >
-            0{{ data.phone_number }}
-          </VChip>
+          <a :href="whatsappUrlFormatter(data.phone_number)" target="_blank">
+            <VChip
+              variant="outlined"
+              color="success"
+              prepend-icon="tabler-brand-whatsapp"
+              class="clickable"
+            >
+              0{{ data.phone_number }}
+            </VChip>
+          </a>
         </template>
         <template #cell-referral="{ data }">
           <VChip variant="outlined" color="dark">

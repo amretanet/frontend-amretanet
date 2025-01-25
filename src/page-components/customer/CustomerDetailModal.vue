@@ -3,6 +3,7 @@ import {
   customerStatusFormatter,
   genderFormatter,
   thousandSeparator,
+  whatsappUrlFormatter,
 } from "@/modules";
 import axiosIns from "@/plugins/axios";
 import { Marker } from "vue3-google-map";
@@ -114,8 +115,19 @@ watch(is_showing_modal, () => {
                 :title_cols="5"
                 :value_cols="7"
                 title="Nomor Telepon"
-                :value="'0' + customer_data?.phone_number || '-'"
-              />
+              >
+                <template #value>
+                  <a
+                    :href="
+                      whatsappUrlFormatter(customer_data?.phone_number || '')
+                    "
+                    target="_blank"
+                    class="font-weight-bold clickable"
+                  >
+                    0{{ customer_data?.phone_number || "" }}
+                  </a>
+                </template>
+              </HorizontalTextFormat>
               <HorizontalTextFormat
                 :title_cols="5"
                 :value_cols="7"
