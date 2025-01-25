@@ -12,7 +12,8 @@ import SkeletonLoader from "@/page-components/SkeletonLoader.vue";
 import TermConditionModal from "@/page-components/TermConditionModal.vue";
 import axiosIns from "@/plugins/axios";
 import { useThemeConfig } from "@core/composable/useThemeConfig";
-import { Marker } from "vue3-google-map";
+import { Marker, InfoWindow } from "vue3-google-map";
+import CoverageAreaMapInfo from "@/page-components/settings/coverage-area/CoverageAreaMapInfo.vue";
 
 // VARIABLE
 const { theme } = useThemeConfig();
@@ -23,6 +24,7 @@ const today = new Date();
 const is_drawer_open = ref(false);
 const is_package_loading = ref(true);
 const current_nav = ref("#home");
+const marker_info_index = ref(null);
 const navigations = ref([
   {
     icon: "mdi-home",
@@ -151,7 +153,7 @@ const our_features = ref([
   },
 ]);
 const package_data = ref<any[]>([]);
-const coverage_area_maps_data = ref([]);
+const coverage_area_maps_data = ref<any[]>([]);
 
 // function
 const getCoverageAreaData = (is_refresh: boolean = false) => {
@@ -212,6 +214,9 @@ const removeAnimationClass = (element_id: string, animation_class: string) => {
   if (element) {
     element.classList.remove(animation_class);
   }
+};
+const onMarkerHover = (item: any, index: any) => {
+  marker_info_index.value = index;
 };
 
 window.onscroll = function () {
@@ -756,9 +761,17 @@ onMounted(() => {
                 v-for="(item, index) in coverage_area_maps_data"
                 :key="index"
                 :options="{
-                  position: item,
+                  position: {
+                    lat: item?.address?.latitude || 0,
+                    lng: item?.address?.longitude || 0,
+                  },
                 }"
-              />
+                @mouseover="onMarkerHover(item, index)"
+              >
+                <InfoWindow v-if="marker_info_index === index">
+                  <CoverageAreaMapInfo :data="item" />
+                </InfoWindow>
+              </Marker>
             </template>
           </GoogleMaps>
         </VCard>
@@ -829,28 +842,6 @@ onMounted(() => {
                     <span>08999094340</span>
                   </div>
                 </a>
-                <!-- <a
-                  href="https://www.facebook.com/#"
-                  target="_blank"
-                  class="fsm-12"
-                  rel="noopener noreferrer"
-                >
-                  <div class="d-flex align-center gap-1 mt-2">
-                    <VIcon icon="mdi-facebook" />
-                    <span>facebook user</span>
-                  </div>
-                </a>
-                <a
-                  href="https://www.instagram.com/#"
-                  target="_blank"
-                  class="fsm-12"
-                  rel="noopener noreferrer"
-                >
-                  <div class="d-flex align-center gap-1 mt-2">
-                    <VIcon icon="mdi-instagram" />
-                    <span>instagram user</span>
-                  </div>
-                </a> -->
               </div>
             </VCol>
           </VRow>

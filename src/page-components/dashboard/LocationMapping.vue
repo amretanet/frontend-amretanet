@@ -2,16 +2,21 @@
 import { IObjectKeys } from "@/models";
 import axiosIns from "@/plugins/axios";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
-import { Marker } from "vue3-google-map";
+import { Marker, InfoWindow } from "vue3-google-map";
 import { stateManagement } from "@/store";
+import CustomerMapInfo from "../customer/CustomerMapInfo.vue";
+import CoverageAreaMapInfo from "../settings/coverage-area/CoverageAreaMapInfo.vue";
+import ODCMapInfo from "../settings/hardware/odc/ODCMapInfo.vue";
+import ODPMapInfo from "../settings/hardware/odp/ODPMapInfo.vue";
 
 // VARIABLES
 const store = stateManagement();
 const current_tab = ref("customer");
-const coverage_area_maps_data = ref([]);
-const customer_maps_data = ref([]);
-const odc_maps_data = ref([]);
-const odp_maps_data = ref([]);
+const coverage_area_maps_data = ref<any[]>([]);
+const customer_maps_data = ref<any[]>([]);
+const odc_maps_data = ref<any[]>([]);
+const odp_maps_data = ref<any[]>([]);
+const marker_info_index = ref(null);
 
 // FUNCTION
 const getCoverageMapsData = () => {
@@ -67,6 +72,9 @@ const isUserWithReferral = () => {
   }
   return false;
 };
+const onMarkerHover = (item: any, index: any) => {
+  marker_info_index.value = index;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -95,19 +103,6 @@ onMounted(() => {
       </VTabs>
     </VCardText>
     <VCardText>
-      <div v-if="current_tab == 'coverage_area'">
-        <GoogleMaps :zoom="15">
-          <template #marker>
-            <Marker
-              v-for="(item, index) in coverage_area_maps_data"
-              :key="index"
-              :options="{
-                position: item,
-              }"
-            />
-          </template>
-        </GoogleMaps>
-      </div>
       <div v-if="current_tab == 'customer'">
         <GoogleMaps :zoom="16">
           <template #marker>
@@ -115,9 +110,38 @@ onMounted(() => {
               v-for="(item, index) in customer_maps_data"
               :key="index"
               :options="{
-                position: item,
+                position: {
+                  lat: item?.location?.latitude || 0,
+                  lng: item?.location?.longitude || 0,
+                },
               }"
-            />
+              @mouseover="onMarkerHover(item, index)"
+            >
+              <InfoWindow v-if="marker_info_index === index">
+                <CustomerMapInfo :data="item" />
+              </InfoWindow>
+            </Marker>
+          </template>
+        </GoogleMaps>
+      </div>
+      <div v-if="current_tab == 'coverage_area'">
+        <GoogleMaps :zoom="15">
+          <template #marker>
+            <Marker
+              v-for="(item, index) in coverage_area_maps_data"
+              :key="index"
+              :options="{
+                position: {
+                  lat: item?.address?.latitude || 0,
+                  lng: item?.address?.longitude || 0,
+                },
+              }"
+              @mouseover="onMarkerHover(item, index)"
+            >
+              <InfoWindow v-if="marker_info_index === index">
+                <CoverageAreaMapInfo :data="item" />
+              </InfoWindow>
+            </Marker>
           </template>
         </GoogleMaps>
       </div>
@@ -128,9 +152,17 @@ onMounted(() => {
               v-for="(item, index) in odc_maps_data"
               :key="index"
               :options="{
-                position: item,
+                position: {
+                  lat: item?.location?.latitude || 0,
+                  lng: item?.location?.longitude || 0,
+                },
               }"
-            />
+              @mouseover="onMarkerHover(item, index)"
+            >
+              <InfoWindow v-if="marker_info_index === index">
+                <ODCMapInfo :data="item" />
+              </InfoWindow>
+            </Marker>
           </template>
         </GoogleMaps>
       </div>
@@ -141,9 +173,17 @@ onMounted(() => {
               v-for="(item, index) in odp_maps_data"
               :key="index"
               :options="{
-                position: item,
+                position: {
+                  lat: item?.location?.latitude || 0,
+                  lng: item?.location?.longitude || 0,
+                },
               }"
-            />
+              @mouseover="onMarkerHover(item, index)"
+            >
+              <InfoWindow v-if="marker_info_index === index">
+                <ODPMapInfo :data="item" />
+              </InfoWindow>
+            </Marker>
           </template>
         </GoogleMaps>
       </div>

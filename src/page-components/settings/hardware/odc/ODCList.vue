@@ -14,8 +14,9 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddODCModal from "./AddODCModal.vue";
 import EditODCModal from "./EditODCModal.vue";
-import { Marker } from "vue3-google-map";
+import { Marker, InfoWindow } from "vue3-google-map";
 import { stateManagement } from "@/store";
+import ODCMapInfo from "./ODCMapInfo.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -31,6 +32,7 @@ const pagination = ref({
   items: 10,
   count: 0,
 });
+const marker_info_index = ref(null);
 const odc_table_data = ref({
   headers: [
     {
@@ -165,6 +167,9 @@ const deleteODC = async (id: string, name: string) => {
       });
   }
 };
+const onMarkerHover = (item: any, index: any) => {
+  marker_info_index.value = index;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -193,8 +198,18 @@ onMounted(() => {
           <Marker
             v-for="(item, index) in odc_maps_data"
             :key="index"
-            :options="{ position: item }"
-          />
+            :options="{
+              position: {
+                lat: item?.location?.latitude || 0,
+                lng: item?.location?.longitude || 0,
+              },
+            }"
+            @mouseover="onMarkerHover(item, index)"
+          >
+            <InfoWindow v-if="marker_info_index === index">
+              <ODCMapInfo :data="item" />
+            </InfoWindow>
+          </Marker>
         </template>
       </GoogleMaps>
     </VCardText>
@@ -250,13 +265,15 @@ onMounted(() => {
           <VChip variant="outlined"> PON {{ data.port || 0 }} </VChip>
         </template>
         <template #cell-damping="{ data }">
-          <VChip variant="outlined"> {{ data.damping || 0 }} DB </VChip>
+          <VChip variant="outlined"> {{ data.damping || 0 }} dB </VChip>
         </template>
         <template #cell-capacity="{ data }">
           <VChip variant="outlined"> {{ data.capacity || 0 }} Core/Port </VChip>
         </template>
         <template #cell-available="{ data }">
-          <VChip variant="outlined"> {{ data.available || 0 }} Core </VChip>
+          <VChip variant="outlined">
+            {{ data.available || 0 }} Core/Port
+          </VChip>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">

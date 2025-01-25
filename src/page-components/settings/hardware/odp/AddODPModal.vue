@@ -261,7 +261,7 @@ watch(is_showing_modal, () => {
                     Redaman <span class="text-error">*</span>
                   </template>
                   <template #append-inner>
-                    <strong>DB</strong>
+                    <strong>dB</strong>
                   </template>
                 </VTextField>
               </VCol>

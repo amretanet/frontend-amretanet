@@ -4,6 +4,16 @@ import { customer_status_options, user_role_options } from "./options";
 import moment from "moment";
 import axiosIns from "@/plugins/axios";
 
+export const whatsappUrlFormatter = (phone_number: any) => {
+  const whatsapp_url = `https://api.whatsapp.com/send?phone=62${phone_number}`;
+  return whatsapp_url;
+};
+
+export const googleMapsUrlFormatter = (lat: number, lng: number) => {
+  const maps_url = `https://www.google.com/maps?q=${lat},${lng}`;
+  return maps_url;
+};
+
 export const bytesConverter = (value: number) => {
   const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   let size = value;

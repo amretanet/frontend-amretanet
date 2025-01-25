@@ -15,8 +15,9 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddCoverageModal from "./AddCoverageModal.vue";
 import EditCoverageModal from "./EditCoverageModal.vue";
-import { Marker } from "vue3-google-map";
+import { Marker, InfoWindow } from "vue3-google-map";
 import { stateManagement } from "@/store";
+import CoverageAreaMapInfo from "./CoverageAreaMapInfo.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -32,6 +33,7 @@ const pagination = ref({
   items: 10,
   count: 0,
 });
+const marker_info_index = ref(null);
 const coverage_area_table_data = ref({
   headers: [
     {
@@ -152,6 +154,9 @@ const addressFormatter = (data: any) => {
   const address = `${data.address.location_name}, RT ${data.address.rt} /RW ${data.address.rw}, Desa. ${data.address.village}, Kec. ${data.address.subdistrict}, Kab. ${data.address.regency}, Prov. ${data.address.province} - Indonesia ${data.address.postal_code}`;
   return address;
 };
+const onMarkerHover = (item: any, index: any) => {
+  marker_info_index.value = index;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -179,9 +184,17 @@ onMounted(() => {
             v-for="(item, index) in coverage_area_maps_data"
             :key="index"
             :options="{
-              position: item,
+              position: {
+                lat: item?.address?.latitude || 0,
+                lng: item?.address?.longitude || 0,
+              },
             }"
-          />
+            @mouseover="onMarkerHover(item, index)"
+          >
+            <InfoWindow v-if="marker_info_index === index">
+              <CoverageAreaMapInfo :data="item" />
+            </InfoWindow>
+          </Marker>
         </template>
       </GoogleMaps>
     </VCardText>
@@ -234,10 +247,12 @@ onMounted(() => {
           {{ addressFormatter(data) }}
         </template>
         <template #cell-capacity="{ data }">
-          <VChip variant="outlined"> {{ data.capacity || 0 }} Port </VChip>
+          <VChip variant="outlined"> {{ data.capacity || 0 }} Core/Port </VChip>
         </template>
         <template #cell-available="{ data }">
-          <VChip variant="outlined"> {{ data.available || 0 }} Port </VChip>
+          <VChip variant="outlined">
+            {{ data.available || 0 }} Core/Port
+          </VChip>
         </template>
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">

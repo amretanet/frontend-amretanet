@@ -17,9 +17,9 @@ import RefreshButton from "@/page-components/RefreshButton.vue";
 import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
 import axios from "axios";
-import { Marker, AdvancedMarker } from "vue3-google-map";
+import { Marker, InfoWindow } from "vue3-google-map";
 import CustomerDetailModal from "./CustomerDetailModal.vue";
-import ProcessButton from "../ProcessButton.vue";
+import CustomerMapInfo from "./CustomerMapInfo.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -40,6 +40,7 @@ const pagination = ref({
   count: 100,
 });
 const cancel_request_token = ref<any>(null);
+const marker_info_index = ref(null);
 const customer_table_data = ref({
   headers: [
     {
@@ -287,6 +288,9 @@ const rejectCustomer = (id: string, reason: string) => {
       store.loadingHandler(false);
     });
 };
+const onMarkerHover = (item: any, index: any) => {
+  marker_info_index.value = index;
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -318,9 +322,17 @@ onMounted(() => {
             v-for="(item, index) in customer_maps_data"
             :key="index"
             :options="{
-              position: item,
+              position: {
+                lat: item?.location?.latitude || 0,
+                lng: item?.location?.longitude || 0,
+              },
             }"
-          />
+            @mouseover="onMarkerHover(item, index)"
+          >
+            <InfoWindow v-if="marker_info_index === index">
+              <CustomerMapInfo :data="item" />
+            </InfoWindow>
+          </Marker>
         </template>
       </GoogleMaps>
     </VCardText>
