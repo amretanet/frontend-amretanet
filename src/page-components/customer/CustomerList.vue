@@ -25,6 +25,7 @@ import CustomerMapInfo from "./CustomerMapInfo.vue";
 // VARIABLES
 const store = stateManagement();
 const router = useRouter();
+const routes = useRoute();
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
@@ -32,7 +33,7 @@ const filter_data = ref({
   key: "",
   id_odp: null,
   id_router: null,
-  status: null,
+  status: routes.query.status ? parseInt(routes.query.status.toString()) : null,
   referral: null,
 });
 const pagination = ref({
@@ -292,6 +293,13 @@ const rejectCustomer = (id: string, reason: string) => {
 const onMarkerHover = (item: any, index: any) => {
   marker_info_index.value = index;
 };
+const removeQueryPath = (key: string) => {
+  const current_query = { ...router.currentRoute.value.query };
+  if (key in current_query) {
+    delete current_query[key];
+    router.replace({ query: current_query });
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -434,7 +442,9 @@ onMounted(() => {
                     item-title="title"
                     item-value="value"
                     clearable
-                    @update:model-value="getCustomerData(false, true)"
+                    @update:model-value="
+                      removeQueryPath('status'), getCustomerData(false, true)
+                    "
                   />
                 </div>
               </VCardText>

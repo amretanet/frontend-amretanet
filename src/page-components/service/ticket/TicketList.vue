@@ -24,10 +24,12 @@ import CloseTicketModal from "./CloseTicketModal.vue";
 
 // VARIABLES
 const store = stateManagement();
+const router = useRouter();
+const routes = useRoute();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
-  status: null,
+  status: routes.query.status || null,
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
@@ -200,6 +202,13 @@ const updateTicketStatus = async (id: string, status: string) => {
       });
   }
 };
+const removeQueryPath = (key: string) => {
+  const current_query = { ...router.currentRoute.value.query };
+  if (key in current_query) {
+    delete current_query[key];
+    router.replace({ query: current_query });
+  }
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -236,7 +245,7 @@ onMounted(() => {
             :items="options.status"
             label="Status"
             clearable
-            @update:model-value="getTicketData()"
+            @update:model-value="removeQueryPath('status'), getTicketData()"
           />
         </div>
         <div class="wm-100" style="width: 15rem">

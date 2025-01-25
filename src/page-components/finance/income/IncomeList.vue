@@ -54,12 +54,6 @@ const income_table_data = ref({
       td_class: "text-center text-no-wrap",
     },
     {
-      title: "NOMINAL",
-      key: "nominal",
-      th_class: "text-left",
-      td_class: "text-left text-no-wrap",
-    },
-    {
       title: "DITERIMA OLEH",
       key: "receiver_name",
       th_class: "text-left",
@@ -70,6 +64,12 @@ const income_table_data = ref({
       key: "description",
       th_class: "text-left",
       td_class: "text-left",
+    },
+    {
+      title: "NOMINAL",
+      key: "nominal",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
     },
     {
       title: "AKSI",

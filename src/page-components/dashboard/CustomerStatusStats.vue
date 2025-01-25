@@ -7,6 +7,7 @@ import { stateManagement } from "@/store";
 
 // VARIABLES
 const store = stateManagement();
+const router = useRouter();
 const is_loading = ref(true);
 const customer_count = ref(0);
 const customer_stats_data = ref([
@@ -82,6 +83,9 @@ const getCustomerStatusStats = () => {
       is_loading.value = false;
     });
 };
+const redirectCustomer = (status: number) => {
+  router.push({ name: "managements-customer", query: { status: status } });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -90,18 +94,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <VCard>
-    <VCardItem>
-      <template #prepend>
-        <VIcon icon="tabler-users" />
-      </template>
-      <template #title> Status Pelanggan </template>
-    </VCardItem>
-    <VCardText> -->
   <VRow>
     <VCol v-for="item in customer_stats_data" cols="12" md="4" sm="12">
       <SkeletonLoader v-if="is_loading" height="120px" rounded="18px" />
-      <VCard v-else variant="flat">
+      <VCard
+        v-else
+        variant="flat"
+        class="clickable"
+        @click="redirectCustomer(item.status_num)"
+      >
         <VCardText>
           <div class="d-flex align-center gap-2">
             <div>
@@ -135,6 +136,4 @@ onMounted(() => {
       </VCard>
     </VCol>
   </VRow>
-  <!-- </VCardText>
-  </VCard> -->
 </template>

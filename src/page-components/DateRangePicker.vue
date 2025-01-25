@@ -102,21 +102,15 @@ function shortcutDate(type: string) {
     date_from.value = moment()
       .subtract(1, "months")
       .format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
-    date_to.value = moment().format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
+    date_to.value = moment().format("YYYY-MM-DD 23:59:59");
   } else if (type == "last_three_month") {
     date_from.value = moment()
       .subtract(2, "months")
       .format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
-    date_to.value = moment().format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
+    date_to.value = moment().format("YYYY-MM-DD 23:59:59");
   } else if (type == "this_year") {
     date_from.value = moment().startOf("year").format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
-    date_to.value = moment().format("YYYY-MM-DD 00:00:00");
-    moment().format("YYYY-MM-DD 23:59:59");
+    date_to.value = moment().format("YYYY-MM-DD 23:59:59");
   }
   date.value = [date_from.value, date_to.value];
 }

@@ -4,6 +4,7 @@ import SkeletonLoader from "../SkeletonLoader.vue";
 import axiosIns from "@/plugins/axios";
 
 // VARIABLE
+const router = useRouter();
 const is_loading = ref(true);
 const ticket_count = ref(0);
 const ticket_stats_data = ref([
@@ -53,6 +54,12 @@ const getTicketStats = () => {
       is_loading.value = false;
     });
 };
+const redirectTicket = (status: string) => {
+  router.push({
+    name: "managements-service-ticket",
+    query: { status: status },
+  });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -67,6 +74,8 @@ onMounted(() => {
         v-else
         variant="flat"
         :color="ticketStatusFormatter(item.status).color"
+        class="clickable"
+        @click="redirectTicket(item.status)"
       >
         <VCardText>
           <div class="d-flex align-center gap-2">

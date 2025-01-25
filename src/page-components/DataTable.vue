@@ -148,6 +148,9 @@ watch(props, () => {
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <slot name="footer"></slot>
+        </tfoot>
       </table>
     </div>
     <VCardText class="pt-2">

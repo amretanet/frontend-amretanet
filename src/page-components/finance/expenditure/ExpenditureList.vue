@@ -50,16 +50,16 @@ const expenditure_table_data = ref({
       td_class: "text-center text-no-wrap",
     },
     {
-      title: "NOMINAL",
-      key: "nominal",
-      th_class: "text-left",
-      td_class: "text-left text-no-wrap",
-    },
-    {
       title: "DESKRIPSI",
       key: "description",
       th_class: "text-left",
       td_class: "text-left",
+    },
+    {
+      title: "NOMINAL",
+      key: "nominal",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
     },
     {
       title: "AKSI",

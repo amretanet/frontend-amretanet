@@ -156,7 +156,7 @@ const package_data = ref<any[]>([]);
 const coverage_area_maps_data = ref<any[]>([]);
 
 // function
-const getCoverageAreaData = (is_refresh: boolean = false) => {
+const getCoverageAreaData = () => {
   axiosIns.get(`coverage-area?is_maps_only=${true}`).then((res) => {
     coverage_area_maps_data.value = res?.data?.coverage_area_maps_data || [];
   });

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CashSubmissionList from "@/page-components/finance/cash-submission/CashSubmissionList.vue";
+import CashflowList from "@/page-components/finance/cashflow/CashflowList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
@@ -8,7 +8,7 @@ const path_data = ref([
     name: "Keuangan",
   },
   {
-    name: "Pengajuan Kasbon",
+    name: "Rekapitulasi",
   },
 ]);
 </script>
@@ -19,11 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <CashSubmissionList />
+      <CashflowList />
     </VCol>
   </VRow>
 </template>
 <route lang="yaml">
 meta:
-  title: Pengajuan Kasbon
+  title: Rekapitulasi
 </route>

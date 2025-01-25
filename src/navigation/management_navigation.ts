@@ -46,12 +46,12 @@ export default [
         to: "managements-finance-salary",
         access: [1, 3],
       },
-      // {
-      //   title: "Pengajuan Kasbon",
-      //   icon: { icon: "tabler-moneybag" },
-      //   to: "managements-finance-cash-submission",
-      //   access: [1],
-      // },
+      {
+        title: "Rekapitulasi",
+        icon: { icon: "tabler-vocabulary" },
+        to: "managements-finance-cashflow",
+        access: [1, 3],
+      },
     ],
   },
   {
