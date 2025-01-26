@@ -5,6 +5,7 @@ import {
   dataCountFormatter,
   dateFormatterID,
   errorMessage,
+  numberToWords,
   setPaginationLength,
   showActionResult,
   thousandSeparator,
@@ -178,11 +179,6 @@ onMounted(() => {
         <VIcon icon="mdi-bank-transfer-out" />
       </template>
       <template #title> Daftar Pengeluaran </template>
-      <template #append>
-        <VChip color="primary" variant="flat" class="font-weight-black">
-          Total Pengeluaran : Rp{{ thousandSeparator(expenditure_count) }}
-        </VChip>
-      </template>
     </VCardItem>
     <!-- FILTER COMPONENT -->
     <VCardText class="pb-2">
@@ -270,6 +266,29 @@ onMounted(() => {
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
           </div>
+        </template>
+        <!-- CUSTOM FOOTER -->
+        <template #footer>
+          <tr>
+            <td colspan="10">
+              <div class="d-flex gap-2 justify-end px-5 pt-3 pb-2">
+                <div class="font-weight-bold">Total :</div>
+                <div class="font-weight-bold">
+                  Rp {{ thousandSeparator(expenditure_count) }}
+                </div>
+              </div>
+              <div class="d-flex justify-end px-5 pb-3">
+                <div class="fs-14 text-center">
+                  ({{ numberToWords(expenditure_count) }} Rupiah)
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="10">
+              <VDivider></VDivider>
+            </td>
+          </tr>
         </template>
         <!-- CUSTOM PAGINATION -->
         <template #pagination>
