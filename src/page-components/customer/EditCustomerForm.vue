@@ -31,8 +31,10 @@ import {
 const routes = useRoute();
 const router = useRouter();
 const is_on_process = ref(false);
-const image_file = ref<File[]>([]);
-const image_path = ref("");
+const id_card_image_file = ref<File[]>([]);
+const id_card_image_path = ref("");
+const house_image_file = ref<File[]>([]);
+const house_image_path = ref("");
 const customer_form = ref<VForm>();
 const customer_data = ref({
   service_number: null,
@@ -49,6 +51,7 @@ const customer_data = ref({
   location: {
     house_status: null,
     house_owner: null,
+    house_image_url: null,
     address: null,
     latitude: null,
     longitude: null,
@@ -90,7 +93,8 @@ const getCustomerData = () => {
         .get(`customer/detail/${id_customer}`)
         .then((res) => {
           customer_data.value = res.data.customer_data;
-          image_path.value = res?.data?.customer_data?.id_card?.image_url || "";
+          id_card_image_path.value =
+            res?.data?.customer_data?.id_card?.image_url || "";
         })
         .catch((err) => {
           const message = errorMessage(err);
@@ -124,14 +128,20 @@ const getCoverageAreaOptions = () => {
 const handleImgError = (event: any) => {
   event.target.src = uploadfile;
 };
-const previewImage = (e: any) => {
-  image_file.value = e?.target?.files;
-  image_path.value = image_file.value
-    ? URL.createObjectURL(image_file.value[0])
+const previewIDCardImage = (e: any) => {
+  id_card_image_file.value = e?.target?.files;
+  id_card_image_path.value = id_card_image_file.value
+    ? URL.createObjectURL(id_card_image_file.value[0])
     : " ";
 };
-const inputImageFile = () => {
-  const input_form = document.getElementById("profile-input-image");
+const previewHouseImage = (e: any) => {
+  house_image_file.value = e?.target?.files;
+  house_image_path.value = house_image_file.value
+    ? URL.createObjectURL(house_image_file.value[0])
+    : " ";
+};
+const inputImageFile = (id: string) => {
+  const input_form = document.getElementById(id);
   input_form?.click();
 };
 const validateCustomerForm = async () => {
@@ -144,13 +154,22 @@ const validateCustomerForm = async () => {
 const updateCustomer = async () => {
   if (routes.query.id && atob(routes.query.id.toString())) {
     is_on_process.value = true;
-    if (image_file.value.length > 0) {
+    if (id_card_image_file.value.length > 0) {
       const image_url = await uploadImageFile(
-        image_file.value[0],
+        id_card_image_file.value[0],
         "id_card_attachment"
       );
       if (image_url) {
         customer_data.value.id_card.image_url = image_url;
+      }
+    }
+    if (house_image_file.value.length > 0) {
+      const house_image_url = await uploadImageFile(
+        house_image_file.value[0],
+        "house_attachment"
+      );
+      if (house_image_url) {
+        customer_data.value.location.house_image_url = house_image_url;
       }
     }
     axiosIns
@@ -244,11 +263,14 @@ onMounted(() => {
               <!-- IMAGE ID -->
               <VCol cols="12" md="5" sm="12">
                 <div class="text-center">
-                  <div class="clickable" @click="inputImageFile">
+                  <div
+                    class="clickable"
+                    @click="inputImageFile('id-card-image')"
+                  >
                     <img
-                      v-if="image_path"
-                      :src="image_path"
-                      alt="profile"
+                      v-if="id_card_image_path"
+                      :src="id_card_image_path"
+                      alt="id-card"
                       class="rounded-lg"
                       style="
                         width: 100%;
@@ -272,12 +294,12 @@ onMounted(() => {
                     </div>
                   </div>
                   <!-- PROFILE INPUT -->
-                  <div class="profile-input mt-2 d-flex">
+                  <div class="id-card mt-2 d-flex">
                     <input
                       type="file"
-                      id="profile-input-image"
+                      id="id-card-image"
                       accept="image/*"
-                      @change="previewImage"
+                      @change="previewIDCardImage"
                       style="display: none"
                     />
                   </div>
@@ -368,28 +390,81 @@ onMounted(() => {
                   </template>
                 </VSelect>
               </VCol>
-              <!-- HOUSE OWNER -->
+              <!-- HOUSE -->
               <VCol cols="12">
-                <VTextField
-                  v-model="customer_data.location.house_owner"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Nama Pemilik Rumah <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <!-- ADDRESS -->
-              <VCol cols="12">
-                <VTextarea
-                  v-model="customer_data.location.address"
-                  rows="5"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Alamat Singkat <span class="text-error">*</span>
-                  </template>
-                </VTextarea>
+                <VRow>
+                  <VCol cols="12" md="5">
+                    <div class="text-center">
+                      <div
+                        class="clickable"
+                        @click="inputImageFile('house-image')"
+                      >
+                        <img
+                          v-if="house_image_path"
+                          :src="house_image_path"
+                          alt="house"
+                          class="rounded-lg"
+                          style="
+                            width: 100%;
+                            max-height: 180px;
+                            object-fit: contain;
+                          "
+                          @error="handleImgError"
+                        />
+                        <div
+                          v-else
+                          class="border border-primary border-md bg-light-info border-dashed rounded-lg"
+                          style="height: 170px"
+                        >
+                          <img
+                            :src="uploadfile"
+                            alt="uploadfile"
+                            class="mt-10"
+                            style="height: 60px"
+                          />
+                          <div>Upload Foto Rumah</div>
+                        </div>
+                      </div>
+                      <!-- PROFILE INPUT -->
+                      <div class="house mt-2 d-flex">
+                        <input
+                          type="file"
+                          id="house-image"
+                          accept="image/*"
+                          @change="previewHouseImage"
+                          style="display: none"
+                        />
+                      </div>
+                    </div>
+                  </VCol>
+                  <VCol cols="12" md="7">
+                    <VRow>
+                      <!-- HOUSE OWNER -->
+                      <VCol cols="12">
+                        <VTextField
+                          v-model="customer_data.location.house_owner"
+                          :rules="[requiredValidator]"
+                        >
+                          <template #label>
+                            Nama Pemilik Rumah <span class="text-error">*</span>
+                          </template>
+                        </VTextField>
+                      </VCol>
+                      <!-- ADDRESS -->
+                      <VCol cols="12">
+                        <VTextarea
+                          v-model="customer_data.location.address"
+                          rows="4"
+                          :rules="[requiredValidator]"
+                        >
+                          <template #label>
+                            Alamat Singkat <span class="text-error">*</span>
+                          </template>
+                        </VTextarea>
+                      </VCol>
+                    </VRow>
+                  </VCol>
+                </VRow>
               </VCol>
               <!-- DESCRIPTIONS -->
               <VCol cols="12">

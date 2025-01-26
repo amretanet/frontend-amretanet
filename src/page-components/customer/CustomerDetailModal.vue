@@ -146,12 +146,20 @@ watch(is_showing_modal, () => {
                 title="Alamat"
                 :value="customer_data?.location?.address || '-'"
               />
+              <img
+                v-if="customer_data?.location?.house_image_url"
+                :src="customer_data?.location?.house_image_url"
+                class="rounded mt-2"
+                style="max-height: 250px; width: 400px; object-fit: contain"
+              />
               <HorizontalTextFormat
                 :title_cols="5"
                 :value_cols="7"
                 title="Deskripsi"
                 :value="customer_data?.description || '-'"
               />
+            </VCol>
+            <VCol cols="12" md="6">
               <HorizontalTextFormat
                 :title_cols="5"
                 :value_cols="7"
@@ -196,8 +204,6 @@ watch(is_showing_modal, () => {
                   </div>
                 </template>
               </HorizontalTextFormat>
-            </VCol>
-            <VCol cols="12" md="6">
               <HorizontalTextFormat
                 :title_cols="5"
                 :value_cols="7"
