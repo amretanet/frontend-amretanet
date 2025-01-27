@@ -3,9 +3,16 @@ import { IObjectKeys } from "@/models";
 import { confirmAction, errorMessage, showActionResult } from "@/modules";
 import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
+import { useLayouts } from "@layouts";
 
 // VARIABLES
 const store = stateManagement();
+const {
+  isVerticalNavCollapsed: isCollapsed,
+  isLessThanOverlayNavBreakpoint,
+  isVerticalNavMini,
+  isAppRtl,
+} = useLayouts();
 const current_router = ref(store.getCurrentRouter);
 const options = ref({
   router: [],
@@ -56,7 +63,13 @@ onMounted(() => {
 });
 </script>
 <template>
-  <VBtn prepend-icon="tabler-router" size="small" block variant="outlined">
+  <VBtn
+    prepend-icon="tabler-router"
+    size="small"
+    block
+    variant="outlined"
+    @click="isCollapsed = false"
+  >
     Router
     <VMenu
       activator="parent"

@@ -2,7 +2,7 @@
 import { IObjectKeys } from "@/models";
 import axiosIns from "@/plugins/axios";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
-import { Marker, InfoWindow } from "vue3-google-map";
+import { Marker, InfoWindow, AdvancedMarker } from "vue3-google-map";
 import { stateManagement } from "@/store";
 import CustomerMapInfo from "../customer/CustomerMapInfo.vue";
 import CoverageAreaMapInfo from "../settings/coverage-area/CoverageAreaMapInfo.vue";
@@ -116,6 +116,7 @@ onMounted(() => {
                 },
               }"
               @mouseover="onMarkerHover(item, index)"
+              @click="onMarkerHover(item, index)"
             >
               <InfoWindow v-if="marker_info_index === index">
                 <CustomerMapInfo :data="item" />
@@ -137,6 +138,7 @@ onMounted(() => {
                 },
               }"
               @mouseover="onMarkerHover(item, index)"
+              @click="onMarkerHover(item, index)"
             >
               <InfoWindow v-if="marker_info_index === index">
                 <CoverageAreaMapInfo :data="item" />
@@ -158,6 +160,7 @@ onMounted(() => {
                 },
               }"
               @mouseover="onMarkerHover(item, index)"
+              @click="onMarkerHover(item, index)"
             >
               <InfoWindow v-if="marker_info_index === index">
                 <ODCMapInfo :data="item" />
@@ -179,6 +182,7 @@ onMounted(() => {
                 },
               }"
               @mouseover="onMarkerHover(item, index)"
+              @click="onMarkerHover(item, index)"
             >
               <InfoWindow v-if="marker_info_index === index">
                 <ODPMapInfo :data="item" />

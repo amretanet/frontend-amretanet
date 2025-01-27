@@ -222,6 +222,7 @@ onMounted(() => {
               },
             }"
             @mouseover="onMarkerHover(item, index)"
+            @click="onMarkerHover(item, index)"
           >
             <InfoWindow v-if="marker_info_index === index">
               <ODPMapInfo :data="item" />
