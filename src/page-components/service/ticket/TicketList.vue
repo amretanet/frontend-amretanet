@@ -21,6 +21,7 @@ import { stateManagement } from "@/store";
 import { ticket_status_options } from "@/modules/options";
 import DetailTicketModal from "./DetailTicketModal.vue";
 import CloseTicketModal from "./CloseTicketModal.vue";
+import PendingTicketModal from "./PendingTicketModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -99,6 +100,12 @@ const getTicketData = (is_refresh: boolean = false) => {
   const params: IObjectKeys = {
     ...(store.isEngineer ? { id_assignee: store.getUser._id } : {}),
     ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
+    ...(!store.isAdmin &&
+    !store.isCustomerService &&
+    !store.isEngineer &&
+    !store.isCustomer
+      ? { created_by: store.getUser._id }
+      : {}),
     ...(filter_data.value.key
       ? { key: encodeURIComponent(filter_data.value.key) }
       : {}),
@@ -285,7 +292,7 @@ onMounted(() => {
                 <VDivider />
                 <div class="fs-14">
                   <HorizontalTextFormat
-                    v-if="data.type === 'TKT'"
+                    v-if="data.reporter"
                     title="Pelanggan"
                     :title_cols="4"
                     :value="data.reporter"
@@ -335,8 +342,8 @@ onMounted(() => {
             {{ ticketStatusFormatter(data.status).title }}
           </VChip>
         </template>
-        <template #cell-action="{ data }">
-          <div class="d-flex gap-1 py-1 justify-center">
+        <template #cell-action="{ data, index }">
+          <div class="d-flex gap-1 flex-nowrap py-1 justify-center">
             <a
               v-if="data?.customer?.phone_number && store.isEngineer"
               :href="whatsappUrlFormatter(data.customer.phone_number)"
@@ -346,6 +353,11 @@ onMounted(() => {
                 <VTooltip activator="parent"> Hubungi Pelanggan </VTooltip>
               </VBtn>
             </a>
+            <PendingTicketModal
+              v-if="data.status !== 'CLOSED' && data.status !== 'PENDING'"
+              :data="data"
+              @ticket-pending="getTicketData()"
+            />
             <DetailTicketModal :data="data" />
             <EditTicketModal
               v-if="store.isAdmin"
@@ -363,7 +375,7 @@ onMounted(() => {
             </VBtn>
             <div v-if="store.isEngineer">
               <VBtn
-                v-if="['OPEN', 'PENDING'].includes(data.status)"
+                v-if="data.status === 'OPEN' && index === 0"
                 size="35"
                 color="warning"
                 @click="updateTicketStatus(data._id, 'ON_PROGRESS')"
@@ -373,6 +385,18 @@ onMounted(() => {
                   Kerjakan Tiket
                 </VTooltip>
               </VBtn>
+              <VBtn
+                v-if="data.status === 'PENDING'"
+                size="35"
+                color="warning"
+                @click="updateTicketStatus(data._id, 'ON_PROGRESS')"
+              >
+                <VIcon icon="tabler-tool"></VIcon>
+                <VTooltip activator="parent" class="text-no-wrap">
+                  Kerjakan Tiket
+                </VTooltip>
+              </VBtn>
+
               <CloseTicketModal
                 v-if="data.status === 'ON_PROGRESS'"
                 :data="data"

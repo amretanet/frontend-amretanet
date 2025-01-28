@@ -127,3 +127,12 @@
 .border-custom {
   border: 0.5px solid #a0a3b8;
 }
+
+.v-theme--dark .gm-style-iw {
+  background-color: rgba(21, 35, 51, 255) !important;
+}
+.gm-style-iw-d {
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  padding: 20px;
+}

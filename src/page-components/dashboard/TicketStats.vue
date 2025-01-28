@@ -2,8 +2,11 @@
 import { thousandSeparator, ticketStatusFormatter } from "@/modules";
 import SkeletonLoader from "../SkeletonLoader.vue";
 import axiosIns from "@/plugins/axios";
+import { IObjectKeys } from "@/models";
+import { stateManagement } from "@/store";
 
 // VARIABLE
+const store = stateManagement();
 const router = useRouter();
 const is_loading = ref(true);
 const ticket_count = ref(0);
@@ -37,8 +40,21 @@ const ticket_stats_data = ref([
 // FUNCTION
 const getTicketStats = () => {
   is_loading.value = true;
+  const params: IObjectKeys = {
+    ...(store.isEngineer ? { id_assignee: store.getUser._id } : {}),
+    ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
+    ...(!store.isAdmin &&
+    !store.isCustomerService &&
+    !store.isEngineer &&
+    !store.isCustomer
+      ? { created_by: store.getUser._id }
+      : {}),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
   axiosIns
-    .get("ticket/stats")
+    .get(`ticket/stats?${query}`)
     .then((res) => {
       const data = res?.data?.ticket_stats_data;
       if (data) {

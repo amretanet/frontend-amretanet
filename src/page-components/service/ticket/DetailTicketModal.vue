@@ -158,6 +158,26 @@ const is_showing_modal = ref(false);
             :value="props?.data?.confirm_message || '-'"
           />
           <HorizontalTextFormat
+            v-if="props?.data?.status === 'PENDING'"
+            :title_cols="5"
+            :value_cols="12"
+            title="Bukti Tiket Pending"
+            :value="props?.data?.confirm_message || '-'"
+          >
+            <template #value>
+              <div class="px-3">
+                <div class="text-center border rounded-lg px-2 py-2">
+                  <div>Foto Bukti Tiket Pending</div>
+                  <img
+                    class="mt-2 rounded-lg"
+                    :src="props?.data?.evidence?.pending_image_url"
+                    style="width: 100%"
+                  />
+                </div>
+              </div>
+            </template>
+          </HorizontalTextFormat>
+          <HorizontalTextFormat
             :title_cols="5"
             :value_cols="7"
             title="ODC"

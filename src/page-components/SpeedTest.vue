@@ -11,7 +11,7 @@ const current_tab = ref("open_speedtest");
     <div class="mt-2">
       <VCard v-if="current_tab === 'open_speedtest'" height="530">
         <div style="text-align: right">
-          <div style="min-height: 500px">
+          <div style="height: 500px">
             <div
               style="
                 width: 100%;
@@ -27,8 +27,7 @@ const current_tab = ref("open_speedtest");
                   top: 0;
                   left: 0;
                   width: 100%;
-                  height: 100%;
-                  min-height: 500px;
+                  height: 530px;
                   border: none;
                   overflow: hidden !important;
                 "
