@@ -329,7 +329,7 @@ onMounted(() => {
               :items="options.user.filter((el:any)=>el.role===5)"
               variant="outlined"
               prepend-inner-icon="mdi-account-hard-hat-outline"
-              :readonly="!store.isAdmin"
+              :readonly="!store.isAdmin && !store.isCustomerService"
               @update:model-value="updateTicket(data)"
             />
           </div>
@@ -360,12 +360,12 @@ onMounted(() => {
             />
             <DetailTicketModal :data="data" />
             <EditTicketModal
-              v-if="store.isAdmin"
+              v-if="store.isAdmin || store.isCustomerService"
               :data="data"
               @ticket-updated="getTicketData()"
             />
             <VBtn
-              v-if="store.isAdmin"
+              v-if="store.isAdmin || store.isCustomerService"
               size="35"
               color="error"
               @click="deleteTicket(data._id, data.name)"
