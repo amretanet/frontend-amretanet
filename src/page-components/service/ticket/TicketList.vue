@@ -354,7 +354,11 @@ onMounted(() => {
               </VBtn>
             </a>
             <PendingTicketModal
-              v-if="data.status !== 'CLOSED' && data.status !== 'PENDING'"
+              v-if="
+                store.isEngineer &&
+                data.status !== 'CLOSED' &&
+                data.status !== 'PENDING'
+              "
               :data="data"
               @ticket-pending="getTicketData()"
             />
