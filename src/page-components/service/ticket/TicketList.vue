@@ -22,6 +22,7 @@ import { ticket_status_options } from "@/modules/options";
 import DetailTicketModal from "./DetailTicketModal.vue";
 import CloseTicketModal from "./CloseTicketModal.vue";
 import PendingTicketModal from "./PendingTicketModal.vue";
+import SkeletonLoader from "@/page-components/SkeletonLoader.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -34,6 +35,7 @@ const filter_data = ref({
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const is_user_loading = ref(true);
 const options = ref({
   user: [],
   status: ticket_status_options,
@@ -157,10 +159,15 @@ const deleteTicket = async (id: string, name: string) => {
   }
 };
 const getUserOptions = () => {
-  axiosIns.get("options/user").then((res) => {
-    const temp = res?.data?.user_options || [];
-    options.value.user = temp.filter((el: any) => el.role != 99);
-  });
+  is_user_loading.value = true;
+  axiosIns
+    .get("options/user")
+    .then((res) => {
+      options.value.user = res?.data?.user_options || [];
+    })
+    .finally(() => {
+      is_user_loading.value = false;
+    });
 };
 const updateTicket = (customer_data: any) => {
   store.loadingHandler(true);
@@ -313,7 +320,7 @@ onMounted(() => {
           </div>
         </template>
         <template #cell-creator="{ data }">
-          <div style="min-width: 10rem">
+          <div class="w-auto" style="width: max-content; min-width: 10rem">
             <VTextField
               v-model="data.creator"
               variant="outlined"
@@ -323,8 +330,15 @@ onMounted(() => {
           </div>
         </template>
         <template #cell-assignee="{ data }">
-          <div style="min-width: 10rem">
+          <div class="w-auto" style="width: max-content; min-width: 10rem">
+            <SkeletonLoader
+              v-if="is_user_loading"
+              width="auto"
+              height="40px"
+              rounded="15px"
+            />
             <VAutocomplete
+              v-else
               v-model="data.id_assignee"
               :items="options.user.filter((el:any)=>el.role===5)"
               variant="outlined"
@@ -372,6 +386,7 @@ onMounted(() => {
                 data.status !== 'CLOSED'
               "
               :data="data"
+              :user_options="options.user"
               @ticket-updated="getTicketData()"
             />
             <VBtn

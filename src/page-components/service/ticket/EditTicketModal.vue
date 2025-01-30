@@ -10,6 +10,7 @@ import { stateManagement } from "@/store";
 // INTERFACE
 interface IProps {
   data: any;
+  user_options: any[];
 }
 interface IEmits {
   (e: "ticketUpdated"): void;
@@ -22,7 +23,7 @@ const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
-  user: [],
+  user: props.user_options || [],
   odp: [],
   odc: [],
   status: ticket_status_options,
@@ -44,11 +45,6 @@ const ticket_data = ref({
 const getTicketTitleOptions = () => {
   axiosIns.get("options/ticket-title").then((res) => {
     options.value.title = res.data.ticket_title_options || [];
-  });
-};
-const getUserOptions = () => {
-  axiosIns.get("options/user").then((res) => {
-    options.value.user = res.data.user_options || [];
   });
 };
 const getODCOptions = () => {
@@ -97,6 +93,7 @@ const setTicketType = () => {
 
 // LIFECYCLE HOOKS
 watch(props, () => {
+  options.value.user = props.user_options;
   ticket_data.value.type = props?.data?.type || null;
   ticket_data.value.id_reporter = props?.data?.id_reporter || null;
   ticket_data.value.id_assignee = props?.data?.id_assignee || null;
@@ -108,7 +105,6 @@ watch(props, () => {
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
     getTicketTitleOptions();
-    getUserOptions();
     getODCOptions();
     getODPOptions();
   }
