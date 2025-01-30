@@ -235,9 +235,11 @@ watch(props, () => {
             />
             <!-- PAID LEAVE -->
             <HorizontalTextFormat
-              v-if="'paid_leave_amount' in invoice_data"
+              v-if="'paid_leave_discount' in invoice_data"
               title="Pengurangan Biaya Cuti"
-              :value="'Rp' + thousandSeparator(invoice_data.paid_leave_amount)"
+              :value="
+                'Rp' + thousandSeparator(invoice_data.paid_leave_discount)
+              "
               :title_cols="5"
               :value_cols="7"
             />

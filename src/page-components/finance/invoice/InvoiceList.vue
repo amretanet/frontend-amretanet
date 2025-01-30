@@ -25,6 +25,7 @@ import ProcessButton from "@/page-components/ProcessButton.vue";
 import EditInvoiceModal from "./EditInvoiceModal.vue";
 import PayOffInvoiceModal from "./PayOffInvoiceModal.vue";
 import RequestPaymentModal from "./RequestPaymentModal.vue";
+import AddInvoiceModal from "./AddInvoiceModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -609,6 +610,8 @@ watch(
           </VMenu>
         </VBtn>
         <VSpacer />
+        <!-- ADD INVOICE BUTTON -->
+        <AddInvoiceModal @invoice-added="getInvoiceData()" />
         <!-- MONTH FILTER -->
         <div class="wm-100" style="min-width: 7rem">
           <VSelect
