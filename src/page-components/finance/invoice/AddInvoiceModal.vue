@@ -95,10 +95,25 @@ watch(is_showing_modal, () => {
                   :items="options.customer"
                   item-title="name"
                   item-value="_id"
+                  clearable
                   :rules="[requiredValidator]"
                 >
                   <template #label>
                     Nama Pelanggan <span class="text-error">*</span>
+                  </template>
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #subtitle>
+                        <VChip
+                          size="x-small"
+                          variant="outlined"
+                          color="primary"
+                          class="font-weight-bold"
+                        >
+                          {{ item?.raw?.service_number }}
+                        </VChip>
+                      </template>
+                    </VListItem>
                   </template>
                 </VAutocomplete>
               </VCol>
