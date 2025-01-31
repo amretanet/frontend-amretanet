@@ -114,7 +114,7 @@ const printInvoice = (id: string) => {
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
     .join("&");
-  const url = `${domain}/invoice/pdf?${query}`;
+  const url = `${domain}invoice/pdf?${query}`;
   window.open(url);
 };
 const confirmPayment = async () => {

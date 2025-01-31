@@ -326,10 +326,10 @@ const printInvoice = async (id: string, type: string) => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   if (type === "A4") {
-    const url = `${domain}/invoice/pdf?${query}`;
+    const url = `${domain}invoice/pdf?${query}`;
     window.open(url);
   } else if (type === "THERMAL") {
-    const url = `${domain}/invoice/thermal?${query}`;
+    const url = `${domain}invoice/thermal?${query}`;
     window.open(url);
   }
 };
@@ -387,10 +387,10 @@ const printSelectedInvoice = (type: string) => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   if (type === "A4") {
-    const url = `${domain}/invoice/pdf?${query}`;
+    const url = `${domain}invoice/pdf?${query}`;
     window.open(url);
   } else if (type === "THERMAL") {
-    const url = `${domain}/invoice/thermal?${query}`;
+    const url = `${domain}invoice/thermal?${query}`;
     window.open(url);
   }
 };
