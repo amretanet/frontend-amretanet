@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { requiredValidator } from "@/@core/utils/validators";
+import { IObjectKeys } from "@/models";
 import { errorMessage, showActionResult, thousandSeparator } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -40,7 +41,13 @@ const change_submission_data = ref({
 
 // FUNCTION
 const getPackageOptions = () => {
-  axiosIns.get("options/package").then((res) => {
+  const params: IObjectKeys = {
+    is_displayed: 1,
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns.get(`options/package?${query}`).then((res) => {
     options.value.package = res?.data?.package_options || [];
   });
 };
