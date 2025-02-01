@@ -21,6 +21,7 @@ import axios from "axios";
 import { Marker, InfoWindow } from "vue3-google-map";
 import CustomerDetailModal from "./CustomerDetailModal.vue";
 import CustomerMapInfo from "./CustomerMapInfo.vue";
+import SkeletonLoader from "../SkeletonLoader.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -29,6 +30,7 @@ const routes = useRoute();
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const is_maps_loading = ref(true);
 const filter_data = ref({
   key: "",
   id_odp: null,
@@ -42,6 +44,7 @@ const pagination = ref({
   count: 100,
 });
 const cancel_request_token = ref<any>(null);
+const cancel_maps_request_token = ref<any>(null);
 const marker_info_index = ref(null);
 const customer_table_data = ref({
   headers: [
@@ -193,7 +196,6 @@ const getCustomerData = (
     .then((res) => {
       cancel_request_token.value = null;
       customer_table_data.value.body = res.data.customer_data || [];
-      customer_maps_data.value = res.data.customer_maps_data || [];
       pagination.value.count = res.data.pagination_info.count || 0;
     })
     .catch((err) => {
@@ -205,6 +207,49 @@ const getCustomerData = (
       if (!cancel_request_token.value) {
         is_on_refresh.value = false;
         is_loading.value = false;
+      }
+    });
+};
+const getCustomerMapsData = () => {
+  is_maps_loading.value = true;
+  if (cancel_maps_request_token.value) {
+    cancel_maps_request_token.value.cancel();
+  }
+  cancel_maps_request_token.value = axios.CancelToken.source();
+  const params: IObjectKeys = {
+    ...(filter_data.value.key
+      ? { key: encodeURIComponent(filter_data.value.key) }
+      : {}),
+    ...(filter_data.value.id_odp ? { id_odp: filter_data.value.id_odp } : {}),
+    ...(filter_data.value.referral
+      ? { referral: filter_data.value.referral }
+      : {}),
+    ...(filter_data.value.id_router
+      ? { id_router: filter_data.value.id_router }
+      : {}),
+    ...(filter_data.value.status != null
+      ? { status: filter_data.value.status }
+      : {}),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns
+    .get(`customer/maps?${query}`, {
+      cancelToken: cancel_maps_request_token.value.token,
+    })
+    .then((res) => {
+      cancel_maps_request_token.value = null;
+      customer_maps_data.value = res.data.customer_maps_data || [];
+    })
+    .catch((err) => {
+      if (err.code !== "ERR_CANCELED") {
+        cancel_maps_request_token.value = null;
+      }
+    })
+    .finally(() => {
+      if (!cancel_maps_request_token.value) {
+        is_maps_loading.value = false;
       }
     });
 };
@@ -305,6 +350,7 @@ const removeQueryPath = (key: string) => {
 onMounted(() => {
   getUserOptions();
   getCustomerData();
+  getCustomerMapsData();
   getRouterOptions();
   getODPOptions();
 });
@@ -325,7 +371,8 @@ onMounted(() => {
       </template>
     </VCardItem>
     <VCardText v-if="is_show_maps">
-      <GoogleMaps :zoom="15">
+      <SkeletonLoader v-if="is_maps_loading" height="500px" />
+      <GoogleMaps v-else :zoom="15">
         <template #marker>
           <Marker
             v-for="(item, index) in customer_maps_data"
@@ -357,7 +404,7 @@ onMounted(() => {
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getCustomerData(true)"
+          @click="getCustomerData(true), getCustomerMapsData()"
         />
         <VSpacer />
         <VBtn
@@ -390,7 +437,9 @@ onMounted(() => {
                     item-title="title"
                     item-value="value"
                     clearable
-                    @update:model-value="getCustomerData(false, true)"
+                    @update:model-value="
+                      getCustomerData(false, true), getCustomerMapsData()
+                    "
                   />
                 </div>
                 <div class="wm-100" style="min-width: 10rem">
@@ -401,7 +450,9 @@ onMounted(() => {
                     item-title="title"
                     item-value="value"
                     clearable
-                    @update:model-value="getCustomerData(false, true)"
+                    @update:model-value="
+                      getCustomerData(false, true), getCustomerMapsData()
+                    "
                   />
                 </div>
                 <div class="wm-100" style="min-width: 10rem">
@@ -412,7 +463,9 @@ onMounted(() => {
                     item-title="title"
                     item-value="referral"
                     clearable
-                    @update:model-value="getCustomerData(false, true)"
+                    @update:model-value="
+                      getCustomerData(false, true), getCustomerMapsData()
+                    "
                   >
                     <template v-slot:item="{ props, item }">
                       <VListItem v-bind="props" class="px-2">
@@ -444,7 +497,9 @@ onMounted(() => {
                     item-value="value"
                     clearable
                     @update:model-value="
-                      removeQueryPath('status'), getCustomerData(false, true)
+                      removeQueryPath('status'),
+                        getCustomerData(false, true),
+                        getCustomerMapsData()
                     "
                   />
                 </div>
@@ -459,7 +514,9 @@ onMounted(() => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getCustomerData(false, true)"
+            @update:model-value="
+              getCustomerData(false, true), getCustomerMapsData()
+            "
           />
         </form>
       </div>

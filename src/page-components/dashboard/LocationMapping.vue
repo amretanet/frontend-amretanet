@@ -31,16 +31,7 @@ const getCoverageMapsData = () => {
   });
 };
 const getCustomerMapsData = () => {
-  const params: IObjectKeys = {
-    is_maps_only: true,
-    ...(isUserWithReferral()
-      ? { referral: store.getUser.referral || null }
-      : {}),
-  };
-  const query = Object.keys(params)
-    .map((key) => `${key}=${params[key]}`)
-    .join("&");
-  axiosIns.get(`customer?${query}`).then((res) => {
+  axiosIns.get(`customer/maps`).then((res) => {
     customer_maps_data.value = res?.data?.customer_maps_data || [];
   });
 };

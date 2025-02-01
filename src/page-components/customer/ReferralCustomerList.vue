@@ -21,6 +21,7 @@ const store = stateManagement();
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
+const is_maps_loading = ref(true);
 const filter_data = ref({
   key: "",
   status: null,
@@ -31,6 +32,7 @@ const pagination = ref({
   count: 100,
 });
 const cancel_request_token = ref<any>(null);
+const cancel_maps_request_token = ref<any>(null);
 const customer_table_data = ref({
   headers: [
     {
@@ -143,10 +145,48 @@ const getCustomerData = (
       }
     });
 };
+const getCustomerMapsData = () => {
+  is_maps_loading.value = true;
+  if (cancel_maps_request_token.value) {
+    cancel_maps_request_token.value.cancel();
+  }
+  cancel_maps_request_token.value = axios.CancelToken.source();
+  const params: IObjectKeys = {
+    referral: store.getUser.referral,
+    ...(filter_data.value.key
+      ? { key: encodeURIComponent(filter_data.value.key) }
+      : {}),
+    ...(filter_data.value.status != null
+      ? { status: filter_data.value.status }
+      : {}),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns
+    .get(`customer/maps?${query}`, {
+      cancelToken: cancel_maps_request_token.value.token,
+    })
+    .then((res) => {
+      cancel_maps_request_token.value = null;
+      customer_maps_data.value = res.data.customer_maps_data || [];
+    })
+    .catch((err) => {
+      if (err.code !== "ERR_CANCELED") {
+        cancel_maps_request_token.value = null;
+      }
+    })
+    .finally(() => {
+      if (!cancel_maps_request_token.value) {
+        is_maps_loading.value = false;
+      }
+    });
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
   getCustomerData();
+  getCustomerMapsData();
 });
 </script>
 <template>
@@ -165,7 +205,8 @@ onMounted(() => {
       </template>
     </VCardItem>
     <VCardText v-if="is_show_maps">
-      <GoogleMaps :zoom="15">
+      <SkeletonLoader v-if="is_maps_loading" height="500px" />
+      <GoogleMaps v-else :zoom="15">
         <template #marker>
           <Marker
             v-for="(item, index) in customer_maps_data"
@@ -188,11 +229,13 @@ onMounted(() => {
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getCustomerData(true)"
+          @click="getCustomerData(true), getCustomerMapsData()"
         />
         <VSpacer />
         <AddReferralCustomerModal
-          @customer-added="(pagination.page = 1), getCustomerData()"
+          @customer-added="
+            (pagination.page = 1), getCustomerData(), getCustomerMapsData()
+          "
         />
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
@@ -202,7 +245,9 @@ onMounted(() => {
             item-title="title"
             item-value="value"
             clearable
-            @update:model-value="getCustomerData(false, true)"
+            @update:model-value="
+              getCustomerData(false, true), getCustomerMapsData()
+            "
           />
         </div>
         <form class="wm-100" style="width: 15rem">
@@ -211,7 +256,9 @@ onMounted(() => {
             label="Pencarian"
             append-inner-icon="tabler-search"
             clearable
-            @update:model-value="getCustomerData(false, true)"
+            @update:model-value="
+              getCustomerData(false, true), getCustomerMapsData()
+            "
           />
         </form>
       </div>
