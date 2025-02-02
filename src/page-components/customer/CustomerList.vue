@@ -96,7 +96,7 @@ const customer_table_data = ref({
     },
     {
       title: "TANGGAL DAFTAR",
-      key: "created_at",
+      key: "registered_at",
       th_class: "text-center",
       td_class: "text-center text-no-wrap",
       width: "25%",
@@ -532,8 +532,12 @@ onMounted(() => {
         <template #cell-name="{ data }">
           {{ data.name }}
         </template>
-        <template #cell-created_at="{ data }">
-          {{ dateFormatterID(data.created_at, false) }}
+        <template #cell-registered_at="{ data }">
+          {{
+            data.registered_at
+              ? dateFormatterID(data.registered_at, false)
+              : "-"
+          }}
         </template>
         <template #cell-service_number="{ data }">
           <VChip color="primary" variant="outlined" class="font-weight-bold">
