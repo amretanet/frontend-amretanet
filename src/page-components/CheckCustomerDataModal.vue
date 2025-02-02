@@ -234,8 +234,8 @@ watch(is_showing_modal, () => {
                 <HorizontalTextFormat
                   title="Terdaftar Sejak"
                   :value="
-                    customer_data?.created_at
-                      ? dateFormatterID(customer_data.created_at)
+                    customer_data?.registered_at
+                      ? dateFormatterID(customer_data.registered_at)
                       : '-'
                   "
                 />
