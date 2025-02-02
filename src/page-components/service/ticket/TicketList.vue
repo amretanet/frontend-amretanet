@@ -252,7 +252,10 @@ onMounted(() => {
           @click="getTicketData(true)"
         />
         <VSpacer />
-        <AddTicketModal @ticket-added="showActionResult(), getTicketData()" />
+        <AddTicketModal
+          :user_options="options.user"
+          @ticket-added="showActionResult(), getTicketData()"
+        />
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.status"

@@ -7,17 +7,21 @@ import { stateManagement } from "@/store";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
+interface IProps {
+  user_options: any[];
+}
 interface IEmits {
   (e: "ticketAdded"): void;
 }
 
 // VARIABLE
 const store = stateManagement();
+const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
 const is_showing_modal = ref(false);
 const options = ref({
-  user: [],
+  user: props?.user_options || [],
   odp: [],
   odc: [],
   title: [],
@@ -37,11 +41,6 @@ const ticket_data = ref({
 const getTicketTitleOptions = () => {
   axiosIns.get("options/ticket-title").then((res) => {
     options.value.title = res.data.ticket_title_options || [];
-  });
-};
-const getUserOptions = () => {
-  axiosIns.get("options/user").then((res) => {
-    options.value.user = res.data.user_options || [];
   });
 };
 const getODCOptions = () => {
@@ -96,10 +95,12 @@ const setTicketType = () => {
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
     getTicketTitleOptions();
-    getUserOptions();
     getODCOptions();
     getODPOptions();
   }
+});
+watch(props, () => {
+  options.value.user = props.user_options;
 });
 </script>
 <template>
@@ -187,6 +188,13 @@ watch(is_showing_modal, () => {
                       </template>
                       <template #subtitle>
                         <div class="d-flex gap-1">
+                          <VChip
+                            v-if="item?.raw?.service_number"
+                            size="x-small"
+                            variant="outlined"
+                          >
+                            {{ item?.raw?.service_number }}
+                          </VChip>
                           <VChip
                             size="x-small"
                             variant="outlined"

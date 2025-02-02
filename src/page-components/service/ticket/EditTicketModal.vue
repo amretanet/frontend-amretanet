@@ -192,6 +192,13 @@ watch(is_showing_modal, () => {
                       <template #subtitle>
                         <div class="d-flex gap-1">
                           <VChip
+                            v-if="item?.raw?.service_number"
+                            size="x-small"
+                            variant="outlined"
+                          >
+                            {{ item?.raw?.service_number }}
+                          </VChip>
+                          <VChip
                             size="x-small"
                             variant="outlined"
                             :color="roleFormatter(item?.raw?.role).color"
