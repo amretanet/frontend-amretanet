@@ -120,7 +120,7 @@ const printCashflow = () => {
     .map((key) => `${key}=${params[key]}`)
     .join("&");
 
-  const url = `${domain}/transaction/cashflow/pdf?${query}`;
+  const url = `${domain}transaction/cashflow/pdf?${query}`;
   window.open(url);
 };
 
