@@ -25,7 +25,12 @@ router.beforeEach((to, from, next) => {
         axiosIns
           .get("auth/verify")
           .then(() => {
-            next();
+            const is_permitted = isRoutesPermitted(store.getUser, to);
+            if (is_permitted) {
+              next();
+            } else {
+              next({ name: "login" });
+            }
           })
           .catch(() => {
             next({ name: "login" });
@@ -33,12 +38,6 @@ router.beforeEach((to, from, next) => {
           .finally(() => {
             store.loadingHandler(false);
           });
-        // const is_permitted = isRoutesPermitted(store.getUser, to);
-        // if (is_permitted) {
-
-        // } else {
-        //   next({ name: "login" });
-        // }
       } else {
         next();
       }
