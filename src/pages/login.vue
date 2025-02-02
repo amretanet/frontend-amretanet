@@ -24,9 +24,9 @@ const login_data = ref({
 // FUNCTION
 const loginSuccess = () => {
   if (store.isCustomer) {
-    router.push("customers/dashboard");
+    router.push({ name: "customers-dashboard" });
   } else {
-    router.push("managements/dashboard");
+    router.push({ name: "managements-dashboard" });
   }
 };
 const onSubmit = () => {
