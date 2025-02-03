@@ -18,7 +18,7 @@ const { appRouteTransition } = useThemeConfig();
     <!-- 👉 navbar -->
     <template #navbar>
       <RouterLink to="/" class="app-logo d-flex align-center gap-x-3">
-        <img src="/public/logo.png" style="height: 25px" />
+        <img src="/logo.png" style="height: 25px" />
         <Transition name="vertical-nav-app-title">
           <h1 class="app-title font-weight-bold leading-normal text-xl">
             Apps Name

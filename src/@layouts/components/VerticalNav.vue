@@ -89,7 +89,7 @@ const handleNavScroll = (evt: Event) => {
       >
         <div class="px-3 py-3 d-flex flex-column gap-2">
           <div class="text-center">
-            <img src="/public/short-logo.png" style="height: 50px" />
+            <img src="/short-logo.png" style="height: 50px" />
             <div>
               <span class="font-weight-black text-black fs-22">AMRETA NET</span>
             </div>
@@ -133,7 +133,7 @@ const handleNavScroll = (evt: Event) => {
         class="border border-dashed border-info border-md"
         style="display: grid; place-items: center"
       >
-        <img src="/public/short-logo.png" class="mt-2" style="height: 50px" />
+        <img src="/short-logo.png" class="mt-2" style="height: 50px" />
       </VCard>
     </div>
     <VBtn
