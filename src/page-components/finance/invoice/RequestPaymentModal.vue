@@ -19,10 +19,6 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_showing_modal = ref(false);
 const invoice_data = ref(props.data);
-const automatic_payment_form = ref<VForm>();
-const automatic_payment_data = ref({
-  channel: null,
-});
 const manual_payment_form = ref<VForm>();
 const manual_payment_data = ref({
   file: [] as File[],
@@ -40,44 +36,25 @@ const options = ref({
 });
 
 // FUNCTION
-const getPaymentChannel = () => {
-  axiosIns.get("payment/channel").then((res) => {
-    options.value.payment_channel = res?.data || [];
-  });
-};
 const createPayment = () => {
-  automatic_payment_form.value?.validate().then((form) => {
-    if (form.valid) {
-      const payload = {
-        id_invoice: invoice_data.value._id || null,
-        method: automatic_payment_data.value.channel,
-      };
-      if (!payload.id_invoice || !payload.method) {
+  is_payment_error.value = false;
+  is_payment_on_creating.value = true;
+  axiosIns
+    .post(`payment/virtual-account/add/${invoice_data.value._id}`)
+    .then((res) => {
+      const checkout_url = res?.data?.paymentUrl || null;
+      if (!checkout_url) {
+        is_payment_error.value = true;
         return;
       }
-      is_payment_error.value = false;
-      is_payment_on_creating.value = true;
-      axiosIns
-        .post("payment/virtual-account/add", {
-          data: payload,
-        })
-        .then((res) => {
-          const checkout_url = res?.data?.checkout_url || null;
-          if (!checkout_url) {
-            is_payment_error.value = true;
-            return;
-          }
-          window.open(checkout_url);
-        })
-        .catch((err) => {
-          console.log(err);
-          is_payment_error.value = true;
-        })
-        .finally(() => {
-          is_payment_on_creating.value = false;
-        });
-    }
-  });
+      window.open(checkout_url);
+    })
+    .catch((err) => {
+      is_payment_error.value = true;
+    })
+    .finally(() => {
+      is_payment_on_creating.value = false;
+    });
 };
 const confirmPayment = async () => {
   try {
@@ -133,11 +110,6 @@ watch(props, () => {
   invoice_data.value = props.data;
 });
 watch(is_showing_modal, () => {
-  if (is_showing_modal) {
-    getPaymentChannel();
-  }
-  automatic_payment_form.value?.reset();
-  automatic_payment_data.value.channel = null;
   manual_payment_form.value?.reset();
   manual_payment_data.value.file = [];
 });
@@ -169,39 +141,15 @@ watch(is_showing_modal, () => {
                   <span class="fs-18"> Pembayaran Otomatis</span>
                 </template>
               </VCardItem>
-              <VForm
-                ref="automatic_payment_form"
-                @submit.prevent="createPayment()"
-              >
-                <VCardText class="d-flex gap-2 flex-column">
-                  <VAlert v-if="is_payment_error" variant="tonal" color="error">
-                    Mohon Maaf, Pembayaran Belum Dapat Dilakukan!
-                  </VAlert>
-                  <VAutocomplete
-                    v-model="automatic_payment_data.channel"
-                    label="Metode Pembayaran"
-                    :items="options.payment_channel"
-                    item-title="name"
-                    item-value="code"
-                    :rules="[requiredValidator]"
-                  />
-                  <div class="d-flex justify-end gap-2">
-                    <VBtn
-                      size="small"
-                      color="error"
-                      @click="is_payment = false"
-                    >
-                      Batal
-                    </VBtn>
-                    <ProcessButton
-                      text="Buat Pembayaran"
-                      color="primary"
-                      :is_on_process="is_payment_on_creating"
-                      type="submit"
-                    />
-                  </div>
-                </VCardText>
-              </VForm>
+              <VCardText>
+                <ProcessButton
+                  text="Buat Pembayaran Otomatis"
+                  color="primary"
+                  :is_on_process="is_payment_on_creating"
+                  block
+                  @click="createPayment()"
+                />
+              </VCardText>
             </VCard>
           </VCardText>
           <!-- MANUAL PAYMENT -->
