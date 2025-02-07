@@ -71,9 +71,9 @@ const createPayment = () => {
   is_payment_error.value = false;
   is_payment_on_creating.value = true;
   axiosIns
-    .post(`payment/virtual-account/add/${customer_data.value?.invoice?._id}`)
+    .post(`payment/ipaymu/add/${customer_data.value?.invoice?._id}`)
     .then((res) => {
-      const checkout_url = res?.data?.paymentUrl || null;
+      const checkout_url = res?.data?.payment_url || null;
       if (!checkout_url) {
         is_payment_error.value = true;
         return;
