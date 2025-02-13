@@ -303,6 +303,18 @@ export const due_date_options = [
     title: "Tanggal 28",
     value: "28",
   },
+  {
+    title: "Tanggal 29",
+    value: "29",
+  },
+  {
+    title: "Tanggal 30",
+    value: "30",
+  },
+  {
+    title: "Tanggal 31",
+    value: "31",
+  },
 ];
 export const customer_status_options = [
   {
