@@ -42,10 +42,32 @@ const is_check_all = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const is_syncronize = ref(false);
+const sorting_data = ref({
+  key: "due_date",
+  direction: "asc",
+});
 const options = ref({
   status: payment_status_options,
   month: month_options,
   year: year_options,
+  sorting_key: [
+    {
+      title: "Nama",
+      value: "name",
+    },
+    {
+      title: "Nomor Layanan",
+      value: "service_number",
+    },
+    {
+      title: "Periode",
+      value: "due_date",
+    },
+    {
+      title: "Total Pembayaran",
+      value: "amount",
+    },
+  ],
 });
 const pagination = ref({
   page: 1,
@@ -145,6 +167,8 @@ const getInvoiceData = (
     ...(filter_data.value.status ? { status: filter_data.value.status } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
+    sort_key: sorting_data.value.key,
+    sort_direction: sorting_data.value.direction,
   };
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
@@ -468,6 +492,10 @@ const removeQueryPath = (key: string) => {
     router.replace({ query: current_query });
   }
 };
+const changeSortDirection = () => {
+  sorting_data.value.direction =
+    sorting_data.value.direction === "asc" ? "desc" : "asc";
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
@@ -609,6 +637,36 @@ watch(
             </VCard>
           </VMenu>
         </VBtn>
+        <div class="d-flex gap-2 flex-nowrap">
+          <div style="min-width: 10rem">
+            <VSelect
+              v-model="sorting_data.key"
+              :items="options.sorting_key"
+              label="Urut Berdasarkan"
+              @update:model-value="getInvoiceData(false, true)"
+            />
+          </div>
+          <VBtn
+            size="40"
+            color="secondary"
+            @click="changeSortDirection(), getInvoiceData(false, true)"
+          >
+            <VIcon
+              :icon="
+                sorting_data.direction == 'asc'
+                  ? 'tabler-sort-ascending'
+                  : 'tabler-sort-descending'
+              "
+            />
+            <VTooltip activator="parent">
+              {{
+                sorting_data.direction == "asc"
+                  ? "Ascending (A-Z)"
+                  : "Descending (Z-A)"
+              }}
+            </VTooltip>
+          </VBtn>
+        </div>
         <VSpacer />
         <!-- ADD INVOICE BUTTON -->
         <AddInvoiceModal @invoice-added="getInvoiceData()" />

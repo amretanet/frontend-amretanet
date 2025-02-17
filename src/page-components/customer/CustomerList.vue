@@ -10,6 +10,7 @@ import {
   setPaginationLength,
   dataCountFormatter,
   whatsappUrlFormatter,
+  numberToWords,
 } from "@/modules";
 import { customer_status_options } from "@/modules/options";
 import DataTable from "@/page-components/DataTable.vue";
@@ -27,6 +28,7 @@ import SkeletonLoader from "../SkeletonLoader.vue";
 const store = stateManagement();
 const router = useRouter();
 const routes = useRoute();
+const billing_count = ref(0);
 const is_show_maps = ref(false);
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
@@ -37,6 +39,10 @@ const filter_data = ref({
   id_router: null,
   status: routes.query.status ? parseInt(routes.query.status.toString()) : null,
   referral: null,
+});
+const sorting_data = ref({
+  key: "service_number",
+  direction: "asc",
 });
 const pagination = ref({
   page: 1,
@@ -136,6 +142,28 @@ const options = ref({
   odp: [],
   router: [],
   user: [],
+  sorting_key: [
+    {
+      title: "Nama",
+      value: "name",
+    },
+    {
+      title: "Nomor Layanan",
+      value: "service_number",
+    },
+    {
+      title: "Tanggal Daftar",
+      value: "registered_at",
+    },
+    {
+      title: "Jatuh Tempo",
+      value: "due_date",
+    },
+    {
+      title: "Nama ODP",
+      value: "odp_name",
+    },
+  ],
 });
 
 // FUNCTION
@@ -185,6 +213,8 @@ const getCustomerData = (
       : {}),
     page: pagination.value.page,
     items: pagination.value.items,
+    sort_key: sorting_data.value.key,
+    sort_direction: sorting_data.value.direction,
   };
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
@@ -208,6 +238,38 @@ const getCustomerData = (
         is_on_refresh.value = false;
         is_loading.value = false;
       }
+    });
+};
+const getBillingCount = () => {
+  const params: IObjectKeys = {
+    ...(filter_data.value.key
+      ? { key: encodeURIComponent(filter_data.value.key) }
+      : {}),
+    ...(filter_data.value.id_odp ? { id_odp: filter_data.value.id_odp } : {}),
+    ...(filter_data.value.referral
+      ? { referral: filter_data.value.referral }
+      : {}),
+    ...(filter_data.value.id_router
+      ? { id_router: filter_data.value.id_router }
+      : {}),
+    ...(filter_data.value.status != null
+      ? { status: filter_data.value.status }
+      : {}),
+    page: pagination.value.page,
+    items: pagination.value.items,
+    sort_key: sorting_data.value.key,
+    sort_direction: sorting_data.value.direction,
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns
+    .get(`customer/billing-count?${query}`)
+    .then((res) => {
+      billing_count.value = res.data.billing_count || 0;
+    })
+    .catch(() => {
+      billing_count.value = 0;
     });
 };
 const getCustomerMapsData = () => {
@@ -345,11 +407,16 @@ const removeQueryPath = (key: string) => {
     router.replace({ query: current_query });
   }
 };
+const changeSortDirection = () => {
+  sorting_data.value.direction =
+    sorting_data.value.direction === "asc" ? "desc" : "asc";
+};
 
 // LIFECYCLE HOOKS
 onMounted(() => {
   getUserOptions();
   getCustomerData();
+  getBillingCount();
   getCustomerMapsData();
   getRouterOptions();
   getODPOptions();
@@ -404,8 +471,40 @@ onMounted(() => {
         </div>
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getCustomerData(true), getCustomerMapsData()"
+          @click="
+            getCustomerData(true), getCustomerMapsData(), getBillingCount()
+          "
         />
+        <div class="d-flex gap-2 flex-nowrap">
+          <div style="min-width: 10rem">
+            <VSelect
+              v-model="sorting_data.key"
+              :items="options.sorting_key"
+              label="Urut Berdasarkan"
+              @update:model-value="getCustomerData(false, true)"
+            />
+          </div>
+          <VBtn
+            size="40"
+            color="secondary"
+            @click="changeSortDirection(), getCustomerData(false, true)"
+          >
+            <VIcon
+              :icon="
+                sorting_data.direction == 'asc'
+                  ? 'tabler-sort-ascending'
+                  : 'tabler-sort-descending'
+              "
+            />
+            <VTooltip activator="parent">
+              {{
+                sorting_data.direction == "asc"
+                  ? "Ascending (A-Z)"
+                  : "Descending (Z-A)"
+              }}
+            </VTooltip>
+          </VBtn>
+        </div>
         <VSpacer />
         <VBtn
           size="40"
@@ -438,7 +537,9 @@ onMounted(() => {
                     item-value="value"
                     clearable
                     @update:model-value="
-                      getCustomerData(false, true), getCustomerMapsData()
+                      getCustomerData(false, true),
+                        getCustomerMapsData(),
+                        getBillingCount()
                     "
                   />
                 </div>
@@ -451,7 +552,9 @@ onMounted(() => {
                     item-value="value"
                     clearable
                     @update:model-value="
-                      getCustomerData(false, true), getCustomerMapsData()
+                      getCustomerData(false, true),
+                        getCustomerMapsData(),
+                        getBillingCount()
                     "
                   />
                 </div>
@@ -464,7 +567,9 @@ onMounted(() => {
                     item-value="referral"
                     clearable
                     @update:model-value="
-                      getCustomerData(false, true), getCustomerMapsData()
+                      getCustomerData(false, true),
+                        getCustomerMapsData(),
+                        getBillingCount()
                     "
                   >
                     <template v-slot:item="{ props, item }">
@@ -499,7 +604,8 @@ onMounted(() => {
                     @update:model-value="
                       removeQueryPath('status'),
                         getCustomerData(false, true),
-                        getCustomerMapsData()
+                        getCustomerMapsData(),
+                        getBillingCount()
                     "
                   />
                 </div>
@@ -515,7 +621,9 @@ onMounted(() => {
             append-inner-icon="tabler-search"
             clearable
             @update:model-value="
-              getCustomerData(false, true), getCustomerMapsData()
+              getCustomerData(false, true),
+                getCustomerMapsData(),
+                getBillingCount()
             "
           />
         </form>
@@ -645,6 +753,29 @@ onMounted(() => {
               <VTooltip activator="parent"> Hapus </VTooltip>
             </VBtn>
           </div>
+        </template>
+        <!-- CUSTOM FOOTER -->
+        <template #footer>
+          <tr>
+            <td colspan="15">
+              <div class="d-flex gap-2 justify-end px-5 pt-3 pb-2">
+                <div class="font-weight-bold">Total :</div>
+                <div class="font-weight-bold">
+                  Rp {{ thousandSeparator(billing_count) }}
+                </div>
+              </div>
+              <div class="d-flex justify-end px-5 pb-3">
+                <div class="fs-14 text-center">
+                  ({{ numberToWords(billing_count) }} Rupiah)
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="10">
+              <VDivider></VDivider>
+            </td>
+          </tr>
         </template>
         <!-- CUSTOM PAGINATION -->
         <template #pagination>

@@ -316,6 +316,16 @@ export const due_date_options = [
     value: "31",
   },
 ];
+export const sorting_direction_options = [
+  {
+    title: "Ascending (A-Z)",
+    value: "asc",
+  },
+  {
+    title: "Descending (Z-A)",
+    value: "desc",
+  },
+];
 export const customer_status_options = [
   {
     title: "Nonaktif",
