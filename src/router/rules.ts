@@ -18,6 +18,7 @@ const exclude_routes = [
   "/managements/customer/add-customer",
   "/managements/customer/edit-customer",
   "/my-profile",
+  "/help-center",
 ];
 
 export function isRoutesPermitted(user: any, to: any) {

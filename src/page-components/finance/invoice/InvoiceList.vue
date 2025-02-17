@@ -637,7 +637,10 @@ watch(
             </VCard>
           </VMenu>
         </VBtn>
-        <div class="d-flex gap-2 flex-nowrap">
+        <div
+          v-if="store.isAdmin || store.isCustomerService"
+          class="d-flex gap-2 flex-nowrap"
+        >
           <div style="min-width: 10rem">
             <VSelect
               v-model="sorting_data.key"

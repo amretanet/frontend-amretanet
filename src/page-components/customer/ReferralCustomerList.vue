@@ -15,6 +15,7 @@ import { stateManagement } from "@/store";
 import axios from "axios";
 import { Marker } from "vue3-google-map";
 import AddReferralCustomerModal from "./AddReferralCustomerModal.vue";
+import SkeletonLoader from "../SkeletonLoader.vue";
 
 // VARIABLES
 const store = stateManagement();

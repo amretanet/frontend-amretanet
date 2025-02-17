@@ -66,6 +66,16 @@ const logout = () => {
           </VListItem>
           <VListItem>
             <VBtn
+              color="warning"
+              block
+              prepend-icon="tabler-help"
+              to="/help-center"
+            >
+              Pusat Bantuan
+            </VBtn>
+          </VListItem>
+          <VListItem>
+            <VBtn
               block
               prepend-icon="tabler-logout"
               color="error"
