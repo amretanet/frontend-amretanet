@@ -278,7 +278,7 @@ onMounted(() => {
             />
             <div>
               <a
-                href="mailto:sandi@amreta.net"
+                href="mailto:customercare@amretanet.com"
                 target="_blank"
                 class="text-muted d-flex gap-1 align-center clickable"
               >
@@ -290,7 +290,7 @@ onMounted(() => {
           <VCard variant="tonal" rounded="small">
             <VCardText class="px-2 py-1 d-flex gap-2 align-center">
               <a
-                href="https://api.whatsapp.com/send?phone=628999094340"
+                href="https://api.whatsapp.com/send?phone=6285159979915"
                 target="_blank"
               >
                 <VIcon icon="mdi-whatsapp" color="primary" class="clickable" />
@@ -823,24 +823,24 @@ onMounted(() => {
               <div class="text-white">
                 <h3 class="text-white mb-4 fsm-14">Hubungi Kami</h3>
                 <a
-                  href="mailto:sandi@amreta.net"
+                  href="mailto:customercare@amretanet.com"
                   target="_blank"
                   class="fsm-12"
                 >
                   <div class="d-flex align-center gap-1">
                     <VIcon icon="mdi-email" />
-                    sandi@amreta.net
+                    customercare@amretanet.com
                   </div>
                 </a>
                 <a
-                  href="https://api.whatsapp.com/send?phone=628999094340"
+                  href="https://api.whatsapp.com/send?phone=6285159979915"
                   target="_blank"
                   class="fsm-12"
                   rel="noopener noreferrer"
                 >
                   <div class="d-flex align-center gap-1 mt-2">
                     <VIcon icon="mdi-whatsapp" />
-                    <span>08999094340</span>
+                    <span>085159979915</span>
                   </div>
                 </a>
               </div>
