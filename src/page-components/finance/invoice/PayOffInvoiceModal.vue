@@ -32,6 +32,7 @@ const is_pay_off_error = ref(false);
 const pay_off_payment_form = ref<VForm>();
 const pay_off_payment_data = ref({
   file: [] as File[],
+  unique_code: props.data?.unique_code || 0,
   method: null,
   description: `Pembayaran Tagihan Periode ${dateFormatterID(
     props.data?.due_date
@@ -44,6 +45,7 @@ const payOffPayment = async () => {
   try {
     is_pay_off_process.value = true;
     let params: any = {
+      unique_code: pay_off_payment_data.value.unique_code,
       description: pay_off_payment_data.value.description,
       method: pay_off_payment_data.value.method,
     };
@@ -92,6 +94,7 @@ const validateConfirmForm = async () => {
 // LIFECYCLE HOOKS
 watch(props, () => {
   invoice_data.value = props.data;
+  pay_off_payment_data.value.unique_code = invoice_data.value.unique_code || 0;
 });
 </script>
 <template>
@@ -154,8 +157,19 @@ watch(props, () => {
                   Mohon Maaf, Gagal Memproses Lunasi Tagihan!
                 </VAlert>
               </VCol>
+              <!-- UNIQUE CODE -->
+              <VCol cols="12" md="4" sm="12">
+                <VTextField
+                  v-model="pay_off_payment_data.unique_code"
+                  :rules="[requiredValidator]"
+                >
+                  <template #label>
+                    Kode Unik <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
               <!-- PAYMENT METHOD -->
-              <VCol cols="12">
+              <VCol cols="12" md="8" sm="12">
                 <VSelect
                   v-model="pay_off_payment_data.method"
                   :items="options.payment_method.filter((el:any)=>el.value != 'VIRTUAL ACCOUNT')"
@@ -202,9 +216,7 @@ watch(props, () => {
                   <VBtn
                     size="small"
                     color="error"
-                    @click="
-                      pay_off_payment_form?.reset(), (is_showing_modal = false)
-                    "
+                    @click="is_showing_modal = false"
                   >
                     Batal
                   </VBtn>
