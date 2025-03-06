@@ -12,6 +12,7 @@ const flat_management_navigation = flattenNavigation(management_navigation);
 const flat_customer_navigation = flattenNavigation(customer_navigation);
 const exclude_routes = [
   "/",
+  "/quick-payment",
   "/login",
   "/error-404",
   "/register",

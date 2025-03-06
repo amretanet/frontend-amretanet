@@ -18,6 +18,7 @@ router.beforeEach((to, from, next) => {
       }, 100);
       if (
         to.name !== "login" &&
+        to.name !== "quick-payment" &&
         to.name !== "index" &&
         to.name !== "register"
       ) {
