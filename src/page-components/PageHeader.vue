@@ -25,9 +25,6 @@ const backupDatabase = async () => {
     "Harap simpan file ditempan yang aman setelah melakukan backup data!",
     "Backup Sekarang!"
   );
-  if (is_confirmed) {
-    console.log("file berhasil di backup");
-  }
 };
 const redirectPath = (item: IPathData) => {
   if (item?.to) {

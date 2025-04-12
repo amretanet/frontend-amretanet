@@ -18,7 +18,7 @@ import { package_category_options } from "@/modules/options";
 import { stateManagement } from "@/store";
 
 // VARIABLES
-const store = stateManagement()
+const store = stateManagement();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -26,6 +26,7 @@ const filter_data = ref({
 });
 const options = ref({
   category: package_category_options,
+  user: [],
 });
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
@@ -165,7 +166,7 @@ const deletePackage = async (id: string, name: string) => {
     "Ya, Hapus!"
   );
   if (is_confirmed) {
-    store.loadingHandler(true)
+    store.loadingHandler(true);
     axiosIns
       .delete(`package/delete/${id}`)
       .then(() => {
@@ -175,15 +176,28 @@ const deletePackage = async (id: string, name: string) => {
       .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
-      }).finally(()=>{
-        store.loadingHandler(false)
       })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
   }
+};
+const getUserOptions = () => {
+  const params: IObjectKeys = {
+    role: 6, // Mitra
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  axiosIns.get(`options/user?${query}`).then((res) => {
+    options.value.user = res?.data?.user_options || [];
+  });
 };
 
 // LIFECYCLE HOOKS
 onMounted(() => {
   getPackageData();
+  getUserOptions();
 });
 </script>
 <template>
@@ -212,7 +226,10 @@ onMounted(() => {
         />
         <VSpacer />
         <!-- ADD PACKAGE BUTTON -->
-        <AddPackageModal @package-added="getPackageData(true)" />
+        <AddPackageModal
+          @package-added="getPackageData(true)"
+          :user_options="options.user"
+        />
         <!-- CATEGORY FILTER -->
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
@@ -293,6 +310,7 @@ onMounted(() => {
           <div class="d-flex gap-1 py-1 justify-center">
             <EditPackageModal
               :data="data"
+              :user_options="options.user"
               @package-updated="getPackageData()"
             />
             <VBtn

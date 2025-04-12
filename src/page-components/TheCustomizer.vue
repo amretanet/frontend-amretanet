@@ -31,7 +31,6 @@ const colors = ["primary", "secondary", "success", "info", "warning", "error"];
 
 // ℹ️ It will set primary color for current theme only
 const setPrimaryColor = (color: string) => {
-  console.log(color);
   const currentThemeName = vuetifyTheme.name.value;
 
   vuetifyTheme.themes.value[currentThemeName].colors.primary = color;

@@ -10,6 +10,7 @@ import { VForm } from "vuetify/components";
 // INTERFACE
 interface IProps {
   data: any;
+  user_options: any[];
 }
 interface IEmits {
   (e: "packageUpdated"): void;
@@ -34,6 +35,7 @@ const options = ref({
       value: false,
     },
   ],
+  user: props?.user_options || [],
 });
 const package_form = ref<VForm>();
 const package_data = ref({
@@ -46,9 +48,11 @@ const package_data = ref({
   price: {
     regular: props?.data?.price?.regular || 0,
     reseller: props?.data?.price?.reseller || 0,
+    mitra_fee: props?.data?.price?.mitra_fee || 0,
   },
   is_displayed: props?.data?.is_displayed || false,
   description: props?.data?.description || null,
+  id_mitra: props?.data?.id_mitra || [],
 });
 
 // FUNCTION
@@ -85,6 +89,7 @@ const updatePackage = () => {
 
 // LIFECYCLE HOOKS
 watch(props, () => {
+  options.value.user = props?.user_options || [];
   package_data.value.name = props?.data?.name || "";
   package_data.value.router_profile = props?.data?.router_profile || null;
   package_data.value.bandwidth = props?.data?.bandwidth || 0;
@@ -93,9 +98,11 @@ watch(props, () => {
   package_data.value.price = {
     regular: props?.data?.price?.regular || 0,
     reseller: props?.data?.price?.reseller || 0,
+    mitra_fee: props?.data?.price?.mitra_fee || 0,
   };
   package_data.value.is_displayed = props?.data?.is_displayed || false;
   package_data.value.description = props?.data?.description || "";
+  package_data.value.id_mitra = props?.data?.id_mitra || [];
 });
 watch(is_showing_modal, () => {
   if (is_showing_modal.value) {
@@ -240,6 +247,53 @@ watch(is_showing_modal, () => {
                 >
                   <template #label>
                     Ditampilkan <span class="text-error">*</span>
+                  </template>
+                </VSelect>
+              </VCol>
+              <!-- MITRA FEE -->
+              <VCol cols="12" md="4" sm="12">
+                <VTextField
+                  v-model="package_data.price.mitra_fee"
+                  type="number"
+                  :rules="[requiredValidator, integerValidator]"
+                >
+                  <template #prepend-inner> Rp </template>
+                  <template #label>
+                    Bonus Mitra <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- MITRA DISYPLAYED -->
+              <VCol cols="12" md="8" sm="12">
+                <VSelect
+                  v-model="package_data.id_mitra"
+                  :items="options.user"
+                  chips
+                  :multiple="true"
+                  clearable
+                  closable-chips
+                >
+                  <template #label> Mitra Terdaftar </template>
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #title>
+                        <span class="fs-14">
+                          {{ item?.raw?.title }}
+                        </span>
+                      </template>
+                      <template #subtitle>
+                        <div class="d-flex gap-1">
+                          <VChip
+                            v-if="item?.raw?.bandwidth"
+                            size="x-small"
+                            variant="outlined"
+                            color="warning"
+                          >
+                            {{ item?.raw?.bandwidth }} Mbps
+                          </VChip>
+                        </div>
+                      </template>
+                    </VListItem>
                   </template>
                 </VSelect>
               </VCol>

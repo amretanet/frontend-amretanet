@@ -46,6 +46,7 @@ const customerAdded = () => {
           <RegisterCustomerForm
             max_height="70vh"
             :referral="store.getUser.referral"
+            :id_mitra="store.isMitra ? store.getUser._id : undefined"
             @cancel-add="is_showing_modal = false"
             @customer-added="customerAdded()"
           />

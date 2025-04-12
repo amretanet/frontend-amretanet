@@ -28,6 +28,7 @@ import { IObjectKeys } from "@/models";
 // INTERFACE
 interface IProps {
   referral?: string;
+  id_mitra?: string;
   max_height?: string;
 }
 interface IEmits {
@@ -78,6 +79,7 @@ const options = ref({
 const getPackageOptions = () => {
   const params: IObjectKeys = {
     is_displayed: 1,
+    ...(props.id_mitra ? { id_mitra: props.id_mitra } : {}),
   };
   const query = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
@@ -135,7 +137,6 @@ const registerCustomer = async () => {
 const getCurrentLocation = async () => {
   try {
     const position: any = await getLocation();
-    console.log(position);
     customer_data.value.location.latitude = position?.coords?.latitude || 0;
     customer_data.value.location.longitude = position?.coords?.longitude || 0;
   } catch {
