@@ -38,7 +38,7 @@ const filter_data = ref({
   id_odp: null,
   id_router: null,
   status: routes.query.status ? parseInt(routes.query.status.toString()) : null,
-  referral: null,
+  referral: routes.query.referral ? routes.query.referral : null,
 });
 const sorting_data = ref({
   key: "service_number",
@@ -562,15 +562,16 @@ onMounted(() => {
                   />
                 </div>
                 <div class="wm-100" style="min-width: 10rem">
-                  <VSelect
+                  <VAutocomplete
                     v-model="filter_data.referral"
                     label="Referral"
-                    :items="options.user"
+                    :items="options.user.filter((el:any) => el.role !== 99)"
                     item-title="title"
                     item-value="referral"
                     clearable
                     @update:model-value="
-                      getCustomerData(false, true),
+                      removeQueryPath('referral'),
+                        getCustomerData(false, true),
                         getCustomerMapsData(),
                         getBillingCount()
                     "
@@ -594,7 +595,7 @@ onMounted(() => {
                         </template>
                       </VListItem>
                     </template>
-                  </VSelect>
+                  </VAutocomplete>
                 </div>
                 <div class="wm-100" style="min-width: 10rem">
                   <VSelect

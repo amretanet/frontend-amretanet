@@ -12,6 +12,12 @@ export default [
     access: [1, 3, 4],
   },
   {
+    title: "Mitra",
+    icon: { icon: "mdi-handshake" },
+    to: "managements-mitra",
+    access: [1],
+  },
+  {
     title: "Pelanggan Referral",
     icon: { icon: "tabler-user-square-rounded" },
     to: "referral-customer",
