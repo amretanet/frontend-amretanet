@@ -233,18 +233,24 @@ onMounted(() => {
               disabled
             />
 
-            <PayOffFeeModal :data="data" @fee-payed-off="getMitraData()">
+            <PayOffFeeModal
+              v-if="data.saldo > 0"
+              :data="data"
+              @fee-payed-off="getMitraData()"
+            >
               <template #trigger-button>
-                <VBtn
-                  size="35"
-                  color="primary"
-                  prepend-icon="mdi-wallet"
-                  :disabled="data.saldo === 0"
-                >
+                <VBtn size="35" color="primary" prepend-icon="mdi-wallet">
                   <VTooltip activator="parent"> Bayar Bonus Mitra </VTooltip>
                 </VBtn>
               </template>
             </PayOffFeeModal>
+            <VBtn
+              v-else
+              size="35"
+              color="primary"
+              prepend-icon="mdi-wallet"
+              disabled
+            />
           </div>
         </template>
         <!-- CUSTOM PAGINATION -->
