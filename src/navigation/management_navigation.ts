@@ -13,7 +13,7 @@ export default [
   },
   {
     title: "Mitra",
-    icon: { icon: "mdi-handshake" },
+    icon: { icon: "mdi-handshake-outline" },
     to: "managements-mitra",
     access: [1],
   },

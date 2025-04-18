@@ -12,7 +12,13 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import PayOffFeeModal from "./PayOffFeeModal.vue";
 
+// INTERFACE
+interface IProps {
+  current_tab: string;
+}
+
 // VARIABLES
+const props = defineProps<IProps>();
 const cancel_request_token = ref<any>(null);
 const filter_data = ref({
   key: "",
@@ -135,12 +141,17 @@ const getMitraData = (
 onMounted(() => {
   getMitraData();
 });
+watch(props, (new_val) => {
+  if (new_val.current_tab === "mitra-list") {
+    getMitraData();
+  }
+});
 </script>
 <template>
   <VCard>
     <VCardItem>
       <template #prepend>
-        <VIcon icon="mdi-handshake" />
+        <VIcon icon="mdi-handshake-outline" />
       </template>
       <template #title> Daftar Mitra </template>
     </VCardItem>
