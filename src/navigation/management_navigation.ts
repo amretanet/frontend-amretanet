@@ -18,6 +18,12 @@ export default [
     access: [1],
   },
   {
+    title: "Bonus Referral",
+    icon: { icon: "tabler-wallet" },
+    to: "managements-referral-fee",
+    access: [6],
+  },
+  {
     title: "Pelanggan Referral",
     icon: { icon: "tabler-user-square-rounded" },
     to: "referral-customer",

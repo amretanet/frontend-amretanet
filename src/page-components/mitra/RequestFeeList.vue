@@ -15,6 +15,7 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import { stateManagement } from "@/store";
 import AcceptFeeModal from "./AcceptFeeModal.vue";
+import RequestFeeModal from "./RequestFeeModal.vue";
 
 // INTERFACE
 interface IProps {
@@ -104,6 +105,7 @@ const mitra_fee_table_data = ref({
   ],
   body: [],
 });
+const saldo_count = ref(0);
 
 // FUNCTION
 const getMitraFee = (
@@ -129,6 +131,7 @@ const getMitraFee = (
     ...(filter_data.value.id_user
       ? { id_user: filter_data.value.id_user }
       : {}),
+    ...(store.isMitra ? { id_user: store.getUser._id } : {}),
     page: pagination.value.page,
     items: pagination.value.items,
   };
@@ -159,6 +162,11 @@ const getMitraFee = (
 const getUserOptions = () => {
   axiosIns.get("options/user?role=6").then((res) => {
     options.value.user = res?.data?.user_options || [];
+  });
+};
+const getUserDetail = () => {
+  axiosIns.get(`user/detail/${store.getUser._id}`).then((res) => {
+    saldo_count.value = res?.data?.user_data?.saldo || 0;
   });
 };
 const deleteMitraFee = async (id: string) => {
@@ -219,7 +227,12 @@ const confirmMitraFeeRequest = async (
 // LIFECYCLE HOOKS
 onMounted(() => {
   getMitraFee();
-  getUserOptions();
+  if (store.isAdmin) {
+    getUserOptions();
+  }
+  if (store.isMitra) {
+    getUserDetail();
+  }
 });
 watch(props, (new_val) => {
   if (new_val.current_tab === "request-fee-list") {
@@ -229,11 +242,20 @@ watch(props, (new_val) => {
 </script>
 <template>
   <VCard>
-    <VCardItem>
+    <VCardItem class="pt-4">
       <template #prepend>
         <VIcon icon="mdi-swap-horizontal" />
       </template>
-      <template #title> Daftar Pengajuan Bonus </template>
+      <template #title> Daftar Bonus Referral </template>
+      <template #append>
+        <VChip
+          v-if="store.isMitra"
+          :color="saldo_count ? 'success' : 'error'"
+          variant="outlined"
+        >
+          Saldo Tersisa : Rp{{ thousandSeparator(saldo_count) }}
+        </VChip>
+      </template>
     </VCardItem>
     <VCardText class="pb-2">
       <div class="d-flex flex-wrap flex-wrap-reverse align-center gap-2">
@@ -248,9 +270,15 @@ watch(props, (new_val) => {
         <!-- REFRESH BUTTON -->
         <RefreshButton
           :is_on_refresh="is_on_refresh"
-          @click="getMitraFee(false, true)"
+          @click="
+            getMitraFee(false, true), store.isMitra ? getUserDetail() : null
+          "
         />
         <VSpacer />
+        <RequestFeeModal
+          v-if="store.isMitra && saldo_count > 0"
+          @fee-requested="getMitraFee()"
+        />
         <div class="wm-100" style="min-width: 10rem">
           <VSelect
             v-model="filter_data.status"
@@ -260,7 +288,7 @@ watch(props, (new_val) => {
             @update:model-value="getMitraFee()"
           />
         </div>
-        <div class="wm-100" style="min-width: 10rem">
+        <div v-if="store.isAdmin" class="wm-100" style="min-width: 10rem">
           <VAutocomplete
             v-model="filter_data.id_user"
             label="Mitra"

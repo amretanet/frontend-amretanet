@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { requiredValidator } from "@/@core/utils/validators";
+import { integerValidator, requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult, thousandSeparator } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -163,6 +163,7 @@ watch(props, () => {
                   v-model="pay_off_fee_data.nominal"
                   type="number"
                   readonly
+                  :rules="[requiredValidator, integerValidator]"
                 >
                   <template #prepend-inner> Rp </template>
                   <template #label>
@@ -190,7 +191,7 @@ watch(props, () => {
                   </template>
                 </DatePicker>
               </VCol>
-              <!-- DESKRIPTION -->
+              <!-- DESCRIPTION -->
               <VCol cols="12">
                 <VTextarea
                   v-model="pay_off_fee_data.description"

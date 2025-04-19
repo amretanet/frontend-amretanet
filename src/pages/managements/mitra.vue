@@ -22,7 +22,7 @@ const current_tab = ref("mitra-list");
         <template #extend-header>
           <VTabs v-model="current_tab">
             <VTab value="mitra-list">Daftar Mitra</VTab>
-            <VTab value="request-fee-list">Pengajuan Bonus</VTab>
+            <VTab value="request-fee-list">Bonus Referral</VTab>
           </VTabs>
         </template>
       </PageHeader>
