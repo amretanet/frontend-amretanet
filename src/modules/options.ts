@@ -492,3 +492,21 @@ export const ticket_status_options = [
     value: "CLOSED",
   },
 ];
+
+export const bill_collector_status_options = [
+  {
+    title: "Belum Ditagih",
+    value: "UNCOLLECTED",
+    color: "warning",
+  },
+  {
+    title: "Sudah Ditagih",
+    value: "COLLECTED",
+    color: "success",
+  },
+  {
+    title: "Gagal Ditagih",
+    value: "FAILED",
+    color: "error",
+  },
+];

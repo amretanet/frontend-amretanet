@@ -1,9 +1,9 @@
+import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
 import { setupLayouts } from "virtual:generated-layouts";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "~pages";
 import { isRoutesPermitted } from "./rules";
-import axiosIns from "@/plugins/axios";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

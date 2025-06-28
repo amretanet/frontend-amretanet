@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IObjectKeys } from "@/models";
 import {
+  billCollectorStatusFormatter,
   confirmAction,
   dataCountFormatter,
   dateFormatterID,
@@ -10,22 +11,22 @@ import {
   showActionResult,
   thousandSeparator,
 } from "@/modules";
-import DataTable from "@/page-components/DataTable.vue";
-import RefreshButton from "@/page-components/RefreshButton.vue";
-import axiosIns from "@/plugins/axios";
-import axios from "axios";
 import {
-  payment_status_options,
   month_options,
+  payment_status_options,
   year_options,
 } from "@/modules/options";
-import { stateManagement } from "@/store";
-import InvoiceDetailModal from "./InvoiceDetailModal.vue";
+import DataTable from "@/page-components/DataTable.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
+import RefreshButton from "@/page-components/RefreshButton.vue";
+import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
+import axios from "axios";
+import AddInvoiceModal from "./AddInvoiceModal.vue";
 import EditInvoiceModal from "./EditInvoiceModal.vue";
+import InvoiceDetailModal from "./InvoiceDetailModal.vue";
 import PayOffInvoiceModal from "./PayOffInvoiceModal.vue";
 import RequestPaymentModal from "./RequestPaymentModal.vue";
-import AddInvoiceModal from "./AddInvoiceModal.vue";
 
 // VARIABLES
 const store = stateManagement();
@@ -194,6 +195,44 @@ const getInvoiceData = (
       }
     });
 };
+const collectBill = async (invoiceId: string, customerName: string) => {
+  const formatted_status = billCollectorStatusFormatter("COLLECTING").title;
+
+  const is_confirmed = await confirmAction(
+    "Ambil Tagihan?",
+    `Tagihan atas nama ${customerName} akan diubah menjadi status "${formatted_status}"`,
+    "Ya, Ambil!"
+  );
+
+  if (!is_confirmed) return;
+
+  store.loadingHandler(true);
+
+  const params: IObjectKeys = {
+    id: btoa(invoiceId),
+    description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
+    status: "COLLECTING",
+  };
+
+  const query = Object.keys(params)
+    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+    .join("&");
+
+  axiosIns
+    .put(`invoice/update/collector-status?${query}`)
+    .then(() => {
+      showActionResult(undefined, undefined, "Status tagihan telah diubah");
+      getInvoiceData(); // refresh your list
+    })
+    .catch(err => {
+      const message = errorMessage(err);
+      showActionResult(true, "error", message);
+    })
+    .finally(() => {
+      store.loadingHandler(false);
+    });
+};
+
 const deleteInvoice = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
     "Hapus Tagihan?",
@@ -879,6 +918,19 @@ watch(
                     >
                       Ingatkan Pelanggan
                     </VBtn>
+
+                    <!-- BILL COLLECTOR BUTTON -->
+                    <VBtn
+                      v-if="data?.status === 'UNPAID'"
+                      size="small"
+                      color="warning"
+                      block
+                      prepend-icon="mdi-whatsapp"
+                      @click="collectBill(data._id, data.name)"
+                    >
+                      Ambil Tagihan
+                    </VBtn>
+
                     <!-- ACTIVATE BUTTON -->
                     <VBtn
                       v-if="data?.customer?.status !== 1"

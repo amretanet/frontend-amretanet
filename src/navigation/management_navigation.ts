@@ -41,6 +41,12 @@ export default [
         access: [1, 3, 4],
       },
       {
+        title: "Bill Collector",
+        to: "managements-bill-collector",
+        icon: { icon: "tabler-report-money" }, 
+        access: [1, 3],
+      },
+      {
         title: "Pemasukan",
         icon: { icon: "mdi-bank-transfer-in" },
         to: "managements-finance-income",

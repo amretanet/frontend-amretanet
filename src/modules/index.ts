@@ -1,8 +1,8 @@
 import { useThemeConfig } from "@/@core/composable/useThemeConfig";
+import axiosIns from "@/plugins/axios";
+import moment from "moment";
 import Swal from "sweetalert2";
 import { customer_status_options, user_role_options } from "./options";
-import moment from "moment";
-import axiosIns from "@/plugins/axios";
 
 export const whatsappUrlFormatter = (phone_number: any) => {
   const whatsapp_url = `https://api.whatsapp.com/send?phone=62${phone_number}`;
@@ -310,6 +310,12 @@ export const paymentStatusFormatter = (status: string) => {
   } else if (status == "PENDING") {
     temp.title = "MENUNGGU KONFIRMASI";
     temp.color = "warning";
+  } else if (status == "COLLECTING") {
+    temp.title = "MENUNGGU MENGABIL BILL";
+    temp.color = "warning";
+  } else if (status == "COLLECTED") {
+    temp.title = "BILL SUDAH DIKOLEKSI";
+    temp.color = "primary";
   }
   return temp;
 };
@@ -445,3 +451,39 @@ export const minMaxSeriesFormatter = (series: any[], title: string) => {
     max: 500000,
   };
 };
+export const billCollectorStatusFormatter = (status: string) => {
+  const temp = {
+    title: "",
+    color: "",
+  };
+
+  switch (status) {
+    case "UNPAID":
+      temp.title = "BELUM DIBAYAR";
+      temp.color = "error";
+      break;
+    case "PAID":
+      temp.title = "SUDAH DIBAYAR";
+      temp.color = "success";
+      break;
+    case "PENDING":
+      temp.title = "MENUNGGU KONFIRMASI";
+      temp.color = "warning";
+      break;
+    case "COLLECTING":
+      temp.title = "DALAM PROSES KOLEKSI";
+      temp.color = "secondary";
+      break;
+    case "COLLECTED":
+      temp.title = "SUDAH DIKOLEKSI";
+      temp.color = "info";
+      break;
+    default:
+      temp.title = "TIDAK DIKETAHUI";
+      temp.color = "grey";
+      break;
+  }
+
+  return temp;
+};
+
