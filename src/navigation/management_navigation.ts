@@ -3,7 +3,7 @@ export default [
     title: "Dashboard",
     icon: { icon: "tabler-dashboard" },
     to: "managements-dashboard",
-    access: [1, 2, 3, 4, 5, 6],
+    access: [1, 2, 3, 4, 5, 6, 7],
   },
   {
     title: "Pelanggan",
@@ -32,7 +32,7 @@ export default [
   {
     title: "Keuangan",
     icon: { icon: "tabler-cash-register" },
-    access: [1, 3, 4],
+    access: [1, 3, 4, 7],
     children: [
       {
         title: "Tagihan Pelanggan",
@@ -44,7 +44,7 @@ export default [
         title: "Bill Collector",
         to: "managements-bill-collector",
         icon: { icon: "tabler-report-money" }, 
-        access: [1, 3],
+        access: [1, 3, 7],
       },
       {
         title: "Pemasukan",
