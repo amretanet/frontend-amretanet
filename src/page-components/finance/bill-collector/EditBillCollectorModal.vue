@@ -3,8 +3,7 @@ import { requiredValidator } from "@/@core/utils/validators";
 import {
   dateFormatterID,
   showActionResult,
-  thousandSeparator,
-  uploadImageFile
+  thousandSeparator
 } from "@/modules";
 import { payment_method_options } from "@/modules/options";
 import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
@@ -36,40 +35,32 @@ const form_data = ref({
   file: [] as File[],
   unique_code: props.data?.unique_code || 0,
   method: null,
-  description: `Bukti Pelunasan Tagihan Periode ${dateFormatterID(props.data?.due_date)}`,
+  description: `Bukti Pelunasan Periode ${dateFormatterID(props.data?.due_date)}`,
 });
 
 // FUNCTION
 const handleSubmit = async () => {
   try {
     is_processing.value = true;
-    let params: any = {
-      unique_code: form_data.value.unique_code,
-      method: form_data.value.method,
+
+    const params: any = {
+      id: btoa(bill_data.value._id),
+      // status: "COLLECTED",
       description: form_data.value.description,
     };
 
-    if (form_data.value.file.length > 0) {
-      const image_url = await uploadImageFile(
-        form_data.value.file[0],
-        "payment_evidence"
-      );
-      if (!image_url) {
-        has_error.value = true;
-        return;
-      }
-      params.image_url = image_url;
-    }
+    const query = Object.keys(params)
+      .map(key => `${key}=${encodeURIComponent(params[key])}`)
+      .join("&");
 
-    axiosIns.put(`bills/pay-off/${bill_data.value._id}`, {
-      data: params,
-    })
-    .then(() => {
-      showActionResult(undefined, undefined, "Tagihan berhasil dikoleksi!");
-      emits("billCollected");
-      });
+    await axiosIns.put("/bills/mark-collected", {
+      id: btoa(bill_data.value._id),
+      description: form_data.value.description,
+    });
 
-    ;
+
+    showActionResult(undefined, undefined, "Tagihan berhasil ditandai sebagai dikoleksi!");
+    emits("billCollected");
     is_showing_modal.value = false;
   } catch {
     has_error.value = true;
@@ -77,6 +68,7 @@ const handleSubmit = async () => {
     is_processing.value = false;
   }
 };
+
 
 const validateAndSubmit = async () => {
   bill_form.value?.validate().then(({ valid }) => {
@@ -86,6 +78,7 @@ const validateAndSubmit = async () => {
     }
   });
 };
+
 
 // LIFECYCLE HOOK
 watch(props, () => {
@@ -118,7 +111,7 @@ watch(props, () => {
           <template #prepend>
             <VIcon icon="tabler-checklist" />
           </template>
-          <template #title> Bukti Koleksi Tagihan </template>
+          <template #title> Konfirmasi Pengambilan Tagihan </template>
         </VCardItem>
 
         <VCardText>
@@ -130,58 +123,16 @@ watch(props, () => {
             <HorizontalTextFormat title="Total Tagihan" :value="'Rp' + thousandSeparator(bill_data.amount)" />
           </div>
 
-          <!-- PAYMENT CONFIRMATION FORM -->
+          <!-- FORM -->
           <VForm ref="bill_form" class="mt-5" @submit.prevent="validateAndSubmit()">
             <VRow>
-              <!-- ERROR ALERT -->
               <VCol v-if="has_error" cols="12">
                 <VAlert variant="tonal" color="error">
-                  Gagal memproses pelunasan tagihan. Silakan coba lagi.
+                  Gagal memproses. Silakan coba lagi.
                 </VAlert>
               </VCol>
 
-              <!-- UNIQUE CODE -->
-              <VCol cols="12" md="4">
-                <VTextField
-                  v-model="form_data.unique_code"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Kode Unik <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-
-              <!-- METHOD -->
-              <VCol cols="12" md="8">
-                <VSelect
-                  v-model="form_data.method"
-                  :items="options.payment_method.filter(el => el.value !== 'VIRTUAL ACCOUNT')"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Metode Pembayaran <span class="text-error">*</span>
-                  </template>
-                </VSelect>
-              </VCol>
-
-              <!-- PAYMENT IMAGE -->
-              <VCol
-                v-if="['QRIS', 'TRANSFER'].includes(form_data.method)"
-                cols="12"
-              >
-                <VFileInput
-                  v-model="form_data.file"
-                  accept="image/*"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Bukti Pembayaran <span class="text-error">*</span>
-                  </template>
-                </VFileInput>
-              </VCol>
-
-              <!-- DESCRIPTION -->
+              <!-- CATATAN -->
               <VCol cols="12">
                 <VTextarea
                   v-model="form_data.description"
@@ -189,12 +140,12 @@ watch(props, () => {
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Catatan <span class="text-error">*</span>
+                    Catatan Pengambilan Tagihan <span class="text-error">*</span>
                   </template>
                 </VTextarea>
               </VCol>
 
-              <!-- ACTIONS -->
+              <!-- AKSI -->
               <VCol cols="12">
                 <div class="d-flex justify-end gap-2">
                   <VBtn
@@ -215,5 +166,6 @@ watch(props, () => {
         </VCardText>
       </VCard>
     </VDialog>
+
   </div>
 </template>

@@ -195,12 +195,61 @@ const getInvoiceData = (
       }
     });
 };
-const collectBill = async (invoiceId: string, customerName: string) => {
+// const collectBill = async (invoiceId: string, customerName: string) => {
+//   const formatted_status = billCollectorStatusFormatter("COLLECTING").title;
+
+//   const is_confirmed = await confirmAction(
+//     "Ambil Tagihan?",
+//     `Tagihan atas nama ${customerName} akan diubah menjadi status "${formatted_status}"`,
+//     "Ya, Ambil!"
+//   );
+
+//   if (!is_confirmed) return;
+
+//   store.loadingHandler(true);
+
+//   const params: IObjectKeys = {
+//     id: btoa(invoiceId),
+//     description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
+//     status: "COLLECTING",
+//   };
+
+//   const query = Object.keys(params)
+//     .map(key => `${key}=${encodeURIComponent(params[key])}`)
+//     .join("&");
+
+//   axiosIns
+//     .put(`invoice/update/collector-status?${query}`)
+//     .then(() => {
+//       showActionResult(undefined, undefined, "Status tagihan telah diubah");
+//       getInvoiceData(); // refresh your list
+//     })
+//     .catch(err => {
+//       const message = errorMessage(err);
+//       showActionResult(true, "error", message);
+//     })
+//     .finally(() => {
+//       store.loadingHandler(false);
+//     });
+// };
+
+// FUNCTION FOR GET BILLS AND ASSIGN TO USER
+const confirmAssign = async () => {
+  const { invoiceId, customerName, email } = assignDialog.value;
+
+  if (!email) {
+    showActionResult(true, "warning", "Silakan pilih pegawai kolektor.");
+    return;
+  }
+
   const formatted_status = billCollectorStatusFormatter("COLLECTING").title;
+
+  assignDialog.value.show = false;
+  await nextTick();
 
   const is_confirmed = await confirmAction(
     "Ambil Tagihan?",
-    `Tagihan atas nama ${customerName} akan diubah menjadi status "${formatted_status}"`,
+    `Tagihan atas nama ${customerName} akan diubah menjadi status "${formatted_status}" dan ditugaskan ke ${email}`,
     "Ya, Ambil!"
   );
 
@@ -212,6 +261,7 @@ const collectBill = async (invoiceId: string, customerName: string) => {
     id: btoa(invoiceId),
     description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
     status: "COLLECTING",
+    assigned_to: email,
   };
 
   const query = Object.keys(params)
@@ -222,7 +272,7 @@ const collectBill = async (invoiceId: string, customerName: string) => {
     .put(`invoice/update/collector-status?${query}`)
     .then(() => {
       showActionResult(undefined, undefined, "Status tagihan telah diubah");
-      getInvoiceData(); // refresh your list
+      getInvoiceData();
     })
     .catch(err => {
       const message = errorMessage(err);
@@ -232,6 +282,38 @@ const collectBill = async (invoiceId: string, customerName: string) => {
       store.loadingHandler(false);
     });
 };
+
+
+
+const assignDialog = ref({
+  show: false,
+  invoiceId: "",
+  customerName: "",
+  email: "",
+});
+
+const collectorOptions = ref<{ name: string; email: string }[]>([]);
+
+const getCollectors = async () => {
+  try {
+    const res = await axiosIns.get("/user/list-collectors");
+    collectorOptions.value = res.data.users;
+  } catch (err) {
+    showActionResult(true, "error", "Gagal mengambil daftar pegawai");
+  }
+};
+
+const openAssignDialog = async (invoiceId: string, customerName: string) => {
+  assignDialog.value = {
+    show: true,
+    invoiceId,
+    customerName,
+    email: "",
+  };
+
+  await getCollectors();
+};
+
 
 const deleteInvoice = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
@@ -925,11 +1007,37 @@ watch(
                       size="small"
                       color="warning"
                       block
-                      prepend-icon="mdi-whatsapp"
-                      @click="collectBill(data._id, data.name)"
+                      prepend-icon="mdi-note"
+                      @click="() => openAssignDialog(data._id, data.name)"
                     >
                       Ambil Tagihan
                     </VBtn>
+
+
+                    <!-- Dialog assign collector -->
+                    <VDialog v-model="assignDialog.show" max-width="500px">
+                      <VCard>
+                        <VCardTitle>Assign Tagihan ke Pegawai</VCardTitle>
+                        <VCardText>
+                          <VSelect
+                            v-model="assignDialog.email"
+                            :items="collectorOptions"
+                            item-title="name"
+                            item-value="email"
+                            label="Pilih Pegawai"
+                            outlined
+                            dense
+                            :return-object="false"
+                          />
+                        </VCardText>
+                        <VCardActions>
+                          <VSpacer />
+                          <VBtn text @click="assignDialog.show = false">Batal</VBtn>
+                          <VBtn color="primary" @click="confirmAssign">Assign</VBtn>
+                        </VCardActions>
+                      </VCard>
+                    </VDialog>
+
 
                     <!-- ACTIVATE BUTTON -->
                     <VBtn

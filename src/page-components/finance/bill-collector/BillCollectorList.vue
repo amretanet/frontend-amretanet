@@ -106,6 +106,12 @@ const collector_table_data = ref({
       td_class: "text-center",
     },
     {
+      title: "PETUGAS PENGAMBILAN",
+      key: "assigned_to",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
+    },
+    {
       title: "AKSI",
       key: "action",
       th_class: "text-center",
@@ -521,6 +527,13 @@ watch(
           >
             <strong>{{ billCollectorStatusFormatter(data.status).title }}</strong>
           </VChip>
+        </template>
+
+        <!-- CELL: Assigned To -->
+        <template #cell-assigned_to="{ data }">
+          <span class="text-sm text-gray-800">
+            {{ data.collector?.assigned_to || '—' }}
+          </span>
         </template>
 
         <!-- CELL: Action -->

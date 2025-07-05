@@ -26,5 +26,5 @@ const path_data = ref([
 
 <route lang="yaml">
 meta:
-  title: Penagihan
+  title: Bill-Collector
 </route>

@@ -109,6 +109,10 @@ export const user_role_options = [
     title: "Mitra",
     value: 6,
   },
+  {
+    title: "Bill-Collector",
+    value: 7,
+  },
 ];
 export const user_role_customer_options = [
   {
