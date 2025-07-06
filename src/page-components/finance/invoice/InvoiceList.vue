@@ -262,6 +262,7 @@ const confirmAssign = async () => {
     description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
     status: "COLLECTING",
     assigned_to: email,
+    repeat_monthly: assignDialog.value.repeat_monthly
   };
 
   const query = Object.keys(params)
@@ -290,6 +291,7 @@ const assignDialog = ref({
   invoiceId: "",
   customerName: "",
   email: "",
+  repeat_monthly: false,
 });
 
 const collectorOptions = ref<{ name: string; email: string }[]>([]);
@@ -309,6 +311,7 @@ const openAssignDialog = async (invoiceId: string, customerName: string) => {
     invoiceId,
     customerName,
     email: "",
+    repeat_monthly : false,
   };
 
   await getCollectors();
@@ -1028,6 +1031,21 @@ watch(
                             outlined
                             dense
                             :return-object="false"
+                          />
+                        </VCardText>
+                        <VCardText>
+                          <VSelect
+                            v-model="assignDialog.repeat_monthly"
+                            :items="[
+                              { label: 'Sekali saja', value: false },
+                              { label: 'Ulangi bulan depan', value: true }
+                            ]"
+                            item-title="label"
+                            item-value="value"
+                            label="Perulangan Penagihan"
+                            outlined
+                            dense
+                            v-if="assignDialog.email"
                           />
                         </VCardText>
                         <VCardActions>

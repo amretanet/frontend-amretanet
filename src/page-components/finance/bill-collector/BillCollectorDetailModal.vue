@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { IObjectKeys } from "@/models";
 import {
-    confirmAction,
-    dateFormatterID,
-    errorMessage,
-    paymentStatusFormatter,
-    showActionResult,
-    thousandSeparator,
+  billCollectorStatusFormatter,
+  confirmAction,
+  dateFormatterID,
+  errorMessage,
+  showActionResult,
+  thousandSeparator,
 } from "@/modules";
 import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
 import axiosIns from "@/plugins/axios";
@@ -124,10 +124,10 @@ watch(props, () => {
               <template #value>
                 <VChip
                   variant="outlined"
-                  :color="paymentStatusFormatter(invoice_data.status).color"
+                  :color="billCollectorStatusFormatter(invoice_data.status).color"
                   class="font-weight-bold"
                 >
-                  {{ paymentStatusFormatter(invoice_data.status).title }}
+                  {{ billCollectorStatusFormatter(invoice_data.status).title }}
                 </VChip>
               </template>
             </HorizontalTextFormat>

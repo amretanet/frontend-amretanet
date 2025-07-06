@@ -35,7 +35,7 @@ const form_data = ref({
   file: [] as File[],
   unique_code: props.data?.unique_code || 0,
   method: null,
-  description: `Tagihan telah diambil pada tanggal ${dateFormatterID(props.data?.due_date)}`,
+  approved_description: `Tagihan telah disetujui pada tanggal ${dateFormatterID(props.data?.due_date)}`,
 });
 
 // FUNCTION
@@ -45,21 +45,12 @@ const handleSubmit = async () => {
 
     const params: any = {
       id: btoa(bill_data.value._id),
-      // status: "COLLECTED",
-      description: form_data.value.description,
+      approved_description: form_data.value.approved_description,
     };
 
-    const query = Object.keys(params)
-      .map(key => `${key}=${encodeURIComponent(params[key])}`)
-      .join("&");
+    await axiosIns.put("/bills/mark-approved", params);
 
-    await axiosIns.put("/bills/mark-collected", {
-      id: btoa(bill_data.value._id),
-      description: form_data.value.description,
-    });
-
-
-    showActionResult(undefined, undefined, "Tagihan berhasil ditandai sebagai dikoleksi!");
+    showActionResult(undefined, undefined, "Tagihan berhasil disetujui!");
     emits("billCollected");
     is_showing_modal.value = false;
   } catch {
@@ -98,7 +89,7 @@ watch(props, () => {
           block
           prepend-icon="tabler-check"
         >
-          Bill Terambil
+          Approve Tagihan
         </VBtn>
       </slot>
     </div>
@@ -111,7 +102,7 @@ watch(props, () => {
           <template #prepend>
             <VIcon icon="tabler-checklist" />
           </template>
-          <template #title> Konfirmasi Pengambilan Tagihan </template>
+          <template #title> Setujui Tagihan </template>
         </VCardItem>
 
         <VCardText>
@@ -135,13 +126,14 @@ watch(props, () => {
               <!-- CATATAN -->
               <VCol cols="12">
                 <VTextarea
-                  v-model="form_data.description"
+                  v-model="form_data.approved_description"
                   rows="2"
                   :rules="[requiredValidator]"
                 >
                   <template #label>
-                    Catatan Pengambilan Tagihan <span class="text-error">*</span>
+                    Catatan Persetujuan Tagihan <span class="text-error">*</span>
                   </template>
+
                 </VTextarea>
               </VCol>
 
@@ -158,7 +150,9 @@ watch(props, () => {
                   <ProcessButton
                     :is_on_process="is_processing"
                     type="submit"
+                    label="Setujui"
                   />
+
                 </div>
               </VCol>
             </VRow>

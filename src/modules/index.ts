@@ -472,11 +472,15 @@ export const billCollectorStatusFormatter = (status: string) => {
       break;
     case "COLLECTING":
       temp.title = "DALAM PROSES KOLEKSI";
-      temp.color = "secondary";
+      temp.color = "error";
       break;
     case "COLLECTED":
       temp.title = "SUDAH DIKOLEKSI";
       temp.color = "info";
+      break;
+    case "APPROVED":
+      temp.title = "SUDAH DISETUJUI";
+      temp.color = "success"; 
       break;
     default:
       temp.title = "TIDAK DIKETAHUI";

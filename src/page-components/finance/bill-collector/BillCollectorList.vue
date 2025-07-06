@@ -11,15 +11,18 @@ import {
   thousandSeparator,
 } from "@/modules";
 import { bill_collector_status_options, month_options, year_options } from "@/modules/options";
+import { stateManagement } from '@/store';
+
+const user = stateManagement();
 
 import DataTable from "@/page-components/DataTable.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import RefreshButton from "@/page-components/RefreshButton.vue";
+import ApproveBillCollectorModal from "@/page-components/finance/bill-collector/ApproveBillCollectorModal.vue";
 import BillCollectorDetailModal from "@/page-components/finance/bill-collector/BillCollectorDetailModal.vue";
 import EditBillCollectorModal from "@/page-components/finance/bill-collector/EditBillCollectorModal.vue";
 
 import axiosIns from "@/plugins/axios";
-import { stateManagement } from "@/store";
 import axios from "axios";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -120,6 +123,7 @@ const collector_table_data = ref({
   ],
   body: [],
 });
+
 
 const checked_collector_data = computed(() => {
   return collector_table_data.value.body
@@ -546,7 +550,12 @@ watch(
             />
             <!-- EDIT BUTTON -->
             <EditBillCollectorModal
-              v-if="data.status === 'COLLECTING'"
+              v-if="data.status === 'COLLECTING' && !user.isAdmin"
+              :data="data"
+              @bill-collected="getCollectorData()"
+            />
+            <ApproveBillCollectorModal
+              v-if="data.status === 'COLLECTED' && user.isAdmin"
               :data="data"
               @bill-collected="getCollectorData()"
             />
