@@ -9,17 +9,17 @@ import {
   showActionResult,
   whatsappUrlFormatter,
 } from "@/modules";
-import DataTable from "@/page-components/DataTable.vue";
-import RefreshButton from "@/page-components/RefreshButton.vue";
-import axiosIns from "@/plugins/axios";
-import axios from "axios";
-import AddUserModal from "./AddUserModal.vue";
-import EditUserModal from "./EditUserModal.vue";
 import {
   user_role_customer_options,
   user_role_options,
 } from "@/modules/options";
+import DataTable from "@/page-components/DataTable.vue";
+import RefreshButton from "@/page-components/RefreshButton.vue";
+import axiosIns from "@/plugins/axios";
 import { stateManagement } from "@/store";
+import axios from "axios";
+import AddUserModal from "./AddUserModal.vue";
+import EditUserModal from "./EditUserModal.vue";
 
 // VARIABLES
 const store = stateManagement();

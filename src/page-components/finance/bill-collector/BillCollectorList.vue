@@ -125,12 +125,17 @@ const collector_table_data = ref({
 });
 
 
+// const checked_collector_data = computed(() => {
+//   return collector_table_data.value.body
+//     .filter((el: any) => el.is_checked === true)
+//     .map((el: any) => el._id);
+// });
 const checked_collector_data = computed(() => {
-  return collector_table_data.value.body
+  const checked_data = collector_table_data.value.body
     .filter((el: any) => el.is_checked === true)
     .map((el: any) => el._id);
+  return checked_data;
 });
-
 // function
 const getCollectorData = (
   is_reset_page: boolean = false,
@@ -202,6 +207,57 @@ const syncCollectorData = async () => {
       .finally(() => {
         is_syncronize.value = false;
       });
+  }
+};
+const sendReminderMessage = async (id: string, name: string) => {
+  const is_confirmed = await confirmAction(
+    "Kirim Whatsapp Pengingat?",
+    `Pesan whatsapp pengingat kepada ${name} akan diambilkan`,
+    "Ya, Kirimkan!"
+  );
+  if (is_confirmed) {
+    store.loadingHandler(true);
+    const params: IObjectKeys = {
+      id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    axiosIns
+      .get(`invoice/whatsapp-reminder?${query}`)
+      .then(() => {
+        showActionResult(
+          undefined,
+          undefined,
+          "Pesan Whatsapp Pengingat Telah Dikirimkan!"
+        );
+      })
+      .catch(() => {
+        showActionResult(
+          undefined,
+          "error",
+          "Pesan Whatsapp Gagal Dikirimkan!"
+        );
+      })
+      .finally(() => {
+        store.loadingHandler(false);
+      });
+  }
+};
+const printInvoice = async (id: string, type: string) => {
+  const domain = import.meta.env.VITE_API_DOMAIN;
+  const params: IObjectKeys = {
+    id: btoa(id),
+  };
+  const query = Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  if (type === "A4") {
+    const url = `${domain}/invoice/pdf?${query}`;
+    window.open(url);
+  } else if (type === "THERMAL") {
+    const url = `${domain}/invoice/thermal?${query}`;
+    window.open(url);
   }
 };
 
@@ -559,28 +615,45 @@ watch(
               :data="data"
               @bill-collected="getCollectorData()"
             />
-            <!-- DELETE -->
-            <!-- <VBtn
-              size="35"
-              color="error"
-              v-if="!store.isCustomer"
-              @click="deleteCollector(data._id, data.name)"
-            >
-              <VIcon icon="tabler-trash" />
-              <VTooltip activator="parent">Hapus</VTooltip>
-            </VBtn> -->
-
-            <!-- WHATSAPP REMINDER -->
-            <!-- <VBtn
-              v-if="!store.isCustomer && data?.status === 'UNPAID'"
+            
+            <VBtn
+              v-if="data.status === 'COLLECTING'"
               size="35"
               color="success"
-              @click="sendReminder(data._id, data.name)"
+              prepend-icon="mdi-whatsapp"
+              @click="sendReminderMessage(data._id, data.name)"
             >
-              <VIcon icon="mdi-whatsapp" />
-              <VTooltip activator="parent">Ingatkan</VTooltip>
-            </VBtn> -->
+              
+            </VBtn>
+
+            <VBtn
+              v-if="user.isAdmin"
+              size="35"
+              color="warning"
+              prepend-icon="mdi-printer"
+            >
+              <VTooltip activator="parent"> Cetak Tagihan </VTooltip>
+              <VMenu activator="parent">
+                <VCard>
+                  <VCardText class="d-flex gap-2 px-2 py-2">
+                    <VBtn
+                      size="small"
+                      variant="outlined"
+                      color="dark"
+                      prepend-icon="mdi-file"
+                      @click="printInvoice(data._id, 'THERMAL')"
+                    >
+                      THERMAL
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VMenu>
+            </VBtn>
           </div>
+          
+        </template>
+        <template #cell-action-cetak="{ data }">
+          
         </template>
 
         <!-- PAGINATION -->

@@ -988,13 +988,13 @@ watch(
                     </VBtn>
                     <!-- PAY OFF BUTTON -->
                     <PayOffInvoiceModal
-                      v-if="data?.status == 'UNPAID'"
+                      v-if="data?.status == 'UNPAID' || data?.status == 'COLLECTING'"
                       :data="data"
                       @invoice-pay-off="getInvoiceData()"
                     />
                     <!-- REMINDER BUTTON -->
                     <VBtn
-                      v-if="data?.status === 'UNPAID'"
+                      v-if="data?.status === 'UNPAID' || data?.status === 'COLLECTING'"
                       size="small"
                       color="success"
                       block
