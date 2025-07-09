@@ -209,41 +209,40 @@ const syncCollectorData = async () => {
       });
   }
 };
-const sendReminderMessage = async (id: string, name: string) => {
-  const is_confirmed = await confirmAction(
-    "Kirim Whatsapp Pengingat?",
-    `Pesan whatsapp pengingat kepada ${name} akan diambilkan`,
-    "Ya, Kirimkan!"
-  );
-  if (is_confirmed) {
-    store.loadingHandler(true);
-    const params: IObjectKeys = {
-      id: btoa(id),
-    };
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join("&");
-    axiosIns
-      .get(`invoice/whatsapp-reminder?${query}`)
-      .then(() => {
-        showActionResult(
-          undefined,
-          undefined,
-          "Pesan Whatsapp Pengingat Telah Dikirimkan!"
-        );
-      })
-      .catch(() => {
-        showActionResult(
-          undefined,
-          "error",
-          "Pesan Whatsapp Gagal Dikirimkan!"
-        );
-      })
-      .finally(() => {
-        store.loadingHandler(false);
-      });
-  }
-};
+//   const is_confirmed = await confirmAction(
+//     "Kirim Whatsapp Pengingat?",
+//     `Pesan whatsapp pengingat kepada ${name} akan diambilkan`,
+//     "Ya, Kirimkan!"
+//   );
+//   if (is_confirmed) {
+//     store.loadingHandler(true);
+//     const params: IObjectKeys = {
+//       id: btoa(id),
+//     };
+//     const query = Object.keys(params)
+//       .map((key) => `${key}=${params[key]}`)
+//       .join("&");
+//     axiosIns
+//       .get(`invoice/whatsapp-reminder?${query}`)
+//       .then(() => {
+//         showActionResult(
+//           undefined,
+//           undefined,
+//           "Pesan Whatsapp Pengingat Telah Dikirimkan!"
+//         );
+//       })
+//       .catch(() => {
+//         showActionResult(
+//           undefined,
+//           "error",
+//           "Pesan Whatsapp Gagal Dikirimkan!"
+//         );
+//       })
+//       .finally(() => {
+//         store.loadingHandler(false);
+//       });
+//   }
+// };
 const printInvoice = async (id: string, type: string) => {
   const domain = import.meta.env.VITE_API_DOMAIN;
   const params: IObjectKeys = {
@@ -261,23 +260,27 @@ const printInvoice = async (id: string, type: string) => {
   }
 };
 
-const deleteCollectorItem = async (id: string, name: string) => {
+const deleteBill = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
     "Hapus Tagihan?",
-    `Tagihan dari ${name} akan dihapus`,
+    `Tagihan ${name} akan dihapus dari daftar bill collector`,
     "Ya, Hapus!"
   );
   if (is_confirmed) {
     store.loadingHandler(true);
-    const query = `id=${btoa(id)}`;
-
+    const params: IObjectKeys = {
+      id: btoa(id),
+    };
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
     axiosIns
-      .delete(`collector/delete?${query}`)
+      .delete(`bills/delete?${query}`)
       .then(() => {
-        showActionResult(undefined, undefined, "Tagihan berhasil dihapus");
         getCollectorData();
+        showActionResult(undefined, undefined, "Bill Tagihan Telah Dihapus");
       })
-      .catch(err => {
+      .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
       })
@@ -610,22 +613,6 @@ watch(
               :data="data"
               @bill-collected="getCollectorData()"
             />
-            <ApproveBillCollectorModal
-              v-if="data.status === 'COLLECTED' && user.isAdmin"
-              :data="data"
-              @bill-collected="getCollectorData()"
-            />
-            
-            <VBtn
-              v-if="data.status === 'COLLECTING'"
-              size="35"
-              color="success"
-              prepend-icon="mdi-whatsapp"
-              @click="sendReminderMessage(data._id, data.name)"
-            >
-              
-            </VBtn>
-
             <VBtn
               v-if="user.isAdmin"
               size="35"
@@ -649,6 +636,21 @@ watch(
                 </VCard>
               </VMenu>
             </VBtn>
+            <VBtn
+              v-if="user.isAdmin"
+              size="35"
+              color="error"
+              @click="deleteBill(data._id, data.name)"
+            >
+              <VIcon icon="tabler-trash" />
+              <VTooltip activator="parent"> Hapus </VTooltip>
+            </VBtn>
+
+            <ApproveBillCollectorModal
+              v-if="data.status === 'COLLECTED' && user.isAdmin"
+              :data="data"
+              @bill-collected="getCollectorData()"
+            />
           </div>
           
         </template>

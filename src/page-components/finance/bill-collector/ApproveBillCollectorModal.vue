@@ -83,13 +83,8 @@ watch(props, () => {
     <!-- OPEN MODAL TRIGGER -->
     <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn
-          size="small"
-          color="info"
-          block
-          prepend-icon="tabler-check"
-        >
-          Approve Tagihan
+        <VBtn size="35" color="info" prepend-icon="tabler-check">
+          <VTooltip activator="parent"> Approve Tagihan </VTooltip>
         </VBtn>
       </slot>
     </div>
