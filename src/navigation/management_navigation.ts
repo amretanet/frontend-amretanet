@@ -30,6 +30,31 @@ export default [
     access: [2, 5, 6],
   },
   {
+    title: "Bill-Collector",
+    icon: { icon: "tabler-cash-register" },
+    access: [1, 3, 4, 7],
+    children: [
+      {
+        title: "Bill Collector",
+        to: "managements-bill-collector-user",
+        icon: { icon: "tabler-report-money" }, 
+        access: [1, 3, 7],
+      },
+      {
+        title: "Pelanggan Bill-Collector",
+        icon: { icon: "mdi-clipboard-user" },
+        to: "managements-bill-collector-pelanggan",
+        access: [1, 3, 7],
+      },
+      {
+        title: "Assigned Bill-Collector",
+        icon: { icon: "mdi-clipboard-user" },
+        to: "managements-bill-collector-assigned",
+        access: [1, 3, 7],
+      },
+    ],
+  },
+  {
     title: "Keuangan",
     icon: { icon: "tabler-cash-register" },
     access: [1, 3, 4, 7],
@@ -40,12 +65,12 @@ export default [
         to: "managements-finance-invoice",
         access: [1, 3, 4],
       },
-      {
-        title: "Bill Collector",
-        to: "managements-bill-collector",
-        icon: { icon: "tabler-report-money" }, 
-        access: [1, 3, 7],
-      },
+      // {
+      //   title: "Bill Collector",
+      //   to: "managements-bill-collector",
+      //   icon: { icon: "tabler-report-money" }, 
+      //   access: [1, 3, 7],
+      // },
       {
         title: "Pemasukan",
         icon: { icon: "mdi-bank-transfer-in" },
