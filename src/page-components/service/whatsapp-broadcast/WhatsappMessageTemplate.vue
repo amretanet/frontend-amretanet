@@ -134,6 +134,16 @@ const options = ref({
       value: "register",
     },
   ],
+  whatsapp_gateway: [
+    {
+      title: "BABLAST",
+      value: "BABLAST",
+    },
+    {
+      title: "MPWA",
+      value: "MPWA",
+    },
+  ],
 });
 const template_form = ref<VForm>();
 const template_data = ref({
@@ -151,6 +161,7 @@ const advance_template_data = ref({
   unique_code_status: false,
   unique_code_message: "",
   saldo_fee: "",
+  whatsapp_gateway: null,
 });
 const isolir_image_file = ref<File[]>([]);
 const thanks_image_file = ref<File[]>([]);
@@ -184,6 +195,8 @@ const getMessageTemplate = () => {
       res?.data?.template_data?.advance?.unique_code_message || "";
     advance_template_data.value.saldo_fee =
       res?.data?.template_data?.advance?.saldo_fee || 0;
+    advance_template_data.value.whatsapp_gateway =
+      res?.data?.template_data?.advance?.whatsapp_gateway || null;
   });
 };
 const updateMessageTemplate = () => {
@@ -378,12 +391,22 @@ watch(
             <VRow>
               <VCol cols="12" md="6" sm="12">
                 <VRow>
+                  <!-- WHATSAPP GATEWAY -->
+                  <VCol cols="12">
+                    <VSelect
+                      v-model="advance_template_data.whatsapp_gateway"
+                      label="Whatsapp Gateway"
+                      :items="options.whatsapp_gateway"
+                      item-title="title"
+                      item-value="value"
+                    />
+                  </VCol>
                   <!-- HEADER -->
                   <VCol cols="12">
                     <VTextarea
                       v-model="advance_template_data.header"
                       label="Header Pesan Whatsapp"
-                      rows="2"
+                      rows="1"
                       auto-grow
                     />
                   </VCol>

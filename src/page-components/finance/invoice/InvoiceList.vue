@@ -262,11 +262,11 @@ const confirmAssign = async () => {
     description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
     status: "COLLECTING",
     assigned_to: email,
-    repeat_monthly: assignDialog.value.repeat_monthly
+    repeat_monthly: assignDialog.value.repeat_monthly,
   };
 
   const query = Object.keys(params)
-    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
     .join("&");
 
   axiosIns
@@ -275,7 +275,7 @@ const confirmAssign = async () => {
       showActionResult(undefined, undefined, "Status tagihan telah diubah");
       getInvoiceData();
     })
-    .catch(err => {
+    .catch((err) => {
       const message = errorMessage(err);
       showActionResult(true, "error", message);
     })
@@ -283,8 +283,6 @@ const confirmAssign = async () => {
       store.loadingHandler(false);
     });
 };
-
-
 
 const assignDialog = ref({
   show: false,
@@ -311,12 +309,11 @@ const openAssignDialog = async (invoiceId: string, customerName: string) => {
     invoiceId,
     customerName,
     email: "",
-    repeat_monthly : false,
+    repeat_monthly: false,
   };
 
   await getCollectors();
 };
-
 
 const deleteInvoice = async (id: string, name: string) => {
   const is_confirmed = await confirmAction(
@@ -988,13 +985,18 @@ watch(
                     </VBtn>
                     <!-- PAY OFF BUTTON -->
                     <PayOffInvoiceModal
-                      v-if="data?.status == 'UNPAID' || data?.status == 'COLLECTING'"
+                      v-if="
+                        data?.status == 'UNPAID' || data?.status == 'COLLECTING'
+                      "
                       :data="data"
                       @invoice-pay-off="getInvoiceData()"
                     />
                     <!-- REMINDER BUTTON -->
                     <VBtn
-                      v-if="data?.status === 'UNPAID' || data?.status === 'COLLECTING'"
+                      v-if="
+                        data?.status === 'UNPAID' ||
+                        data?.status === 'COLLECTING'
+                      "
                       size="small"
                       color="success"
                       block
@@ -1015,7 +1017,6 @@ watch(
                     >
                       Ambil Tagihan
                     </VBtn>
-
 
                     <!-- Dialog assign collector -->
                     <VDialog v-model="assignDialog.show" max-width="500px">
@@ -1038,7 +1039,7 @@ watch(
                             v-model="assignDialog.repeat_monthly"
                             :items="[
                               { label: 'Sekali saja', value: false },
-                              { label: 'Ulangi bulan depan', value: true }
+                              { label: 'Ulangi bulan depan', value: true },
                             ]"
                             item-title="label"
                             item-value="value"
@@ -1050,12 +1051,15 @@ watch(
                         </VCardText>
                         <VCardActions>
                           <VSpacer />
-                          <VBtn text @click="assignDialog.show = false">Batal</VBtn>
-                          <VBtn color="primary" @click="confirmAssign">Assign</VBtn>
+                          <VBtn text @click="assignDialog.show = false"
+                            >Batal</VBtn
+                          >
+                          <VBtn color="primary" @click="confirmAssign"
+                            >Assign</VBtn
+                          >
                         </VCardActions>
                       </VCard>
                     </VDialog>
-
 
                     <!-- ACTIVATE BUTTON -->
                     <VBtn
