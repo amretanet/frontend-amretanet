@@ -90,6 +90,18 @@ const setTicketType = () => {
     }
   }
 };
+const customerAutocompleteFilter = (
+  item_title: any,
+  query_text: any,
+  item: any
+) => {
+  const text_one = item?.raw?.title.toLowerCase();
+  const text_two = item?.raw?.service_number.toString().toLowerCase();
+  const search_text = query_text.toLowerCase();
+  return (
+    text_one.indexOf(search_text) > -1 || text_two.indexOf(search_text) > -1
+  );
+};
 
 // LIFECYCLE HOOKS
 watch(is_showing_modal, () => {
@@ -175,6 +187,7 @@ watch(props, () => {
                   :items="options.user.filter((el:any)=>el.role===99)"
                   :rules="[requiredValidator]"
                   clearable
+                  :custom-filter="customerAutocompleteFilter"
                 >
                   <template #label>
                     Pelanggan <span class="text-error">*</span>
