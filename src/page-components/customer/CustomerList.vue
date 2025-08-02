@@ -152,6 +152,10 @@ const options = ref({
       value: "service_number",
     },
     {
+      title: "Kode Unik",
+      value: "unique_code",
+    },
+    {
       title: "Tanggal Daftar",
       value: "registered_at",
     },
@@ -642,7 +646,12 @@ onMounted(() => {
         :is_loading="is_loading"
       >
         <template #cell-name="{ data }">
-          {{ data.name }}
+          <div class="py-1">
+            <strong>{{ data.name }}</strong>
+            <div>
+              <VChip>Kode Unik : {{ data?.unique_code }}</VChip>
+            </div>
+          </div>
         </template>
         <template #cell-registered_at="{ data }">
           {{

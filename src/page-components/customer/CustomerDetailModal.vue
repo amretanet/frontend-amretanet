@@ -70,6 +70,12 @@ watch(is_showing_modal, () => {
               <HorizontalTextFormat
                 :title_cols="5"
                 :value_cols="7"
+                title="Kode Unik"
+                :value="customer_data?.unique_code || '-'"
+              />
+              <HorizontalTextFormat
+                :title_cols="5"
+                :value_cols="7"
                 title="Status"
               >
                 <template #value>
