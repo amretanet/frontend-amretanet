@@ -10,8 +10,12 @@ import {
   showActionResult,
   thousandSeparator,
 } from "@/modules";
-import { bill_collector_status_options, month_options, year_options } from "@/modules/options";
-import { stateManagement } from '@/store';
+import {
+  bill_collector_status_options,
+  month_options,
+  year_options,
+} from "@/modules/options";
+import { stateManagement } from "@/store";
 
 const user = stateManagement();
 
@@ -124,7 +128,6 @@ const collector_table_data = ref({
   body: [],
 });
 
-
 // const checked_collector_data = computed(() => {
 //   return collector_table_data.value.body
 //     .filter((el: any) => el.is_checked === true)
@@ -163,19 +166,19 @@ const getCollectorData = (
   };
 
   const query = Object.keys(params)
-    .map(key => `${key}=${params[key]}`)
+    .map((key) => `${key}=${params[key]}`)
     .join("&");
 
   axiosIns
     .get(`bills?${query}`, {
       cancelToken: cancel_request_token.value.token,
     })
-    .then(res => {
+    .then((res) => {
       cancel_request_token.value = null;
       collector_table_data.value.body = res?.data?.bill_data || [];
       pagination.value.count = res?.data?.pagination_info?.count || 0;
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.code !== "ERR_CANCELED") cancel_request_token.value = null;
     })
     .finally(() => {
@@ -200,7 +203,7 @@ const syncCollectorData = async () => {
         getCollectorData();
         showActionResult(undefined, undefined, "Data Kolektor Disinkronkan");
       })
-      .catch(err => {
+      .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
       })
@@ -292,13 +295,14 @@ const deleteBill = async (id: string, name: string) => {
 
 const checkAll = () => {
   const check_all = !is_check_all.value;
-  collector_table_data.value.body.forEach(el => (el.is_checked = check_all));
+  collector_table_data.value.body.forEach((el) => (el.is_checked = check_all));
 };
 
 const checkItemChecked = () => {
   is_check_all.value =
     collector_table_data.value.body.length !== 0 &&
-    checked_collector_data.value.length === collector_table_data.value.body.length;
+    checked_collector_data.value.length ===
+      collector_table_data.value.body.length;
 };
 
 const deleteSelectedCollector = async () => {
@@ -316,7 +320,7 @@ const deleteSelectedCollector = async () => {
         showActionResult(undefined, undefined, "Tagihan berhasil dihapus");
         getCollectorData();
       })
-      .catch(err => {
+      .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
       })
@@ -377,7 +381,6 @@ watch(
     }
   }
 );
-
 </script>
 
 <template>
@@ -389,9 +392,7 @@ watch(
 
       <template #title>
         {{
-          store.isCustomer
-            ? "Daftar Penagihan Saya"
-            : "Daftar Bill Collector"
+          store.isCustomer ? "Daftar Penagihan Saya" : "Daftar Bill Collector"
         }}
       </template>
 
@@ -462,7 +463,7 @@ watch(
 
         <!-- Sorting Controls -->
         <div
-          v-if="store.isAdmin || store.isCustomerService"
+          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">
@@ -477,7 +478,10 @@ watch(
           <VBtn
             size="40"
             color="secondary"
-            @click="changeSortDirection(); getCollectorData(false, true)"
+            @click="
+              changeSortDirection();
+              getCollectorData(false, true);
+            "
           >
             <VIcon
               :icon="
@@ -527,7 +531,7 @@ watch(
             clearable
             @update:model-value="
               removeQueryPath('status');
-              getCollectorData(true)
+              getCollectorData(true);
             "
           />
         </div>
@@ -588,14 +592,16 @@ watch(
             :color="billCollectorStatusFormatter(data.status).color"
             variant="outlined"
           >
-            <strong>{{ billCollectorStatusFormatter(data.status).title }}</strong>
+            <strong>{{
+              billCollectorStatusFormatter(data.status).title
+            }}</strong>
           </VChip>
         </template>
 
         <!-- CELL: Assigned To -->
         <template #cell-assigned_to="{ data }">
           <span class="text-sm text-gray-800">
-            {{ data.collector?.assigned_to || '—' }}
+            {{ data.collector?.assigned_to || "—" }}
           </span>
         </template>
 
@@ -609,12 +615,14 @@ watch(
             />
             <!-- EDIT BUTTON -->
             <EditBillCollectorModal
-              v-if="data.status === 'COLLECTING' && !user.isAdmin"
+              v-if="
+                data.status === 'COLLECTING' && !user.isAdmin && !store.isOwner
+              "
               :data="data"
               @bill-collected="getCollectorData()"
             />
             <VBtn
-              v-if="user.isAdmin"
+              v-if="store.isOwner || user.isAdmin"
               size="35"
               color="warning"
               prepend-icon="mdi-printer"
@@ -637,7 +645,7 @@ watch(
               </VMenu>
             </VBtn>
             <VBtn
-              v-if="user.isAdmin"
+              v-if="store.isOwner || user.isAdmin"
               size="35"
               color="error"
               @click="deleteBill(data._id, data.name)"
@@ -647,16 +655,15 @@ watch(
             </VBtn>
 
             <ApproveBillCollectorModal
-              v-if="data.status === 'COLLECTED' && user.isAdmin"
+              v-if="
+                data.status === 'COLLECTED' && (store.isOwner || user.isAdmin)
+              "
               :data="data"
               @bill-collected="getCollectorData()"
             />
           </div>
-          
         </template>
-        <template #cell-action-cetak="{ data }">
-          
-        </template>
+        <template #cell-action-cetak="{ data }"> </template>
 
         <!-- PAGINATION -->
         <template #pagination>
@@ -682,7 +689,6 @@ watch(
           </div>
         </template>
       </DataTable>
-
     </div>
   </VCard>
 </template>

@@ -10,11 +10,15 @@ import {
   showActionResult,
   thousandSeparator,
 } from "@/modules";
-import { bill_collector_status_options, month_options, year_options } from "@/modules/options";
-import { stateManagement } from '@/store';
-import { useRoute } from 'vue-router';
+import {
+  bill_collector_status_options,
+  month_options,
+  year_options,
+} from "@/modules/options";
+import { stateManagement } from "@/store";
+import { useRoute } from "vue-router";
 
-const route = useRoute()
+const route = useRoute();
 const user = stateManagement();
 
 import DataTable from "@/page-components/DataTable.vue";
@@ -126,7 +130,6 @@ const collector_table_data = ref({
   body: [],
 });
 
-
 const checked_collector_data = computed(() => {
   const checked_data = collector_table_data.value.body
     .filter((el: any) => el.is_checked === true)
@@ -138,16 +141,16 @@ const getCollectorData = (
   is_reset_page: boolean = false,
   is_refresh: boolean = false
 ) => {
-  is_loading.value = true
+  is_loading.value = true;
 
-  if (is_refresh) is_on_refresh.value = true
-  if (is_reset_page) pagination.value.page = 1
-  if (cancel_request_token.value) cancel_request_token.value.cancel()
+  if (is_refresh) is_on_refresh.value = true;
+  if (is_reset_page) pagination.value.page = 1;
+  if (cancel_request_token.value) cancel_request_token.value.cancel();
 
-  cancel_request_token.value = axios.CancelToken.source()
+  cancel_request_token.value = axios.CancelToken.source();
 
   // ✅ Use correct query param name from route
-  const assignedTo = route.query.assigned_to || ''
+  const assignedTo = route.query.assigned_to || "";
 
   const params: IObjectKeys = {
     ...(assignedTo ? { assigned_to: assignedTo } : {}),
@@ -155,33 +158,31 @@ const getCollectorData = (
     items: pagination.value.items,
     sort_key: sorting_data.value.key,
     sort_direction: sorting_data.value.direction,
-  }
+  };
 
   const query = Object.keys(params)
-    .map(key => `${key}=${encodeURIComponent(params[key])}`)
-    .join("&")
+    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+    .join("&");
 
   axiosIns
     .get(`bills/assigned?${query}`, {
       cancelToken: cancel_request_token.value.token,
     })
-    .then(res => {
-      cancel_request_token.value = null
-      collector_table_data.value.body = res?.data?.bill_data || []
-      pagination.value.count = res?.data?.pagination_info?.count || 0
+    .then((res) => {
+      cancel_request_token.value = null;
+      collector_table_data.value.body = res?.data?.bill_data || [];
+      pagination.value.count = res?.data?.pagination_info?.count || 0;
     })
-    .catch(err => {
-      if (err.code !== "ERR_CANCELED") cancel_request_token.value = null
+    .catch((err) => {
+      if (err.code !== "ERR_CANCELED") cancel_request_token.value = null;
     })
     .finally(() => {
       if (!cancel_request_token.value) {
-        is_loading.value = false
-        is_on_refresh.value = false
+        is_loading.value = false;
+        is_on_refresh.value = false;
       }
-    })
-}
-
-
+    });
+};
 
 const syncCollectorData = async () => {
   const is_confirmed = await confirmAction(
@@ -197,7 +198,7 @@ const syncCollectorData = async () => {
         getCollectorData();
         showActionResult(undefined, undefined, "Data Kolektor Disinkronkan");
       })
-      .catch(err => {
+      .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
       })
@@ -289,13 +290,14 @@ const deleteBill = async (id: string, name: string) => {
 
 const checkAll = () => {
   const check_all = !is_check_all.value;
-  collector_table_data.value.body.forEach(el => (el.is_checked = check_all));
+  collector_table_data.value.body.forEach((el) => (el.is_checked = check_all));
 };
 
 const checkItemChecked = () => {
   is_check_all.value =
     collector_table_data.value.body.length !== 0 &&
-    checked_collector_data.value.length === collector_table_data.value.body.length;
+    checked_collector_data.value.length ===
+      collector_table_data.value.body.length;
 };
 
 const deleteSelectedCollector = async () => {
@@ -313,7 +315,7 @@ const deleteSelectedCollector = async () => {
         showActionResult(undefined, undefined, "Tagihan berhasil dihapus");
         getCollectorData();
       })
-      .catch(err => {
+      .catch((err) => {
         const message = errorMessage(err);
         showActionResult(true, "error", message);
       })
@@ -374,7 +376,6 @@ watch(
     }
   }
 );
-
 </script>
 
 <template>
@@ -386,9 +387,7 @@ watch(
 
       <template #title>
         {{
-          store.isCustomer
-            ? "Daftar Penagihan Saya"
-            : "Daftar Bill Collector"
+          store.isCustomer ? "Daftar Penagihan Saya" : "Daftar Bill Collector"
         }}
       </template>
 
@@ -459,7 +458,7 @@ watch(
 
         <!-- Sorting Controls -->
         <div
-          v-if="store.isAdmin || store.isCustomerService"
+          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">
@@ -474,7 +473,10 @@ watch(
           <VBtn
             size="40"
             color="secondary"
-            @click="changeSortDirection(); getCollectorData(false, true)"
+            @click="
+              changeSortDirection();
+              getCollectorData(false, true);
+            "
           >
             <VIcon
               :icon="
@@ -524,7 +526,7 @@ watch(
             clearable
             @update:model-value="
               removeQueryPath('status');
-              getCollectorData(true)
+              getCollectorData(true);
             "
           />
         </div>
@@ -585,14 +587,16 @@ watch(
             :color="billCollectorStatusFormatter(data.status).color"
             variant="outlined"
           >
-            <strong>{{ billCollectorStatusFormatter(data.status).title }}</strong>
+            <strong>{{
+              billCollectorStatusFormatter(data.status).title
+            }}</strong>
           </VChip>
         </template>
 
         <!-- CELL: Assigned To -->
         <template #cell-assigned_to="{ data }">
           <span class="text-sm text-gray-800">
-            {{ data.collector?.assigned_to || '—' }}
+            {{ data.collector?.assigned_to || "—" }}
           </span>
         </template>
 
@@ -606,12 +610,14 @@ watch(
             />
             <!-- EDIT BUTTON -->
             <EditBillCollectorModal
-              v-if="data.status === 'COLLECTING' && !user.isAdmin"
+              v-if="
+                data.status === 'COLLECTING' && !user.isAdmin && !store.isOwner
+              "
               :data="data"
               @bill-collected="getCollectorData()"
             />
             <VBtn
-              v-if="user.isAdmin"
+              v-if="store.isOwner || user.isAdmin"
               size="35"
               color="warning"
               prepend-icon="mdi-printer"
@@ -634,7 +640,7 @@ watch(
               </VMenu>
             </VBtn>
             <VBtn
-              v-if="user.isAdmin"
+              v-if="store.isOwner || user.isAdmin"
               size="35"
               color="error"
               @click="deleteBill(data._id, data.name)"
@@ -644,16 +650,15 @@ watch(
             </VBtn>
 
             <ApproveBillCollectorModal
-              v-if="data.status === 'COLLECTED' && user.isAdmin"
+              v-if="
+                data.status === 'COLLECTED' && (store.isOwner || user.isAdmin)
+              "
               :data="data"
               @bill-collected="getCollectorData()"
             />
           </div>
-          
         </template>
-        <template #cell-action-cetak="{ data }">
-          
-        </template>
+        <template #cell-action-cetak="{ data }"> </template>
 
         <!-- PAGINATION -->
         <template #pagination>
@@ -679,7 +684,6 @@ watch(
           </div>
         </template>
       </DataTable>
-
     </div>
   </VCard>
 </template>

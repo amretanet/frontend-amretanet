@@ -26,9 +26,6 @@ export function isRoutesPermitted(user: any, to: any) {
   if (exclude_routes.includes(to.path)) {
     return true;
   }
-  if (!user?.role) {
-    return false;
-  }
   let navigation: any[] = [];
   if (user.role === 99) {
     navigation = flat_customer_navigation;

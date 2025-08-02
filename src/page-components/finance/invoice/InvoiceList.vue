@@ -759,7 +759,7 @@ watch(
           </VMenu>
         </VBtn>
         <div
-          v-if="store.isAdmin || store.isCustomerService"
+          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">

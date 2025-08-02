@@ -86,7 +86,11 @@ export const tube_color_options = [
 ];
 export const user_role_options = [
   {
-    title: "Admin/Owner",
+    title: "Owner",
+    value: 0,
+  },
+  {
+    title: "Admin",
     value: 1,
   },
   {

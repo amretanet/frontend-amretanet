@@ -168,7 +168,7 @@ const deleteUser = async (id: string, name: string) => {
   }
 };
 const activateUser = async (data: any) => {
-  if (store.getUser.role !== 1) {
+  if (store.getUser.role !== 1 && store.getUser.role !== 0) {
     return;
   }
   const is_confirmed = await confirmAction(

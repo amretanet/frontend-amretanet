@@ -44,7 +44,7 @@ const change_submission_table_data = ref({
       td_class: "text-center",
       width: "10px",
     },
-    ...(store.isAdmin
+    ...(store.isOwner || store.isAdmin
       ? [
           {
             title: "NAMA PELANGGAN",
@@ -307,7 +307,9 @@ onMounted(() => {
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <VBtn
-              v-if="data.status === 'PENDING' && store.isAdmin"
+              v-if="
+                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
+              "
               size="35"
               color="success"
               @click="
@@ -322,7 +324,9 @@ onMounted(() => {
               <VTooltip activator="parent"> Setujui Pengajuan </VTooltip>
             </VBtn>
             <VBtn
-              v-if="data.status === 'PENDING' && store.isAdmin"
+              v-if="
+                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
+              "
               size="35"
               color="error"
             >

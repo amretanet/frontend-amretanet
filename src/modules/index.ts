@@ -224,7 +224,10 @@ export const roleFormatter = (role: number) => {
   if (current_data) {
     return {
       title: current_data.title,
-      color: current_data.value === 1 ? "primary" : "warning",
+      color:
+        current_data.value === 0 || current_data.value === 1
+          ? "primary"
+          : "warning",
     };
   } else {
     return {
@@ -480,7 +483,7 @@ export const billCollectorStatusFormatter = (status: string) => {
       break;
     case "APPROVED":
       temp.title = "SUDAH DISETUJUI";
-      temp.color = "success"; 
+      temp.color = "success";
       break;
     default:
       temp.title = "TIDAK DIKETAHUI";
@@ -490,4 +493,3 @@ export const billCollectorStatusFormatter = (status: string) => {
 
   return temp;
 };
-

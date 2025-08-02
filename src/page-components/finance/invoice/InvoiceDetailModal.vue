@@ -89,7 +89,10 @@ watch(props, () => {
           <template #title> Detail Tagihan </template>
           <template #append>
             <VBtn
-              v-if="invoice_data?.status === 'PENDING' && store.isAdmin"
+              v-if="
+                invoice_data?.status === 'PENDING' &&
+                (store.isOwner || store.isAdmin)
+              "
               size="small"
               color="success"
               prepend-icon="tabler-checklist"

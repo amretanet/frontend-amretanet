@@ -43,7 +43,8 @@ const getTicketStats = () => {
   const params: IObjectKeys = {
     ...(store.isEngineer ? { id_assignee: store.getUser._id } : {}),
     ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
-    ...(!store.isAdmin &&
+    ...(!store.isOwner &&
+    !store.isAdmin &&
     !store.isCustomerService &&
     !store.isEngineer &&
     !store.isCustomer

@@ -102,7 +102,8 @@ const getTicketData = (is_refresh: boolean = false) => {
   const params: IObjectKeys = {
     ...(store.isEngineer ? { id_assignee: store.getUser._id } : {}),
     ...(store.isCustomer ? { id_reporter: store.getUser._id } : {}),
-    ...(!store.isAdmin &&
+    ...(!store.isOwner &&
+    !store.isAdmin &&
     !store.isCustomerService &&
     !store.isEngineer &&
     !store.isCustomer
@@ -348,7 +349,7 @@ onMounted(() => {
               prepend-inner-icon="mdi-account-hard-hat-outline"
               :readonly="
                 data.status === 'CLOSED' ||
-                (!store.isAdmin && !store.isCustomerService)
+                (!store.isOwner && !store.isAdmin && !store.isCustomerService)
               "
               @update:model-value="updateTicket(data)"
             />
@@ -385,7 +386,7 @@ onMounted(() => {
             <DetailTicketModal :data="data" />
             <EditTicketModal
               v-if="
-                (store.isAdmin || store.isCustomerService) &&
+                (store.isOwner || store.isAdmin || store.isCustomerService) &&
                 data.status !== 'CLOSED'
               "
               :data="data"
@@ -393,7 +394,7 @@ onMounted(() => {
               @ticket-updated="getTicketData()"
             />
             <VBtn
-              v-if="store.isAdmin || store.isCustomerService"
+              v-if="store.isOwner || store.isAdmin || store.isCustomerService"
               size="35"
               color="error"
               @click="deleteTicket(data._id, data.name)"
