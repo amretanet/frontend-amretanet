@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import BillCollectorListUser from "@/page-components/finance/bill-collector/BillCollectorListUser.vue";
+import VerifyInvoiceList from "@/page-components/finance/verify-invoice/VerifyInvoiceList.vue";
 import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-user-share",
-    name: "Bill Collector",
+    icon: "tabler-cash-register",
+    name: "Keuangan",
+  },
+  {
+    name: "Verifikasi Tagihan",
   },
 ]);
 </script>
@@ -16,12 +19,11 @@ const path_data = ref([
       <PageHeader :data="path_data" />
     </VCol>
     <VCol cols="12">
-      <BillCollectorListUser />
+      <VerifyInvoiceList />
     </VCol>
   </VRow>
 </template>
-
 <route lang="yaml">
 meta:
-  title: Bill-Collector
+  title: Verifikasi Tagihan
 </route>

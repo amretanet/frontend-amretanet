@@ -322,6 +322,23 @@ export const paymentStatusFormatter = (status: string) => {
   }
   return temp;
 };
+export const ownerVerifiedStatusFormatter = (status: string) => {
+  let temp = {
+    title: "",
+    color: "",
+  };
+  if (status == "ACCEPTED") {
+    temp.title = "DISETUJUI";
+    temp.color = "success";
+  } else if (status == "REJECTED") {
+    temp.title = "DITOLAK";
+    temp.color = "error";
+  } else if (status == "PENDING") {
+    temp.title = "MENUNGGU KONFIRMASI";
+    temp.color = "warning";
+  }
+  return temp;
+};
 export const getLocation = (): Promise<GeolocationPosition> => {
   return new Promise((resolve, reject) => {
     if ("geolocation" in navigator) {

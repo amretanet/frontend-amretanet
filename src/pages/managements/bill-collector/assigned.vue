@@ -4,11 +4,11 @@ import PageHeader from "@/page-components/PageHeader.vue";
 
 const path_data = ref([
   {
-    icon: "tabler-cash-register",
-    name: "bill-collector-assigned",
+    icon: "tabler-user-share",
+    name: "Bill Collector",
   },
   {
-    name: 'bill-collector-assigned',
+    name: "Assigned",
   },
 ]);
 </script>
@@ -26,5 +26,5 @@ const path_data = ref([
 
 <route lang="yaml">
 meta:
-  title: bill-collector-assigned
+  title: Bill Collector
 </route>

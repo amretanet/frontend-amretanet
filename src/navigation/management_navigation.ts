@@ -31,7 +31,7 @@ export default [
   },
   {
     title: "Bill-Collector",
-    icon: { icon: "tabler-cash-register" },
+    icon: { icon: "tabler-user-share" },
     access: [0, 1, 3, 4, 7],
     children: [
       {
@@ -64,6 +64,12 @@ export default [
         icon: { icon: "tabler-file-invoice" },
         to: "managements-finance-invoice",
         access: [0, 1, 3, 4],
+      },
+      {
+        title: "Verifikasi Tagihan",
+        icon: { icon: "tabler-checklist" },
+        to: "managements-finance-verify-invoice",
+        access: [0],
       },
       {
         title: "Pemasukan",

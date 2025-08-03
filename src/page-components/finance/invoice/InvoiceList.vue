@@ -195,45 +195,7 @@ const getInvoiceData = (
       }
     });
 };
-// const collectBill = async (invoiceId: string, customerName: string) => {
-//   const formatted_status = billCollectorStatusFormatter("COLLECTING").title;
 
-//   const is_confirmed = await confirmAction(
-//     "Ambil Tagihan?",
-//     `Tagihan atas nama ${customerName} akan diubah menjadi status "${formatted_status}"`,
-//     "Ya, Ambil!"
-//   );
-
-//   if (!is_confirmed) return;
-
-//   store.loadingHandler(true);
-
-//   const params: IObjectKeys = {
-//     id: btoa(invoiceId),
-//     description: `Tagihan atas nama ${customerName} sedang dikoleksi`,
-//     status: "COLLECTING",
-//   };
-
-//   const query = Object.keys(params)
-//     .map(key => `${key}=${encodeURIComponent(params[key])}`)
-//     .join("&");
-
-//   axiosIns
-//     .put(`invoice/update/collector-status?${query}`)
-//     .then(() => {
-//       showActionResult(undefined, undefined, "Status tagihan telah diubah");
-//       getInvoiceData(); // refresh your list
-//     })
-//     .catch(err => {
-//       const message = errorMessage(err);
-//       showActionResult(true, "error", message);
-//     })
-//     .finally(() => {
-//       store.loadingHandler(false);
-//     });
-// };
-
-// FUNCTION FOR GET BILLS AND ASSIGN TO USER
 const confirmAssign = async () => {
   const { invoiceId, customerName, email } = assignDialog.value;
 
