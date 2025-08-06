@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { requiredValidator } from "@/@core/utils/validators";
+import { integerValidator, requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult } from "@/modules";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
@@ -38,6 +38,7 @@ const router_data = ref({
   api_port: props.data.api_port || 0,
   username: props.data.username || "",
   password: props.data.password || "",
+  service_number_prefix: props.data.service_number_prefix || 0,
   status: props.data.status || 1,
 });
 
@@ -118,6 +119,18 @@ watch(props, () => {
                 >
                   <template #label>
                     Host/IP Address <span class="text-error">*</span>
+                  </template>
+                </VTextField>
+              </VCol>
+              <!-- SERVICE NUMBER PREFIX -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="router_data.service_number_prefix"
+                  clearable
+                  :rules="[requiredValidator, integerValidator]"
+                >
+                  <template #label>
+                    Prefiks Nomor Layanan <span class="text-error">*</span>
                   </template>
                 </VTextField>
               </VCol>

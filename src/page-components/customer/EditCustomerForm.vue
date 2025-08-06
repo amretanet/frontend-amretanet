@@ -105,6 +105,19 @@ const getCustomerData = () => {
     }
   }
 };
+const getServiceNumber = () => {
+  const id_router = customer_data.value.id_router;
+  if (!id_router) {
+    return;
+  }
+  axiosIns
+    .get(`customer/generate-service-number?id_router=${id_router}`)
+    .then((res) => {
+      customer_data.value.service_number = res?.data?.service_number || 0;
+      customer_data.value.pppoe_username = res?.data?.pppoe_username || null;
+      customer_data.value.pppoe_password = res?.data?.pppoe_password || null;
+    });
+};
 const getPackageOptions = () => {
   axiosIns.get("options/package").then((res) => {
     options.value.package = res?.data?.package_options || [];
@@ -599,6 +612,7 @@ onMounted(() => {
                   v-model="customer_data.id_router"
                   :items="options.router"
                   :rules="[requiredValidator]"
+                  @update:model-value="getServiceNumber()"
                 >
                   <template #label>
                     Router <span class="text-error">*</span>

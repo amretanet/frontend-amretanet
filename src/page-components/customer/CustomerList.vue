@@ -661,9 +661,15 @@ onMounted(() => {
           }}
         </template>
         <template #cell-service_number="{ data }">
-          <VChip color="primary" variant="outlined" class="font-weight-bold">
+          <VChip
+            v-if="data.service_number"
+            color="primary"
+            variant="outlined"
+            class="font-weight-bold"
+          >
             {{ data.service_number }}
           </VChip>
+          <div v-else>-</div>
         </template>
         <template #cell-odp_name="{ data }">
           <VChip color="primary" variant="outlined" class="font-weight-bold">

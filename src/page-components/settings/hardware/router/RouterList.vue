@@ -57,6 +57,12 @@ const router_table_data = ref({
       td_class: "text-left text-no-wrap",
     },
     {
+      title: "PREFIKS NOMOR LAYANAN",
+      key: "service_number_prefix",
+      th_class: "text-left",
+      td_class: "text-left text-no-wrap",
+    },
+    {
       title: "PORT API",
       key: "api_port",
       th_class: "text-center",
