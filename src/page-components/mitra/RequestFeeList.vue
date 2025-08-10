@@ -227,7 +227,7 @@ const confirmMitraFeeRequest = async (
 // LIFECYCLE HOOKS
 onMounted(() => {
   getMitraFee();
-  if (store.isOwner || store.isAdmin) {
+  if (store.isOwnerAdmin) {
     getUserOptions();
   }
   if (store.isMitra) {
@@ -288,11 +288,7 @@ watch(props, (new_val) => {
             @update:model-value="getMitraFee()"
           />
         </div>
-        <div
-          v-if="store.isOwner || store.isAdmin"
-          class="wm-100"
-          style="min-width: 10rem"
-        >
+        <div v-if="store.isOwnerAdmin" class="wm-100" style="min-width: 10rem">
           <VAutocomplete
             v-model="filter_data.id_user"
             label="Mitra"
@@ -396,9 +392,7 @@ watch(props, (new_val) => {
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <AcceptFeeModal
-              v-if="
-                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
-              "
+              v-if="data.status === 'PENDING' && store.isOwnerAdmin"
               :data="data"
               @fee-accepted="getMitraFee()"
             >
@@ -411,9 +405,7 @@ watch(props, (new_val) => {
             </AcceptFeeModal>
 
             <VBtn
-              v-if="
-                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
-              "
+              v-if="data.status === 'PENDING' && store.isOwnerAdmin"
               size="35"
               color="error"
             >

@@ -5,7 +5,7 @@ import {
   dataCountFormatter,
   dateFormatterID,
   errorMessage,
-  ownerVerifiedStatusFormatter,
+  requestedStatusFormatter,
   paymentStatusFormatter,
   setPaginationLength,
   showActionResult,
@@ -214,7 +214,7 @@ const changeSortDirection = () => {
     sorting_data.value.direction === "asc" ? "desc" : "asc";
 };
 const updateVerifiedStatusSelectedInvoice = async (status: string) => {
-  const formatted_status = ownerVerifiedStatusFormatter(status).title;
+  const formatted_status = requestedStatusFormatter(status).title;
   const is_confirmed = await confirmAction(
     `${
       status == "ACCEPTED" ? "Setujui" : "Tolak"
@@ -255,7 +255,7 @@ const updateVerifiedStatus = async (
   status: string,
   name: string
 ) => {
-  const formatted_status = ownerVerifiedStatusFormatter(status).title;
+  const formatted_status = requestedStatusFormatter(status).title;
   const is_confirmed = await confirmAction(
     `${status == "ACCEPTED" ? "Setujui" : "Tolak"} Pembayaran Invoice ${name}?`,
     `Status Verifikasi Invoice ${name} akan diubah menjadi ${formatted_status}`,
@@ -471,15 +471,11 @@ watch(checked_invoice_data, () => {
         <!-- CUSTOM OWNER VERIFIED STATUS -->
         <template #cell-owner_verified_status="{ data }">
           <VChip
-            :color="
-              ownerVerifiedStatusFormatter(data?.owner_verified_status).color
-            "
+            :color="requestedStatusFormatter(data?.owner_verified_status).color"
             variant="outlined"
           >
             <strong>
-              {{
-                ownerVerifiedStatusFormatter(data?.owner_verified_status).title
-              }}
+              {{ requestedStatusFormatter(data?.owner_verified_status).title }}
             </strong>
           </VChip>
         </template>

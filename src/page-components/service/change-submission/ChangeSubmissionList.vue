@@ -15,7 +15,7 @@ import axiosIns from "@/plugins/axios";
 import axios from "axios";
 import AddChangeSubmissionModal from "./AddChangeSubmissionModal.vue";
 import EditChangeSubmissionModal from "./EditChangeSubmissionModal.vue";
-import { change_submission_status_options } from "@/modules/options";
+import { requested_status_options } from "@/modules/options";
 import { stateManagement } from "@/store";
 
 // VARIABLES
@@ -28,7 +28,7 @@ const filter_data = ref({
 const is_on_refresh = ref(true);
 const is_loading = ref(true);
 const options = ref({
-  status: change_submission_status_options,
+  status: requested_status_options,
 });
 const pagination = ref({
   page: 1,
@@ -44,7 +44,7 @@ const change_submission_table_data = ref({
       td_class: "text-center",
       width: "10px",
     },
-    ...(store.isOwner || store.isAdmin
+    ...(store.isOwnerAdmin
       ? [
           {
             title: "NAMA PELANGGAN",
@@ -307,9 +307,7 @@ onMounted(() => {
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 py-1 justify-center">
             <VBtn
-              v-if="
-                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
-              "
+              v-if="data.status === 'PENDING' && store.isOwnerAdmin"
               size="35"
               color="success"
               @click="
@@ -324,9 +322,7 @@ onMounted(() => {
               <VTooltip activator="parent"> Setujui Pengajuan </VTooltip>
             </VBtn>
             <VBtn
-              v-if="
-                data.status === 'PENDING' && (store.isOwner || store.isAdmin)
-              "
+              v-if="data.status === 'PENDING' && store.isOwnerAdmin"
               size="35"
               color="error"
             >

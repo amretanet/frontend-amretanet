@@ -31,15 +31,11 @@ const current_tab = ref("send-message");
     </VCol>
     <VCol cols="12">
       <VWindow v-model="current_tab">
-        <VWindowItem value="send-message">
-          <SendWhatsappMessage />
-        </VWindowItem>
-        <VWindowItem value="message-scheduler">
-          <WhatsappMessageScheduler />
-        </VWindowItem>
-        <VWindowItem value="message-template">
-          <WhatsappMessageTemplate />
-        </VWindowItem>
+        <SendWhatsappMessage v-if="current_tab == 'send-message'" />
+        <WhatsappMessageScheduler
+          v-else-if="current_tab == 'message-scheduler'"
+        />
+        <WhatsappMessageTemplate v-else />
       </VWindow>
     </VCol>
   </VRow>

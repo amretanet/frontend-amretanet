@@ -480,7 +480,7 @@ onMounted(() => {
           "
         />
         <div
-          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
+          v-if="store.isOwnerAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">

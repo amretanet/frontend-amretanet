@@ -41,6 +41,8 @@ export const stateManagement = defineStore({
     getRefreshToken: (state) => state.refresh_token,
     getCurrentRouter: (state) => state.current_router,
     getIsLoading: (state) => state.is_loading,
+    isOwnerAdmin: (state) =>
+      state.user.role == 0 || state.user.role == 1 ? true : false,
     isOwner: (state) => (state.user.role == 0 ? true : false),
     isAdmin: (state) => (state.user.role == 1 ? true : false),
     isSales: (state) => (state.user.role == 2 ? true : false),

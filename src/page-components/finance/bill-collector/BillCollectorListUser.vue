@@ -304,7 +304,7 @@ const removeQueryPath = (key: string) => {
 };
 
 function goToAssigned(email) {
-  if (user.isOwner || user.isAdmin) {
+  if (user.isOwnerAdmin) {
     router.push({
       path: "/managements/bill-collector/assigned",
       query: {
@@ -418,7 +418,7 @@ watch(
 
         <!-- Sorting Controls -->
         <div
-          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
+          v-if="store.isOwnerAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">
@@ -564,7 +564,7 @@ watch(
         <template #cell-action="{ data }">
           <div class="d-flex gap-1 justify-center">
             <VBtn
-              v-if="store.isOwner || user.isAdmin"
+              v-if="store.isOwnerAdmin"
               size="small"
               color="success"
               @click="goToAssigned(data.email)"
@@ -574,7 +574,7 @@ watch(
             </VBtn>
 
             <VBtn
-              v-if="store.isOwner || user.isAdmin"
+              v-if="store.isOwnerAdmin"
               size="35"
               color="error"
               @click="deleteBill(data._id, data.name)"
@@ -584,9 +584,7 @@ watch(
             </VBtn>
 
             <ApproveBillCollectorModal
-              v-if="
-                data.status === 'COLLECTED' && (store.isOwner || user.isAdmin)
-              "
+              v-if="data.status === 'COLLECTED' && store.isOwnerAdmin"
               :data="data"
               @bill-collected="getCollectorData()"
             />

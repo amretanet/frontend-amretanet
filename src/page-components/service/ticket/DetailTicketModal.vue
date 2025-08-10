@@ -190,25 +190,25 @@ const is_showing_modal = ref(false);
             :value="props?.data?.odp || '-'"
           />
           <HorizontalTextFormat
-            v-if="props?.data?.cable"
+            v-if="props?.data?.precon?.name"
             :title_cols="5"
             :value_cols="7"
-            title="Panjang Kabel"
-            :value="props?.data?.cable + ' Meter' || '-'"
+            title="Precon"
+            :value="props?.data?.precon?.name || '-'"
           />
           <HorizontalTextFormat
-            v-if="props?.data?.hardware"
+            v-if="props?.data?.ont?.name"
             :title_cols="5"
             :value_cols="7"
-            title="Perangkat"
-            :value="props?.data?.hardware || '-'"
+            title="ONT"
+            :value="props?.data?.ont?.name || '-'"
           />
           <HorizontalTextFormat
-            v-if="props?.data?.serial_number"
+            v-if="props?.data?.ont?.serial_number"
             :title_cols="5"
             :value_cols="7"
             title="Serial Number"
-            :value="props?.data?.serial_number || '-'"
+            :value="props?.data?.ont?.serial_number || '-'"
           />
           <HorizontalTextFormat
             v-if="props?.data?.tube"

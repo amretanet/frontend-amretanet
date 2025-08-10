@@ -160,6 +160,31 @@ export default [
     ],
   },
   {
+    title: "Inventory",
+    icon: { icon: "tabler-folder-open" },
+    access: [0, 1, 5],
+    children: [
+      {
+        title: "Kategori",
+        icon: { icon: "tabler-category" },
+        to: "managements-inventory-category",
+        access: [0, 1],
+      },
+      {
+        title: "Barang",
+        icon: { icon: "tabler-device-airpods-case" },
+        to: "managements-inventory-inventory",
+        access: [0, 1, 5],
+      },
+      {
+        title: "Pengajuan Barang",
+        icon: { icon: "tabler-git-pull-request" },
+        to: "managements-inventory-inventory-request",
+        access: [0, 1, 5],
+      },
+    ],
+  },
+  {
     title: "Pengaturan",
     icon: { icon: "tabler-settings-cog" },
     access: [0, 1, 4],

@@ -22,7 +22,7 @@ const path_data = ref([
     <VCol cols="12" class="py-0">
       <PageHeader :data="path_data" />
     </VCol>
-    <VCol v-if="store.isOwner || store.isAdmin" cols="12">
+    <VCol v-if="store.isOwnerAdmin" cols="12">
       <IncomeStats />
     </VCol>
     <VCol v-if="!store.isMitra" cols="12">
@@ -31,7 +31,7 @@ const path_data = ref([
     <VCol cols="12">
       <CustomerStatusStats />
     </VCol>
-    <VCol v-if="store.isOwner || store.isAdmin" cols="12">
+    <VCol v-if="store.isOwnerAdmin" cols="12">
       <MikrotikSystemResource />
     </VCol>
     <VCol cols="12">

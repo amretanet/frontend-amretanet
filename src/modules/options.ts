@@ -1,4 +1,4 @@
-export const change_submission_status_options = [
+export const requested_status_options = [
   {
     title: "Menunggu",
     value: "PENDING",

@@ -322,7 +322,7 @@ export const paymentStatusFormatter = (status: string) => {
   }
   return temp;
 };
-export const ownerVerifiedStatusFormatter = (status: string) => {
+export const requestedStatusFormatter = (status: string) => {
   let temp = {
     title: "",
     color: "",

@@ -29,12 +29,11 @@ const current_tab = ref("mitra-list");
     </VCol>
     <VCol cols="12">
       <VWindow v-model="current_tab">
-        <VWindowItem value="mitra-list">
-          <MitraList :current_tab="current_tab" />
-        </VWindowItem>
-        <VWindowItem value="request-fee-list">
-          <RequestFeeList :current_tab="current_tab" />
-        </VWindowItem>
+        <MitraList
+          v-if="current_tab == 'mitra-list'"
+          :current_tab="current_tab"
+        />
+        <RequestFeeList v-else :current_tab="current_tab" />
       </VWindow>
     </VCol>
   </VRow>

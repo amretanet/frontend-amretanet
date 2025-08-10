@@ -463,7 +463,7 @@ watch(
 
         <!-- Sorting Controls -->
         <div
-          v-if="store.isOwner || store.isAdmin || store.isCustomerService"
+          v-if="store.isOwnerAdmin || store.isCustomerService"
           class="d-flex gap-2 flex-nowrap"
         >
           <div style="min-width: 10rem">
@@ -615,14 +615,12 @@ watch(
             />
             <!-- EDIT BUTTON -->
             <EditBillCollectorModal
-              v-if="
-                data.status === 'COLLECTING' && !user.isAdmin && !store.isOwner
-              "
+              v-if="data.status === 'COLLECTING' && !user.isOwnerAdmin"
               :data="data"
               @bill-collected="getCollectorData()"
             />
             <VBtn
-              v-if="store.isOwner || user.isAdmin"
+              v-if="store.isOwnerAdmin"
               size="35"
               color="warning"
               prepend-icon="mdi-printer"
@@ -645,7 +643,7 @@ watch(
               </VMenu>
             </VBtn>
             <VBtn
-              v-if="store.isOwner || user.isAdmin"
+              v-if="store.isOwnerAdmin"
               size="35"
               color="error"
               @click="deleteBill(data._id, data.name)"

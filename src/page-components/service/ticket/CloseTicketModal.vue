@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { requiredValidator } from "@/@core/utils/validators";
+import { integerValidator, requiredValidator } from "@/@core/utils/validators";
 import {
   errorMessage,
   getLocation,
@@ -10,6 +10,7 @@ import { ticket_status_options, tube_color_options } from "@/modules/options";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
+import { stateManagement } from "@/store";
 import { VForm } from "vuetify/components";
 
 // INTERFACE
@@ -21,6 +22,7 @@ interface IEmits {
 }
 
 // VARIABLE
+const store = stateManagement();
 const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
@@ -33,6 +35,7 @@ const options = ref({
   status: ticket_status_options,
   title: [],
   hardware: [],
+  inventory: [],
 });
 const ticket_form = ref<VForm>();
 const ticket_data = ref({
@@ -40,10 +43,16 @@ const ticket_data = ref({
   name: props?.data?.name || null,
   id_odc: props?.data?.id_odc || null,
   id_odp: props?.data?.id_odp || null,
+  precon: {
+    id: null,
+    quantity: 1,
+  },
+  ont: {
+    id: null,
+    quantity: 1,
+    serial_number: null,
+  },
   tube: null,
-  cable: 0,
-  hardware: null,
-  serial_number: null,
   re_odp: 0,
   re_ont: 0,
   odp_image: [] as File[],
@@ -61,6 +70,13 @@ const ticket_data = ref({
 });
 
 // FUNCTION
+const getInventoryOptions = () => {
+  axiosIns
+    .get(`options/inventory?position=ENGINEER&id_pic=${store.getUser._id}`)
+    .then((res) => {
+      options.value.inventory = res?.data?.inventory_options || [];
+    });
+};
 const getHardwareOptions = () => {
   axiosIns.get("options/hardware").then((res) => {
     options.value.hardware = res.data.hardware_options || [];
@@ -116,9 +132,15 @@ const closeTicket = async () => {
     id_odc: ticket_data.value.id_odc,
     id_odp: ticket_data.value.id_odp,
     tube: ticket_data.value.tube,
-    cable: ticket_data.value.cable,
-    hardware: ticket_data.value.hardware,
-    serial_number: ticket_data.value.serial_number,
+    precon: {
+      id: ticket_data.value.precon.id,
+      quantity: ticket_data.value.precon.quantity,
+    },
+    ont: {
+      id: ticket_data.value.ont.id,
+      quantity: ticket_data.value.ont.quantity,
+      serial_number: ticket_data.value.ont.serial_number,
+    },
     re_odp: ticket_data.value.re_odp,
     re_ont: ticket_data.value.re_ont,
     evidence: {
@@ -217,6 +239,7 @@ watch(is_showing_modal, () => {
     getODCOptions();
     getODPOptions();
     getHardwareOptions();
+    getInventoryOptions();
   }
 });
 </script>
@@ -263,33 +286,98 @@ watch(is_showing_modal, () => {
                   <template #label> ODP </template>
                 </VAutocomplete>
               </VCol>
-              <!-- TUBE/CORE -->
-              <VCol cols="12" md="7">
-                <VAutocomplete v-model="ticket_data.tube" :items="options.tube">
-                  <template #label> Warna /Core (FOM) </template>
+              <!-- PRECON NAME -->
+              <VCol cols="12" md="8">
+                <VAutocomplete
+                  v-model="ticket_data.precon.id"
+                  label="Precon"
+                  item-title="name"
+                  item-value="_id"
+                  :items="options.inventory.filter((el: any) => el.category.toUpperCase() === 'PRECON')"
+                  clearable
+                >
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #name>
+                        <span class="fs-14">
+                          {{ item?.raw?.name }}
+                        </span>
+                      </template>
+                      <template #subtitle>
+                        <VChip
+                          size="x-small"
+                          variant="outlined"
+                          color="success"
+                          class="font-weight-bold"
+                        >
+                          Tersisa: {{ item?.raw?.quantity }}
+                        </VChip>
+                      </template>
+                    </VListItem>
+                  </template>
                 </VAutocomplete>
               </VCol>
-              <!-- CABLE -->
-              <VCol cols="12" md="5">
-                <VTextField v-model="ticket_data.cable" type="number">
-                  <template #label> Kabel </template>
-                  <template #append-inner> Meter </template>
+              <!-- PRECON QUANTITY -->
+              <VCol cols="12" md="4">
+                <VTextField
+                  v-model="ticket_data.precon.quantity"
+                  type="number"
+                  :rules="[integerValidator]"
+                >
+                  <template #label> Jumlah </template>
                 </VTextField>
               </VCol>
-              <!-- HARDWARE -->
-              <VCol cols="12" md="6">
-                <VCombobox
-                  v-model="ticket_data.hardware"
-                  label="Perangkat"
-                  :items="options.hardware"
+              <!-- ONT NAME -->
+              <VCol cols="12" md="8">
+                <VAutocomplete
+                  v-model="ticket_data.ont.id"
+                  label="ONT"
+                  item-title="name"
+                  item-value="_id"
+                  :items="options.inventory.filter((el:any)=>el.category.toUpperCase() == 'ONT')"
                   clearable
+                >
+                  <template v-slot:item="{ props, item }">
+                    <VListItem v-bind="props" class="px-2">
+                      <template #name>
+                        <span class="fs-14">
+                          {{ item?.raw?.name }}
+                        </span>
+                      </template>
+                      <template #subtitle>
+                        <VChip
+                          size="x-small"
+                          variant="outlined"
+                          color="success"
+                          class="font-weight-bold"
+                        >
+                          Tersisa: {{ item?.raw?.quantity }}
+                        </VChip>
+                      </template>
+                    </VListItem>
+                  </template>
+                </VAutocomplete>
+              </VCol>
+              <!-- ONT QUANTITY -->
+              <VCol cols="12" md="4">
+                <VTextField
+                  v-model="ticket_data.ont.quantity"
+                  label="Jumlah"
+                  type="number"
+                  :rules="[integerValidator]"
                 />
               </VCol>
               <!-- SERIAL NUMBER -->
               <VCol cols="12" md="6">
-                <VTextField v-model="ticket_data.serial_number">
-                  <template #label> Serial Number/ Mac Address </template>
+                <VTextField v-model="ticket_data.ont.serial_number">
+                  <template #label> Serial Number ONT </template>
                 </VTextField>
+              </VCol>
+              <!-- TUBE/CORE -->
+              <VCol cols="12" md="6">
+                <VAutocomplete v-model="ticket_data.tube" :items="options.tube">
+                  <template #label> Warna /Core (FOM) </template>
+                </VAutocomplete>
               </VCol>
               <!-- DUMPING BEFORE -->
               <VCol cols="12" md="6">
