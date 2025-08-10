@@ -283,7 +283,7 @@ watch(props, () => {
         <template #cell-action="{ data, index }">
           <div class="d-flex gap-1 flex-nowrap py-1 justify-center">
             <EditInventoryModal
-              v-if="props.position == 'WAREHOUSE'"
+              v-if="props.position == 'WAREHOUSE' || store.isOwnerAdmin"
               :data="data"
               :category_options="options.category"
               @inventory-updated="getInventoryData()"
