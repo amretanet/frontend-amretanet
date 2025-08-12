@@ -81,7 +81,7 @@ watch(is_showing_modal, () => {
           <template #prepend>
             <VIcon icon="tabler-edit" />
           </template>
-          <template #title> Edit Kategori </template>
+          <template #title> Edit Barang </template>
         </VCardItem>
         <VCardText>
           <VForm

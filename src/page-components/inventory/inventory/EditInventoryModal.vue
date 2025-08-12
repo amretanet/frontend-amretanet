@@ -5,6 +5,7 @@ import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
 import { stateManagement } from "@/store";
+import { inventory_position_options } from "@/modules/options";
 
 // INTERFACE
 interface IProps {
@@ -80,7 +81,7 @@ watch(props, () => {
           <template #prepend>
             <VIcon icon="tabler-edit" />
           </template>
-          <template #title> Edit Kategori </template>
+          <template #title> Edit Barang </template>
         </VCardItem>
         <VCardText>
           <VForm ref="inventory_form" @submit.prevent="updateInventory">

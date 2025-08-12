@@ -72,7 +72,7 @@ watch(is_showing_modal, () => {
     <div @click="is_showing_modal = true">
       <slot name="trigger-button">
         <VBtn size="40" prepend-icon="tabler-plus">
-          <VTooltip activator="parent"> Tambah Kategori </VTooltip>
+          <VTooltip activator="parent"> Tambah Barang </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -83,7 +83,7 @@ watch(is_showing_modal, () => {
           <template #prepend>
             <VIcon icon="tabler-plus" />
           </template>
-          <template #title> Tambah Kategori </template>
+          <template #title> Tambah Barang </template>
         </VCardItem>
         <VCardText>
           <VForm

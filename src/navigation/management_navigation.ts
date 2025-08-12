@@ -182,6 +182,12 @@ export default [
         to: "managements-inventory-inventory-request",
         access: [0, 1, 5],
       },
+      {
+        title: "Laporan",
+        icon: { icon: "tabler-file-report" },
+        to: "managements-inventory-report",
+        access: [0, 1],
+      },
     ],
   },
   {

@@ -24,6 +24,7 @@ const path_data = ref([
         <template #extend-header>
           <VTabs v-if="store.isOwnerAdmin" v-model="current_tab">
             <VTab value="WAREHOUSE"> GUDANG </VTab>
+            <VTab value="ONSITE"> ONSITE LAPANGAN </VTab>
             <VTab value="ENGINEER"> TEKNISI </VTab>
             <VTab value="CUSTOMER"> PELANGGAN </VTab>
           </VTabs>
@@ -32,6 +33,7 @@ const path_data = ref([
     </VCol>
     <VCol cols="12">
       <InventoryList v-if="current_tab == 'WAREHOUSE'" position="WAREHOUSE" />
+      <InventoryList v-if="current_tab == 'ONSITE'" position="ONSITE" />
       <InventoryList v-if="current_tab == 'ENGINEER'" position="ENGINEER" />
       <InventoryList v-if="current_tab == 'CUSTOMER'" position="CUSTOMER" />
     </VCol>

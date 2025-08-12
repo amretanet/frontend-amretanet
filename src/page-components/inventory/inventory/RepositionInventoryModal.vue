@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import { integerValidator, requiredValidator } from "@/@core/utils/validators";
 import { errorMessage, showActionResult } from "@/modules";
-import { inventory_position_options } from "@/modules/options";
 import ProcessButton from "@/page-components/ProcessButton.vue";
 import axiosIns from "@/plugins/axios";
 import { VForm } from "vuetify/components";
+import { stateManagement } from "@/store";
+import { inventory_position_options } from "@/modules/options";
+import HorizontalTextFormat from "@/page-components/HorizontalTextFormat.vue";
 
 // INTERFACE
 interface IProps {
+  data: any;
   category_options: any[];
 }
 interface IEmits {
-  (e: "inventoryAdded"): void;
+  (e: "inventoryUpdated"): void;
 }
 
 // VARIABLE
+const store = stateManagement();
 const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 const is_on_process = ref(false);
@@ -27,13 +31,14 @@ const options = ref({
 });
 const inventory_form = ref<VForm>();
 const inventory_data = ref({
-  name: null,
-  id_category: null,
+  name: props?.data?.name || null,
+  id_category: props?.data?.id_category || null,
+  current_quantity: props?.data?.quantity || 0,
   quantity: 0,
-  unit: "Pcs",
-  description: null,
-  position: "WAREHOUSE",
-  id_pic: null,
+  unit: props?.data?.unit || "Pcs",
+  description: props?.data?.description || null,
+  position: props?.data?.position || "WAREHOUSE",
+  id_pic: props?.data?.id_pic || null,
 });
 const non_pic_position = ref(["WAREHOUSE", "ONSITE"]);
 
@@ -43,20 +48,25 @@ const getUserOptions = () => {
     options.value.users = response?.data?.user_options || [];
   });
 };
-const saveInventory = () => {
+const repositionInventory = () => {
   inventory_form.value?.validate().then(({ valid: is_valid }) => {
     if (is_valid) {
       is_on_process.value = true;
-      if (non_pic_position.value.includes(inventory_data.value.position)) {
-        inventory_data.value.id_pic = null;
+      let update_data: any = {
+        quantity: inventory_data.value.quantity,
+        position: inventory_data.value.position,
+      };
+      if (!non_pic_position.value.includes(inventory_data.value.position)) {
+        update_data.pic = inventory_data.value.id_pic;
       }
+
       axiosIns
-        .post("inventory/add", {
+        .put(`inventory/reposition/${props.data._id}`, {
           data: inventory_data.value,
         })
         .then(() => {
-          emits("inventoryAdded");
-          resetForm();
+          emits("inventoryUpdated");
+          showActionResult(true, "success", "Barang Telah Dialihkan!");
         })
         .catch((err) => {
           const message = errorMessage(err);
@@ -68,11 +78,6 @@ const saveInventory = () => {
         });
     }
   });
-};
-const resetForm = () => {
-  inventory_form.value?.reset();
-  inventory_data.value.unit = "Pcs";
-  inventory_data.value.quantity = 0;
 };
 const userAutocompleteFilter = (
   item_title: any,
@@ -103,8 +108,8 @@ watch(is_showing_modal, () => {
   <div>
     <div @click="is_showing_modal = true">
       <slot name="trigger-button">
-        <VBtn size="40" prepend-icon="tabler-plus">
-          <VTooltip activator="parent"> Tambah Barang </VTooltip>
+        <VBtn size="35" color="warning" prepend-icon="tabler-arrows-cross">
+          <VTooltip activator="parent"> Alihkan </VTooltip>
         </VBtn>
       </slot>
     </div>
@@ -113,61 +118,35 @@ watch(is_showing_modal, () => {
       <VCard>
         <VCardItem>
           <template #prepend>
-            <VIcon icon="tabler-plus" />
+            <VIcon icon="tabler-arrows-cross" />
           </template>
-          <template #title> Tambah Barang </template>
+          <template #title> Alihkan Posisi Barang </template>
         </VCardItem>
         <VCardText>
-          <VForm ref="inventory_form" @submit.prevent="saveInventory">
+          <VForm ref="inventory_form" @submit.prevent="repositionInventory">
             <VRow>
               <!-- NAME -->
               <VCol cols="12">
-                <VTextField
-                  v-model="inventory_data.name"
-                  :rules="[requiredValidator]"
-                  clearable
-                >
-                  <template #label>
-                    Nama <span class="text-error">*</span>
-                  </template>
-                </VTextField>
-              </VCol>
-              <!-- CATEGORY -->
-              <VCol cols="12">
-                <VAutocomplete
-                  v-model="inventory_data.id_category"
-                  :items="options.category"
-                  item-title="name"
-                  item-value="_id"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Kategori <span class="text-error">*</span>
-                  </template>
-                </VAutocomplete>
+                <HorizontalTextFormat
+                  title="Nama Barang"
+                  :value="inventory_data.name"
+                  title_cols="4"
+                  value_cols="8"
+                />
+                <HorizontalTextFormat
+                  title="Stok Tersedia"
+                  :value="inventory_data.current_quantity"
+                  title_cols="4"
+                  value_cols="8"
+                />
               </VCol>
               <!-- STOK -->
-              <VCol cols="12" md="7" sm="12">
-                <VTextField
-                  v-model="inventory_data.quantity"
-                  :rules="[requiredValidator, integerValidator]"
-                >
+              <VCol cols="12">
+                <VTextField v-model="inventory_data.quantity">
                   <template #label>
-                    Jumlah Stok <span class="text-error">*</span>
+                    Jumlah Stok Dialihkan <span class="text-error">*</span>
                   </template>
                 </VTextField>
-              </VCol>
-              <!-- UNIT -->
-              <VCol cols="12" md="5" sm="12">
-                <VCombobox
-                  v-model="inventory_data.unit"
-                  :items="options.unit"
-                  :rules="[requiredValidator]"
-                >
-                  <template #label>
-                    Satuan <span class="text-error">*</span>
-                  </template>
-                </VCombobox>
               </VCol>
               <!-- POSITION -->
               <VCol cols="12">
@@ -219,13 +198,6 @@ watch(is_showing_modal, () => {
                   </template>
                 </VAutocomplete>
               </VCol>
-              <!-- DESCRIPTION -->
-              <VCol cols="12">
-                <VTextarea
-                  v-model="inventory_data.description"
-                  label="Deskripsi"
-                />
-              </VCol>
               <!-- ACTION BUTTON -->
               <VCol cols="12">
                 <VRow>
@@ -234,7 +206,7 @@ watch(is_showing_modal, () => {
                       size="default"
                       block
                       color="error"
-                      @click="(is_showing_modal = false), resetForm()"
+                      @click="is_showing_modal = false"
                     >
                       Batal
                     </VBtn>

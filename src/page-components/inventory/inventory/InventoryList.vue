@@ -15,6 +15,7 @@ import axios from "axios";
 import AddInventoryModal from "./AddInventoryModal.vue";
 import EditInventoryModal from "./EditInventoryModal.vue";
 import { stateManagement } from "@/store";
+import RepositionInventoryModal from "./RepositionInventoryModal.vue";
 
 // INTERFACE
 interface IProps {
@@ -282,6 +283,11 @@ watch(props, () => {
         </template>
         <template #cell-action="{ data, index }">
           <div class="d-flex gap-1 flex-nowrap py-1 justify-center">
+            <RepositionInventoryModal
+              :data="data"
+              :category_options="options.category"
+              @inventory-updated="getInventoryData()"
+            />
             <EditInventoryModal
               v-if="props.position == 'WAREHOUSE' || store.isOwnerAdmin"
               :data="data"

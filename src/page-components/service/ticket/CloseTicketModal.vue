@@ -293,7 +293,7 @@ watch(is_showing_modal, () => {
                   label="Precon"
                   item-title="name"
                   item-value="_id"
-                  :items="options.inventory.filter((el: any) => el.category.toUpperCase() === 'PRECON')"
+                  :items="options.inventory.filter((el: any) => el.category.toUpperCase() === 'FIBER OPTIK')"
                   clearable
                 >
                   <template v-slot:item="{ props, item }">

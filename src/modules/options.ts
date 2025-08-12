@@ -1,3 +1,21 @@
+export const inventory_position_options = [
+  {
+    title: "GUDANG",
+    value: "WAREHOUSE",
+  },
+  {
+    title: "ONSITE LAPANGAN",
+    value: "ONSITE",
+  },
+  {
+    title: "TEKNISI",
+    value: "ENGINEER",
+  },
+  {
+    title: "PELANGGAN",
+    value: "CUSTOMER",
+  },
+];
 export const requested_status_options = [
   {
     title: "Menunggu",
