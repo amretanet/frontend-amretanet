@@ -832,7 +832,7 @@ onMounted(() => {
                   </div>
                 </a>
                 <a
-                  href="https://api.whatsapp.com/send?phone=6285159979915"
+                  href="https://api.whatsapp.com/send?phone=6289695666636"
                   target="_blank"
                   class="fsm-12"
                   rel="noopener noreferrer"
