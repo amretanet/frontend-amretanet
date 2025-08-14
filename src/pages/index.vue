@@ -8,12 +8,12 @@ import CheckCustomerDataModal from "@/page-components/CheckCustomerDataModal.vue
 import EmptyAlert from "@/page-components/EmptyAlert.vue";
 import GoogleMaps from "@/page-components/GoogleMaps.vue";
 import PrivacyModal from "@/page-components/PrivacyModal.vue";
+import CoverageAreaMapInfo from "@/page-components/settings/coverage-area/CoverageAreaMapInfo.vue";
 import SkeletonLoader from "@/page-components/SkeletonLoader.vue";
 import TermConditionModal from "@/page-components/TermConditionModal.vue";
 import axiosIns from "@/plugins/axios";
 import { useThemeConfig } from "@core/composable/useThemeConfig";
-import { Marker, InfoWindow } from "vue3-google-map";
-import CoverageAreaMapInfo from "@/page-components/settings/coverage-area/CoverageAreaMapInfo.vue";
+import { InfoWindow, Marker } from "vue3-google-map";
 
 // VARIABLE
 const { theme } = useThemeConfig();
@@ -799,8 +799,7 @@ onMounted(() => {
                 </a>
                 <p class="text-white fsm-12 mb-4">
                   <VIcon icon="tabler-map-pin" class="mb-1" />
-                  Jl. Pasirkuya No.88-47 Cipacing Kec. Jatinangor Kabupaten
-                  Sumedang, Jawa Barat 45363, Indonesia
+                  Jalan jayalaras no 41 Cipacing , kec jatinangor ,kab sumedang
                 </p>
               </div>
             </VCol>
@@ -840,7 +839,7 @@ onMounted(() => {
                 >
                   <div class="d-flex align-center gap-1 mt-2">
                     <VIcon icon="mdi-whatsapp" />
-                    <span>085159979915</span>
+                    <span>089695666636</span>
                   </div>
                 </a>
               </div>
